@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý đơn hàng - Quản trị NDT Gift</title>
+    <link rel="stylesheet" href="styles/styleAdmin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <h2><i class="fas fa-gift"></i> NDT Gift</h2>
+                <p>Quản trị viên</p>
+            </div>
+            
+            <nav class="menu">
+                <a href="admin-dashboard.html" class="menu-item">
+                    <i class="fas fa-tachometer-alt"></i> Tổng quan
+                </a>
+                <a href="admin-products.html" class="menu-item">
+                    <i class="fas fa-box"></i> Quản lý sản phẩm
+                </a>
+                <a href="admin-categories.html" class="menu-item">
+                    <i class="fas fa-list"></i> Quản lý danh mục
+                </a>
+                <a href="admin-customers.html" class="menu-item">
+                    <i class="fas fa-users"></i> Quản lý khách hàng
+                </a>
+                <a href="admin-orders.html" class="menu-item active">
+                    <i class="fas fa-shopping-cart"></i> Quản lý đơn hàng
+                </a>
+                <a href="admin-promotions.html" class="menu-item">
+                    <i class="fas fa-tags"></i> Quản lý khuyến mãi
+                </a>
+            </nav>
+            
+            <div class="logout">
+                <a href="#" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Quản lý đơn hàng</h1>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="admin-name">Admin</span>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Form thêm đơn hàng -->
+                <div class="form-card">
+                    <h2 id="form-title">Thêm đơn hàng mới</h2>
+                    <form id="order-form">
+                        <input type="hidden" id="order-id">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Mã đơn hàng *</label>
+                                <input type="text" id="order-code" placeholder="VD: DH001" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Khách hàng *</label>
+                                <select id="order-customer" required>
+                                    <option value="">-- Chọn khách hàng --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Ngày đặt *</label>
+                                <input type="date" id="order-date" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Trạng thái *</label>
+                                <select id="order-status" required>
+                                    <option value="pending">Đang xử lý</option>
+                                    <option value="shipping">Đang giao</option>
+                                    <option value="completed">Hoàn tất</option>
+                                    <option value="cancelled">Đã hủy</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Tổng tiền (₫) *</label>
+                                <input type="number" id="order-total" min="0" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Phương thức thanh toán</label>
+                                <select id="order-payment">
+                                    <option value="cod">COD</option>
+                                    <option value="bank">Chuyển khoản</option>
+                                    <option value="momo">MoMo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ghi chú</label>
+                            <textarea id="order-note" rows="2"></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Lưu
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                <i class="fas fa-redo"></i> Làm mới
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Bộ lọc và bảng -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h2>Danh sách đơn hàng</h2>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="filter-status" class="filter-select">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="pending">Đang xử lý</option>
+                                <option value="shipping">Đang giao</option>
+                                <option value="completed">Hoàn tất</option>
+                                <option value="cancelled">Đã hủy</option>
+                            </select>
+                            <input type="text" id="search-input" placeholder="Tìm kiếm..." class="search-input">
+                        </div>
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Khách hàng</th>
+                                <th>Ngày đặt</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="order-list">
+                            <tr>
+                                <td colspan="6" class="text-center">Chưa có đơn hàng nào</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="scripts/admin/adminCore.js"></script>
+    <script src="scripts/admin/adminOrders.js"></script>
+</body>
+</html>
