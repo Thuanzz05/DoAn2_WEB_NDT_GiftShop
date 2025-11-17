@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý khách hàng - Quản trị NDT Gift</title>
+    <link rel="stylesheet" href="styles/styleAdmin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <h2><i class="fas fa-gift"></i> NDT Gift</h2>
+                <p>Quản trị viên</p>
+            </div>
+            
+            <nav class="menu">
+                <a href="admin-dashboard.html" class="menu-item">
+                    <i class="fas fa-tachometer-alt"></i> Tổng quan
+                </a>
+                <a href="admin-products.html" class="menu-item">
+                    <i class="fas fa-box"></i> Quản lý sản phẩm
+                </a>
+                <a href="admin-categories.html" class="menu-item">
+                    <i class="fas fa-list"></i> Quản lý danh mục
+                </a>
+                <a href="admin-customers.html" class="menu-item active">
+                    <i class="fas fa-users"></i> Quản lý khách hàng
+                </a>
+                <a href="admin-orders.html" class="menu-item">
+                    <i class="fas fa-shopping-cart"></i> Quản lý đơn hàng
+                </a>
+                <a href="admin-promotions.html" class="menu-item">
+                    <i class="fas fa-tags"></i> Quản lý khuyến mãi
+                </a>
+            </nav>
+            
+            <div class="logout">
+                <a href="#" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Quản lý khách hàng</h1>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="admin-name">Admin</span>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Form -->
+                <div class="form-card">
+                    <h2 id="form-title">Thêm khách hàng mới</h2>
+                    <form id="customer-form">
+                        <input type="hidden" id="customer-id">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Họ tên *</label>
+                                <input type="text" id="customer-name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Email *</label>
+                                <input type="email" id="customer-email" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Số điện thoại *</label>
+                                <input type="tel" id="customer-phone" pattern="[0-9]{10}" required>
+                                <small>10 chữ số</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Ngày tham gia</label>
+                                <input type="date" id="customer-joindate">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Địa chỉ</label>
+                            <textarea id="customer-address" rows="2"></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Lưu
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                <i class="fas fa-redo"></i> Làm mới
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h2>Danh sách khách hàng</h2>
+                        <input type="text" id="search-input" placeholder="Tìm kiếm..." class="search-input">
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Họ tên</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Địa chỉ</th>
+                                <th>Ngày tham gia</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customer-list">
+                            <tr>
+                                <td colspan="7" class="text-center">Chưa có khách hàng nào</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="scripts/admin/adminCore.js"></script>
+    <script src="scripts/admin/adminCustomers.js"></script>
+</body>
+</html>
