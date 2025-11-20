@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý khuyến mãi - Quản trị NDT Gift</title>
+    <link rel="stylesheet" href="styles/styleAdmin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <h2><i class="fas fa-gift"></i> NDT Gift</h2>
+                <p>Quản trị viên</p>
+            </div>
+            
+            <nav class="menu">
+                <a href="admin-dashboard.html" class="menu-item">
+                    <i class="fas fa-tachometer-alt"></i> Tổng quan
+                </a>
+                <a href="admin-products.html" class="menu-item">
+                    <i class="fas fa-box"></i> Quản lý sản phẩm
+                </a>
+                <a href="admin-categories.html" class="menu-item">
+                    <i class="fas fa-list"></i> Quản lý danh mục
+                </a>
+                <a href="admin-customers.html" class="menu-item">
+                    <i class="fas fa-users"></i> Quản lý khách hàng
+                </a>
+                <a href="admin-orders.html" class="menu-item">
+                    <i class="fas fa-shopping-cart"></i> Quản lý đơn hàng
+                </a>
+                <a href="admin-promotions.html" class="menu-item active">
+                    <i class="fas fa-tags"></i> Quản lý khuyến mãi
+                </a>
+            </nav>
+            
+            <div class="logout">
+                <a href="#" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h1>Quản lý khuyến mãi</h1>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="admin-name">Admin</span>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Form -->
+                <div class="form-card">
+                    <h2 id="form-title">Tạo khuyến mãi mới</h2>
+                    <form id="promotion-form">
+                        <input type="hidden" id="promotion-id">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Mã khuyến mãi *</label>
+                                <input type="text" id="promotion-code" placeholder="VD: KM001" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Tên chương trình *</label>
+                                <input type="text" id="promotion-name" placeholder="VD: Giảm giá 20%" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Loại khuyến mãi *</label>
+                                <select id="promotion-type" required>
+                                    <option value="percent">Giảm %</option>
+                                    <option value="amount">Giảm tiền</option>
+                                    <option value="freeship">Freeship</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Giá trị *</label>
+                                <input type="number" id="promotion-value" min="0" required>
+                                <small id="value-hint">Nhập % hoặc số tiền</small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Ngày bắt đầu *</label>
+                                <input type="date" id="promotion-startdate" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Ngày kết thúc *</label>
+                                <input type="date" id="promotion-enddate" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Mô tả</label>
+                            <textarea id="promotion-description" rows="2"></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Lưu
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                <i class="fas fa-redo"></i> Làm mới
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h2>Danh sách khuyến mãi</h2>
+                        <input type="text" id="search-input" placeholder="Tìm kiếm..." class="search-input">
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã KM</th>
+                                <th>Tên chương trình</th>
+                                <th>Loại</th>
+                                <th>Giá trị</th>
+                                <th>Thời gian</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="promotion-list">
+                            <tr>
+                                <td colspan="7" class="text-center">Chưa có khuyến mãi nào</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="scripts/admin/adminCore.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPromotions();
+            setupForm();
+            setupSearch();
+            setupTypeChange();
+        });
+
+        function setupTypeChange() {
+            document.getElementById('promotion-type').addEventListener('change', function() {
+                const hint = document.getElementById('value-hint');
+                if (this.value === 'percent') {
+                    hint.textContent = 'Nhập % (0-100)';
+                } else if (this.value === 'amount') {
+                    hint.textContent = 'Nhập số tiền (₫)';
+                } else {
+                    hint.textContent = 'Để 0 nếu freeship';
+                }
+            });
+        }
+
+        function loadPromotions() {
+            const promotions = JSON.parse(localStorage.getItem('promotions') || '[]');
+            const tbody = document.getElementById('promotion-list');
+            
+            if (promotions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">Chưa có khuyến mãi nào</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            const today = new Date();
+            
+            promotions.forEach(promo => {
+                const startDate = new Date(promo.startDate);
+                const endDate = new Date(promo.endDate);
+                
+                let statusClass = '';
+                let statusText = '';
+                
+                if (today < startDate) {
+                    statusClass = 'badge-info';
+                    statusText = 'Sắp diễn ra';
+                } else if (today > endDate) {
+                    statusClass = 'badge-danger';
+                    statusText = 'Hết hạn';
+                } else {
+                    statusClass = 'badge-success';
+                    statusText = 'Đang chạy';
+                }
+                
+                const typeText = {
+                    'percent': 'Giảm %',
+                    'amount': 'Giảm tiền',
+                    'freeship': 'Freeship'
+                };
+                
+                const valueDisplay = promo.type === 'percent' 
+                    ? promo.value + '%' 
+                    : promo.type === 'freeship'
+                    ? 'Miễn phí'
+                    : parseInt(promo.value).toLocaleString('vi-VN') + '₫';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${promo.code}</td>
+                    <td>${promo.name}</td>
+                    <td>${typeText[promo.type]}</td>
+                    <td>${valueDisplay}</td>
+                    <td>${promo.startDate} ~ ${promo.endDate}</td>
+                    <td><span class="badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button class="btn-icon" onclick="editPromotion(${promo.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icon btn-danger" onclick="deletePromotion(${promo.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function setupForm() {
+            document.getElementById('promotion-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                savePromotion();
+            });
+        }
+
+        function savePromotion() {
+            const id = document.getElementById('promotion-id').value;
+            const code = document.getElementById('promotion-code').value.trim().toUpperCase();
+            const name = document.getElementById('promotion-name').value.trim();
+            const type = document.getElementById('promotion-type').value;
+            const value = document.getElementById('promotion-value').value;
+            const startDate = document.getElementById('promotion-startdate').value;
+            const endDate = document.getElementById('promotion-enddate').value;
+            const description = document.getElementById('promotion-description').value.trim();
+            
+            // Validate
+            if (!code || !name || !value || !startDate || !endDate) {
+                alert('Vui lòng điền đầy đủ thông tin!');
+                return;
+            }
+            
+            if (parseFloat(value) < 0) {
+                alert('Giá trị phải >= 0!');
+                return;
+            }
+            
+            if (type === 'percent' && parseFloat(value) > 100) {
+                alert('Giảm % không được vượt quá 100!');
+                return;
+            }
+            
+            if (new Date(endDate) < new Date(startDate)) {
+                alert('Ngày kết thúc phải sau ngày bắt đầu!');
+                return;
+            }
+            
+            let promotions = JSON.parse(localStorage.getItem('promotions') || '[]');
+            
+            // Kiểm tra trùng mã
+            if (!id && promotions.some(p => p.code === code)) {
+                alert('Mã khuyến mãi đã tồn tại!');
+                return;
+            }
+            
+            if (id) {
+                const index = promotions.findIndex(p => p.id == id);
+                if (index !== -1) {
+                    promotions[index] = {
+                        id: parseInt(id),
+                        code, name, type,
+                        value: parseFloat(value),
+                        startDate, endDate, description
+                    };
+                    alert('Đã cập nhật khuyến mãi!');
+                }
+            } else {
+                const newId = promotions.length > 0 ? Math.max(...promotions.map(p => p.id)) + 1 : 1;
+                promotions.push({
+                    id: newId,
+                    code, name, type,
+                    value: parseFloat(value),
+                    startDate, endDate, description
+                });
+                alert('Đã tạo khuyến mãi!');
+            }
+            
+            localStorage.setItem('promotions', JSON.stringify(promotions));
+            resetForm();
+            loadPromotions();
+        }
+
+        function editPromotion(id) {
+            const promotions = JSON.parse(localStorage.getItem('promotions') || '[]');
+            const promo = promotions.find(p => p.id == id);
+            
+            if (promo) {
+                document.getElementById('promotion-id').value = promo.id;
+                document.getElementById('promotion-code').value = promo.code;
+                document.getElementById('promotion-name').value = promo.name;
+                document.getElementById('promotion-type').value = promo.type;
+                document.getElementById('promotion-value').value = promo.value;
+                document.getElementById('promotion-startdate').value = promo.startDate;
+                document.getElementById('promotion-enddate').value = promo.endDate;
+                document.getElementById('promotion-description').value = promo.description || '';
+                document.getElementById('form-title').textContent = 'Chỉnh sửa khuyến mãi';
+                document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function deletePromotion(id) {
+            if (!confirm('Xóa khuyến mãi này?')) return;
+            
+            let promotions = JSON.parse(localStorage.getItem('promotions') || '[]');
+            promotions = promotions.filter(p => p.id != id);
+            localStorage.setItem('promotions', JSON.stringify(promotions));
+            
+            alert('Đã xóa khuyến mãi!');
+            loadPromotions();
+        }
+
+        function resetForm() {
+            document.getElementById('promotion-form').reset();
+            document.getElementById('promotion-id').value = '';
+            document.getElementById('form-title').textContent = 'Tạo khuyến mãi mới';
+        }
+
+        function setupSearch() {
+            document.getElementById('search-input').addEventListener('input', function() {
+                const keyword = this.value.toLowerCase();
+                document.querySelectorAll('#promotion-list tr').forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(keyword) || keyword === '' ? '' : 'none';
+                });
+            });
+        }
+    </script>
+</body>
+</html>
