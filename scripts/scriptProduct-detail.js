@@ -1,12 +1,238 @@
+// Khai báo biến global productData
+let productData = {};
+
+// Flash Sale Products Data (để sẵn sàng nếu cần)
+const flashSaleProductsData = {
+    'fs-1': { id: 'fs-1', name: 'Bộ đồ chơi lego lắp ráp chủ đề Giáng Sinh', price: 200000, oldPrice: 250000, discount: -20, image: 'images/flash_sale_1.webp', sold: 205, progress: 82, description: 'Bộ đồ chơi lego cao cấp lắp ráp chủ đề Giáng Sinh, phù hợp cho trẻ em và người lớn. Gồm các mô hình trang trí Noel, cây thông, ông già Noel và nhiều chi tiết khác. Chất liệu an toàn, không độc hại.', category: 'Đồ chơi' },
+    'fs-2': { id: 'fs-2', name: 'Set mô hình 5 Ông già Noel dễ thương', price: 140000, oldPrice: 200000, discount: -30, image: 'images/flash_sale_2.webp', sold: 55, progress: 55, description: 'Set 5 mô hình ông già Noel dễ thương với các biểu cảm khác nhau. Chất liệu PVC cao cấp, màu sắc sáng, độc đáo. Dùng để trang trí nhà cửa, cửa hàng, bàn làm việc.', category: 'Trang trí' },
+    'fs-3': { id: 'fs-3', name: 'Cốc ly hình cây thông Giáng Sinh 3D', price: 160000, oldPrice: 200000, discount: -20, image: 'images/flash_sale_3.webp', sold: 90, progress: 72, description: 'Cốc ly hình cây thông Giáng Sinh 3D với thiết kế độc đáo, nắp và khay giữ. Chất liệu sứ cao cấp, in hình đẹp mắt, không độc hại. Phù hợp làm quà tặng.', category: 'Cốc tách' },
+    'fs-4': { id: 'fs-4', name: 'Cốc ly sứ Christmas hộp quà tặng ngôi sao', price: 200000, oldPrice: 300000, discount: -33, image: 'images/flash_sale_4.webp', sold: 52, progress: 52, description: 'Cốc ly sứ cao cấp với họa tiết Christmas ngôi sao lấp lánh. Đi kèm hộp quà đẹp, in logo nhãn hiệu. Dùng đựng nước, cà phê, trà, là quà tặng tuyệt vời.', category: 'Cốc tách' },
+    'fs-5': { id: 'fs-5', name: 'Đèn LED trang trí cây thông Giáng Sinh', price: 150000, oldPrice: 200000, discount: -25, image: 'images/flash_sale_5.webp', sold: 85, progress: 68, description: 'Đèn LED trang trí cây thông Giáng Sinh với 100 bóng LED sáng đa màu, dây dài 10m. Tiết kiệm điện, sáng lâu, an toàn tuyệt đối. Chế độ nhấp nháy tự động.', category: 'Trang trí' },
+    'fs-6': { id: 'fs-6', name: 'Set hộp quà trang trí Noel cao cấp', price: 180000, oldPrice: 300000, discount: -40, image: 'images/flash_sale_6.webp', sold: 45, progress: 45, description: 'Set 3 hộp quà trang trí Noel cao cấp với họa tiết đặc biệt, màu sắc rực rỡ. Chất liệu carton dày, bền bỉ. Dùng đựng quà tặng hoặc trang trí nhà cửa.', category: 'Hộp quà' },
+    'fs-7': { id: 'fs-7', name: 'Tất treo Giáng Sinh họa tiết đáng yêu', price: 85000, oldPrice: 100000, discount: -15, image: 'images/flash_sale_7.webp', sold: 95, progress: 76, description: 'Tất treo Giáng Sinh họa tiết đáng yêu với màu đỏ, xanh, trắng. Chất liệu cotton mềm mại, ấm áp. Treo trên cây thông, tường, cửa sổ để trang trí.', category: 'Trang trí' },
+    'fs-8': { id: 'fs-8', name: 'Set chuông vàng trang trí Giáng Sinh', price: 130000, oldPrice: 200000, discount: -35, image: 'images/flash_sale_8.webp', sold: 60, progress: 60, description: 'Set 5 chuông vàng trang trí Giáng Sinh với âm thanh rung chuông dễ nghe. Chất liệu kim loại cao cấp, bền bỉ, sáng bóng. Treo trên cây thông hoặc tường.', category: 'Trang trí' }
+};
+
+// Hàm khởi tạo Flash Sale products vào localStorage nếu chưa có
+function ensureFlashSaleProductsInStorage() {
+    let products = JSON.parse(localStorage.getItem('products')) || [];
+    
+    // Kiểm tra xem Flash Sale products đã có trong localStorage chưa
+    const flashSaleExists = products.some(p => p.id && typeof p.id === 'string' && p.id.startsWith('fs-'));
+    
+    if (!flashSaleExists) {
+        // Thêm các Flash Sale products vào localStorage
+        Object.values(flashSaleProductsData).forEach(product => {
+            products.push(product);
+        });
+        localStorage.setItem('products', JSON.stringify(products));
+    }
+}
+
+// Hàm khởi tạo demo products (100-117) nếu chưa có
+function ensureDemoProductsInStorage() {
+    let products = JSON.parse(localStorage.getItem('products')) || [];
+    
+    // Kiểm tra xem demo products đã có không
+    const demoExists = products.some(p => p.id >= 100 && p.id <= 117);
+    
+    if (!demoExists) {
+        // Khởi tạo demo products
+        const demoProducts = [
+            { id: 100, name: 'Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm', price: 180000, image: 'images/product1.webp', category: 'Trang trí', description: 'Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm dễ thương nhiều màu sắc trang trí nhà cửa, bàn làm việc. Sản phẩm làm từ chất liệu nhựa cao cấp, bền đẹp theo thời gian.' },
+            { id: 101, name: 'Mô hình tượng Shin bút chì cosplay Phật Tổ', price: 300000, image: 'images/product2.webp', category: 'Trang trí', description: 'Mô hình tượng Shin bút chì cosplay Phật Tổ vô cùng độc đáo và dễ thương. Sản phẩm làm từ chất liệu cao cấp, màu sắc tươi sáng.' },
+            { id: 102, name: 'Set 6 mô hình lợn hồng heo hồng đế bàn mini', price: 70000, image: 'images/product3.webp', category: 'Trang trí', description: 'Set 6 mô hình lợn hồng heo hồng đế bàn mini dễ thương. Thiết kế nhỏ gọn, vừa vặn trên bàn làm việc hoặc bàn học.' },
+            { id: 103, name: 'Mô hình mông Silicon Gấu Thỏ Chó Heo Rắp đồ chơi', price: 75000, image: 'images/product4.webp', category: 'Đồ chơi', description: 'Mô hình mông Silicon Gấu Thỏ Chó Heo Rắp đồ chơi. Chất liệu silicone mềm mại, an toàn cho trẻ em. Hình dáng dễ thương, sinh động.' },
+            { id: 104, name: 'Tượng mèo thần tài trắng khăn xanh', price: 130000, image: 'images/product5.webp', category: 'Trang trí', description: 'Tượng mèo thần tài trắng khăn xanh may mắn. Hình tượng truyền thống, mang lại may mắn và tài lộc. Thiết kế tinh tế, phù hợp để trang trí.' },
+            { id: 105, name: 'Mô hình Blind Box mèo Xiêm Thái Lan', price: 63000, image: 'images/product6.webp', category: 'Đồ chơi', description: 'Mô hình Blind Box mèo Xiêm Thái Lan độc đáo. Mỗi hộp là một bất ngờ, có thể nhận được nhiều mẫu khác nhau.' },
+            { id: 106, name: 'Set 4 mô hình mèo thần tài tròn', price: 60000, image: 'images/product7.webp', category: 'Trang trí', description: 'Set 4 mô hình mèo thần tài tròn may mắn. Bộ sưu tập 4 mèo với màu sắc khác nhau, mang lại không khí vui vẻ.' },
+            { id: 107, name: 'Mô hình 4 mèo thần tài may mắn', price: 50000, image: 'images/product8.webp', category: 'Trang trí', description: 'Mô hình 4 mèo thần tài may mắn. Tập hợp 4 chú mèo với biểu cảm dễ thương, phù hợp làm quà tặng.' },
+            { id: 108, name: 'Set mô hình Shiba thần tài hoa anh đào', price: 150000, image: 'images/new-product1.webp', category: 'Trang trí', description: 'Set mô hình Shiba thần tài hoa anh đào độc đáo. Kết hợp giữa chó Shiba dễ thương và hoa anh đào, mang lại cảm giác mùa xuân.' },
+            { id: 109, name: 'Set 3 mô hình chú vịt vàng cosplay Phi công', price: 210000, image: 'images/new-product2.webp', category: 'Đồ chơi', description: 'Set 3 mô hình chú vịt vàng cosplay Phi công. Hình ảnh độc đáo, mang tính hài hước. Phù hợp làm quà tặng vui vẻ.' },
+            { id: 110, name: 'Set 4 mô hình cừu Dory', price: 215000, image: 'images/new-product3.webp', category: 'Đồ chơi', description: 'Set 4 mô hình cừu Dory. Bộ sưu tập 4 chú cừu với biểu cảm khác nhau, thích hợp để sưu tầm.' },
+            { id: 111, name: 'Set mô hình Phúc Lộc Thọ Thần Tài', price: 80000, image: 'images/new-product4.webp', category: 'Trang trí', description: 'Set mô hình Phúc Lộc Thọ Thần Tài. Tượng truyền thống mang ý nghĩa may mắn, tài lộc, sức khỏe. Quà tặng ý nghĩa cho gia đình.' },
+            { id: 112, name: 'Mô hình gấu dâu Lotso mini', price: 204000, image: 'images/new-product5.webp', category: 'Đồ chơi', description: 'Mô hình gấu dâu Lotso mini. Hình gấu bông dâu rất dễ thương, nhỏ gọn, dễ mang theo. Quà tặng hoàn hảo cho bé yêu.' },
+            { id: 113, name: 'Set 4 mô hình thần tài trắng vui vẻ', price: 183000, image: 'images/new-product6.webp', category: 'Trang trí', description: 'Set 4 mô hình thần tài trắng vui vẻ. Bộ sưu tập tượng thần tài trắng với biểu cảm tươi cười, trang trí phòng khách.' },
+            { id: 114, name: 'Mô hình gấu trúc Panda vịt vàng', price: 150000, image: 'images/new-product7.webp', category: 'Trang trí', description: 'Mô hình gấu trúc Panda vịt vàng. Sự kết hợp dễ thương giữa gấu trúc và vịt vàng, mang đến cảm giác vui vẻ.' },
+            { id: 115, name: 'Tượng mèo thần tài trắng khăn xanh (Mẫu 2)', price: 130000, image: 'images/new-product8.webp', category: 'Trang trí', description: 'Tượng mèo thần tài trắng khăn xanh mẫu 2. Phiên bản khác của mèo thần tài may mắn, khác biệt trong chi tiết thiết kế.' },
+            { id: 116, name: 'Set mô hình 5 Ông già Noel dễ thương', price: 140000, image: 'images/new-product9.webp', category: 'Trang trí', description: 'Set mô hình 5 Ông già Noel dễ thương. Bộ sưu tập các mẫu Ông già Noel với biểu cảm vui vẻ, phù hợp cho mùa lễ.' },
+            { id: 117, name: 'Đèn led Quả cầu tuyết Ông già Noel, Tuần lộc', price: 180000, image: 'images/new-product10.webp', category: 'Trang trí', description: 'Đèn led Quả cầu tuyết Ông già Noel, Tuần lộc. Đèn trang trí lễ hội với hình ảnh ấm cúng, thích hợp cho mùa giáng sinh.' }
+        ];
+        demoProducts.forEach(product => {
+            products.push(product);
+        });
+        localStorage.setItem('products', JSON.stringify(products));
+    }
+}
+
 //load
 document.addEventListener('DOMContentLoaded', function() {
+    // Khởi tạo tất cả dữ liệu sản phẩm nếu chưa có
+    ensureDemoProductsInStorage();
+    ensureFlashSaleProductsInStorage();
+    
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
 
-    initProductData();
+    // Nếu là Flash Sale product, load từ localStorage
+    if (productId && productId.startsWith('fs-')) {
+        loadFlashSaleProductData(productId);
+    } else if (productId) {
+        // Load sản phẩm từ localStorage (ID 100-117 hoặc admin products)
+        loadProductDataFromLocalStorage(productId);
+    } else {
+        // Chỉ load từ HTML nếu không có URL parameter
+        initProductData();
+    }
+    
     setupEventListeners();
     updateCartCount();
+    updateMenuByLoginStatus();
 });
+
+//Hàm load dữ liệu Flash Sale product từ localStorage
+function loadFlashSaleProductData(productId) {
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+    const product = products.find(p => p.id === productId);
+    
+    if (product) {
+        productData = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            oldPrice: product.oldPrice,
+            image: product.image,
+            category: product.category,
+            description: product.description,
+            discount: product.discount,
+            sold: product.sold,
+            progress: product.progress
+        };
+        
+        // Cập nhật HTML trang chi tiết sản phẩm
+        updatePageWithFlashSaleData(product);
+    }
+}
+
+//Hàm load dữ liệu sản phẩm từ localStorage (ID 100-117 hoặc admin products)
+function loadProductDataFromLocalStorage(productId) {
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+    const product = products.find(p => p.id == productId || p.id === parseInt(productId));
+    
+    if (product) {
+        productData = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            category: product.category || 'Không xác định',
+            description: product.description || 'Mô tả sản phẩm',
+            oldPrice: product.oldPrice || product.price
+        };
+        
+        // Cập nhật HTML trang chi tiết sản phẩm
+        updatePageWithProductData(product);
+    } else {
+        // Nếu không tìm thấy, vẫn set default productData để không gây lỗi
+        productData = {
+            id: productId,
+            name: 'Sản phẩm không tìm thấy',
+            price: 0,
+            image: 'images/default-product.jpg',
+            category: 'Không xác định',
+            description: 'Sản phẩm này không tồn tại'
+        };
+    }
+}
+
+//Hàm cập nhật trang chi tiết với dữ liệu Flash Sale
+function updatePageWithFlashSaleData(product) {
+    try {
+        // Cập nhật tiêu đề
+        const titleElement = document.querySelector('.product-title');
+        if (titleElement) titleElement.textContent = product.name;
+        
+        // Cập nhật hình ảnh
+        const mainImage = document.getElementById('main-product-image');
+        if (mainImage) mainImage.src = product.image;
+        
+        // Cập nhật giá
+        const priceElement = document.querySelector('.current-price');
+        if (priceElement) priceElement.textContent = formatPrice(product.price);
+        
+        // Cập nhật giá cũ
+        const oldPriceElement = document.querySelector('.old-price');
+        if (oldPriceElement) {
+            oldPriceElement.textContent = formatPrice(product.oldPrice);
+            oldPriceElement.style.display = 'inline';
+        }
+        
+        // Cập nhật % giảm giá
+        const discountElement = document.querySelector('.discount-percentage');
+        if (discountElement && product.discount) {
+            discountElement.textContent = product.discount + '%';
+        }
+        
+        // Cập nhật mô tả
+        const descriptionElement = document.querySelector('.product-description');
+        if (descriptionElement) descriptionElement.textContent = product.description;
+        
+        // Cập nhật danh mục
+        const categoryLink = document.querySelector('.product-category a');
+        if (categoryLink) categoryLink.textContent = product.category;
+        
+        // Cập nhật breadcrumb
+        const breadcrumb = document.querySelector('.breadcrumb-product');
+        if (breadcrumb) breadcrumb.textContent = product.name;
+    } catch (e) {
+        console.log('Không thể cập nhật trang chi tiết. Sử dụng dữ liệu mặc định.');
+    }
+}
+
+//Hàm cập nhật trang chi tiết với dữ liệu sản phẩm thường
+function updatePageWithProductData(product) {
+    try {
+        // Cập nhật tiêu đề
+        const titleElement = document.querySelector('.product-title');
+        if (titleElement) titleElement.textContent = product.name;
+        
+        // Cập nhật hình ảnh
+        const mainImage = document.getElementById('main-product-image');
+        if (mainImage) mainImage.src = product.image;
+        
+        // Cập nhật giá hiện tại
+        const priceElement = document.querySelector('.current-price');
+        if (priceElement) priceElement.textContent = formatPrice(product.price);
+        
+        // Cập nhật giá cũ nếu có
+        if (product.oldPrice && product.oldPrice > product.price) {
+            const oldPriceElement = document.querySelector('.old-price');
+            if (oldPriceElement) {
+                oldPriceElement.textContent = formatPrice(product.oldPrice);
+                oldPriceElement.style.display = 'inline';
+            }
+        }
+        
+        // Cập nhật mô tả
+        const descriptionElement = document.querySelector('.product-description');
+        if (descriptionElement) descriptionElement.textContent = product.description;
+        
+        // Cập nhật danh mục
+        const categoryLink = document.querySelector('.product-category a');
+        if (categoryLink) categoryLink.textContent = product.category;
+        
+        // Cập nhật breadcrumb
+        const breadcrumb = document.querySelector('.breadcrumb-product');
+        if (breadcrumb) breadcrumb.textContent = product.name;
+    } catch (e) {
+        // Bỏ qua lỗi
+    }
+}
+
+// Hàm định dạng giá tiền
+function formatPrice(price) {
+    return price.toLocaleString('vi-VN') + '₫';
+}
 
 //Hàm khởi tạo dl sp từ các phần tử HTML
 function initProductData() {
@@ -148,4 +374,29 @@ function updateCartCount() {
             link.textContent = `${link.textContent} (${totalItems})`;              // Thêm số lượng vào cuối văn bản
         }
     });
+}
+
+// Hàm cập nhật menu theo trạng thái đăng nhập
+function updateMenuByLoginStatus() {
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    const menuList = document.querySelector('.menu-account');
+    
+    if (menuList) {
+        // Xóa menu cũ
+        menuList.innerHTML = '';
+        
+        if (userData && userData.isLoggedIn) {
+            // Hiển thị menu khi đã đăng nhập
+            menuList.innerHTML = `
+                <li><a href="account.html">Quản lý tài khoản</a></li>
+                <li><a href="javascript:void(0);" onclick="logout()">Đăng xuất</a></li>
+            `;
+        } else {
+            // Hiển thị menu khi chưa đăng nhập
+            menuList.innerHTML = `
+                <li><a href="login-register.html">Đăng nhập</a></li>
+                <li><a href="login-register.html">Đăng ký</a></li>
+            `;
+        }
+    }
 }

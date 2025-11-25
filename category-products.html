@@ -8,7 +8,8 @@
     <link rel="stylesheet" type="text/css" href="styles/styleCategory-products.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-	<script src="scripts/scriptLogin-register.js"></script>
+	<script src="scripts/scriptIndex.js"></script>
+	<script src="scripts/scriptCategory-products.js"></script>
     <link rel="icon" href="images/iconWeb.png" type="image/x-icon">
 </head>
 
@@ -24,9 +25,9 @@
                         </ul>
                     </div>
                     <div class="top-right">
-                        <ul>
+                        <ul class="account-submenu">
                             <li><a href="login-register.html"><i class="fas fa-user"></i> Đăng nhập</a></li>
-                            <li><a href="login-register.html#register"><i class="fas fa-user-plus"></i> Đăng ký</a></li>
+                            <li><a href="login-register.html#register" id="go-to-register"><i class="fas fa-user-plus"></i> Đăng ký</a></li>
                         </ul>
                     </div>
                 </div>
@@ -103,16 +104,16 @@
         <div id="sidebar">
             <h2><i class="fas fa-bars"></i> Danh mục</h2>
             <ul class="category-list">
-                <li><a href="category-products.html" class="active">Set quà tặng</a></li>
-                <li><a href="category-products.html">Phụ kiện trang trí</a></li>
-                <li><a href="category-products.html">Thú bông</a></li>
-                <li><a href="category-products.html">Quà tặng giáng sinh</a></li>
-                <li><a href="category-products.html">Mèo thần tài</a></li>
-                <li><a href="category-products.html">Mô hình Anime</a></li>
-                <li><a href="category-products.html">Hộp mica</a></li>
-                <li><a href="category-products.html">Túi, hộp đựng quà</a></li>
-                <li><a href="category-products.html">Móc khóa</a></li>
-                <li><a href="category-products.html">Quạt cầm tay mini</a></li>
+                <li><a href="category-products.html?id=1" class="active">Set quà tặng</a></li>
+                <li><a href="category-products.html?id=2">Phụ kiện trang trí</a></li>
+                <li><a href="category-products.html?id=3">Thú bông</a></li>
+                <li><a href="category-products.html?id=4">Quà tặng giáng sinh</a></li>
+                <li><a href="category-products.html?id=5">Mèo thần tài</a></li>
+                <li><a href="category-products.html?id=6">Mô hình Anime</a></li>
+                <li><a href="category-products.html?id=7">Hộp mica</a></li>
+                <li><a href="category-products.html?id=8">Túi, hộp đựng quà</a></li>
+                <li><a href="category-products.html?id=9">Móc khóa</a></li>
+                <li><a href="category-products.html?id=10">Quạt cầm tay mini</a></li>
             </ul>
         </div>
 
@@ -133,149 +134,7 @@
             </div>
 
             <div class="category-products">
-                <!-- Sản phẩm 1 -->
-                <div class="product-item" >
-                    <div class="product-image">
-                        <a href="product-detail.html">
-                            <img src="images/product1.webp" alt="Set 4 mô hình em bé">
-                        </a>
-                        <div class="product-buttons">
-                            <button class="add-to-cart"><i class="fa fa-shopping-cart"></i></button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name"><a href="#">Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm</a></h3>
-                        <div class="product-price">
-                            <span class="current-price">180.000₫</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sản phẩm 2 -->
-                <div class="product-item" >
-                    <div class="product-image">
-                        <a href="product-detail.html">
-                            <img src="images/product1.webp" alt="Set 4 mô hình em bé">
-                        </a>
-                        <div class="product-buttons">
-                            <button class="add-to-cart"><i class="fa fa-shopping-cart"></i></button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name"><a href="#">Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm</a></h3>
-                        <div class="product-price">
-                            <span class="current-price">180.000₫</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sản phẩm 3 -->
-                <div class="product-item" >
-                    <div class="product-image">
-                        <a href="product-detail.html">
-                            <img src="images/product1.webp" alt="Set 4 mô hình em bé">
-                        </a>
-                        <div class="product-buttons">
-                            <button class="add-to-cart"><i class="fa fa-shopping-cart"></i></button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name"><a href="#">Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm</a></h3>
-                        <div class="product-price">
-                            <span class="current-price">180.000₫</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sản phẩm 4 -->
-                <div class="product-item" >
-                    <div class="product-image">
-                        <a href="product-detail.html">
-                            <img src="images/product1.webp" alt="Set 4 mô hình em bé">
-                        </a>
-                        <div class="product-buttons">
-                            <button class="add-to-cart"><i class="fa fa-shopping-cart"></i></button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name"><a href="#">Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm</a></h3>
-                        <div class="product-price">
-                            <span class="current-price">180.000₫</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sản phẩm 5 -->
-                <div class="product-item" >
-                    <div class="product-image">
-                        <a href="product-detail.html">
-                            <img src="images/product1.webp" alt="Set 4 mô hình em bé">
-                        </a>
-                        <div class="product-buttons">
-                            <button class="add-to-cart"><i class="fa fa-shopping-cart"></i></button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name"><a href="#">Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm</a></h3>
-                        <div class="product-price">
-                            <span class="current-price">180.000₫</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sản phẩm 6 -->
-                <div class="product-item" >
-                    <div class="product-image">
-                        <a href="product-detail.html">
-                            <img src="images/product1.webp" alt="Set 4 mô hình em bé">
-                        </a>
-                        <div class="product-buttons">
-                            <button class="add-to-cart"><i class="fa fa-shopping-cart"></i></button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name"><a href="#">Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm</a></h3>
-                        <div class="product-price">
-                            <span class="current-price">180.000₫</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sản phẩm 7 -->
-                <div class="product-item" >
-                    <div class="product-image">
-                        <a href="product-detail.html">
-                            <img src="images/product1.webp" alt="Set 4 mô hình em bé">
-                        </a>
-                        <div class="product-buttons">
-                            <button class="add-to-cart"><i class="fa fa-shopping-cart"></i></button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name"><a href="#">Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm</a></h3>
-                        <div class="product-price">
-                            <span class="current-price">180.000₫</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sản phẩm 8 -->
-                <div class="product-item" >
-                    <div class="product-image">
-                        <a href="product-detail.html">
-                            <img src="images/product1.webp" alt="Set 4 mô hình em bé">
-                        </a>
-                        <div class="product-buttons">
-                            <button class="add-to-cart"><i class="fa fa-shopping-cart"></i></button>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name"><a href="#">Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm</a></h3>
-                        <div class="product-price">
-                            <span class="current-price">180.000₫</span>
-                        </div>
-                    </div>
-                </div>
+                <!-- Sản phẩm sẽ được load động từ JavaScript -->
             </div>
 
             <div class="pagination">

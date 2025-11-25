@@ -1794,6 +1794,27 @@ ul {
     border-radius: 10px;
     margin: 10px 0;
     display: block;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.fs-product-image:hover {
+    transform: scale(1.05);
+}
+
+.fs-product-link {
+    text-decoration: none;
+    display: block;
+}
+
+.fs-product-name-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.fs-product-name-link:hover .fs-product-name {
+    color: #e74c3c;
 }
 
 .fs-product-name {

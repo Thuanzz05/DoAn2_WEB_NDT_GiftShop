@@ -72,6 +72,11 @@ function switchSection(sectionId) {
     document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
 
     hideAllAlerts();
+    
+    // Nếu chuyển đến section đơn hàng, load danh sách đơn hàng
+    if (sectionId === 'orders') {
+        loadOrders();
+    }
 }
 
 // Xử lý cập nhật thông tin
@@ -243,16 +248,126 @@ window.handleLogoutFromIndex = handleLogout;
 
 // Load đơn hàng 
 function loadOrders() {
-    const orders = [];
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (!userData) return;
+    
+    // Lấy đơn hàng của user hiện tại
+    const userOrders = JSON.parse(localStorage.getItem(`orders_${userData.email}`)) || [];
     
     const ordersContainer = document.getElementById('orders-container');
     
-    if (orders.length === 0) {
+    if (userOrders.length === 0) {
         ordersContainer.innerHTML = `
             <p style="text-align: center; color: #666; padding: 40px 0;">
                 <i class="fas fa-box-open" style="font-size: 48px; margin-bottom: 15px; display: block;"></i>
                 Bạn chưa có đơn hàng nào
             </p>
         `;
+        return;
     }
+    
+    // Hiển thị danh sách đơn hàng
+    let ordersHTML = '';
+    
+    userOrders.forEach(order => {
+        const orderDate = new Date(order.orderDate).toLocaleDateString('vi-VN');
+        const statusText = getOrderStatusText(order.status);
+        const statusClass = getOrderStatusClass(order.status);
+        
+        ordersHTML += `
+            <div class="order-item" style="border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 8px;">
+                <div class="order-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div>
+                        <h4 style="margin: 0; color: #333;">Mã đơn hàng: ${order.id}</h4>
+                        <p style="margin: 5px 0; color: #666; font-size: 14px;">Ngày đặt: ${orderDate}</p>
+                    </div>
+                    <div class="order-status">
+                        <span class="status-badge ${statusClass}" style="padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold;">
+                            ${statusText}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="order-info" style="margin-bottom: 15px;">
+                    <p style="margin: 5px 0;"><strong>Người nhận:</strong> ${order.customerInfo.fullname}</p>
+                    <p style="margin: 5px 0;"><strong>SĐT:</strong> ${order.customerInfo.phone}</p>
+                    <p style="margin: 5px 0;"><strong>Địa chỉ:</strong> ${order.customerInfo.address}</p>
+                    <p style="margin: 5px 0;"><strong>Thanh toán:</strong> ${getPaymentMethodText(order.paymentMethod)}</p>
+                </div>
+                
+                <div class="order-items">
+                    <h5 style="margin: 10px 0;">Sản phẩm:</h5>
+        `;
+        
+        order.items.forEach(item => {
+            ordersHTML += `
+                <div class="order-product" style="display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;">
+                    <img src="${item.image}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; margin-right: 15px; border-radius: 4px;">
+                    <div style="flex: 1;">
+                        <p style="margin: 0; font-weight: bold;">${item.name}</p>
+                        <p style="margin: 5px 0; color: #666;">Số lượng: ${item.quantity} | Giá: ${item.price.toLocaleString()}₫</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="margin: 0; font-weight: bold; color: #e74c3c;">
+                            ${(item.price * item.quantity).toLocaleString()}₫
+                        </p>
+                    </div>
+                </div>
+            `;
+        });
+        
+        ordersHTML += `
+                </div>
+                
+                <div class="order-total" style="text-align: right; margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
+                    <p style="margin: 5px 0;">Phí vận chuyển: ${order.shippingFee.toLocaleString()}₫</p>
+                    <p style="margin: 5px 0; font-size: 18px; font-weight: bold; color: #e74c3c;">
+                        Tổng cộng: ${order.totalPrice.toLocaleString()}₫
+                    </p>
+                </div>
+                
+                ${order.note ? `
+                <div class="order-note" style="margin-top: 10px; padding: 10px; background-color: #f9f9f9; border-radius: 4px;">
+                    <p style="margin: 0; color: #666;"><strong>Ghi chú:</strong> ${order.note}</p>
+                </div>
+                ` : ''}
+            </div>
+        `;
+    });
+    
+    ordersContainer.innerHTML = ordersHTML;
+}
+
+// Lấy text trạng thái đơn hàng
+function getOrderStatusText(status) {
+    const statusMap = {
+        'pending': 'Chờ xử lý',
+        'processing': 'Đang xử lý',
+        'shipping': 'Đang giao hàng',
+        'delivered': 'Đã giao hàng',
+        'cancelled': 'Đã hủy'
+    };
+    return statusMap[status] || 'Chờ xử lý';
+}
+
+// Lấy class CSS cho trạng thái đơn hàng
+function getOrderStatusClass(status) {
+    const classMap = {
+        'pending': 'status-pending',
+        'processing': 'status-processing',
+        'shipping': 'status-shipping',
+        'delivered': 'status-delivered',
+        'cancelled': 'status-cancelled'
+    };
+    return classMap[status] || 'status-pending';
+}
+
+// Lấy text phương thức thanh toán
+function getPaymentMethodText(method) {
+    const methodMap = {
+        'cod': 'Thanh toán khi nhận hàng (COD)',
+        'bank': 'Chuyển khoản ngân hàng',
+        'momo': 'Ví điện tử MoMo'
+    };
+    return methodMap[method] || 'COD';
 }

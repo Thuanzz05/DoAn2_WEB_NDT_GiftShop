@@ -1,4 +1,4 @@
-// Tk admin
+// Tài khoản admin 
 const ADMIN_ACCOUNTS = [
     { 
         username: 'admin', 
@@ -27,7 +27,9 @@ document.getElementById('admin-login-form').addEventListener('submit', function(
         acc.username === username && acc.password === password
     );
 
-    if (admin) {      
+    if (admin) {
+        // ✅ ĐĂNG NHẬP THÀNH CÔNG
+        
         // Tạo object lưu thông tin admin
         const adminData = {
             username: admin.username,
@@ -36,11 +38,18 @@ document.getElementById('admin-login-form').addEventListener('submit', function(
             isAdmin: true,
             loginTime: new Date().toISOString()
         };
+
+        // Lưu vào localStorage
         localStorage.setItem('adminData', JSON.stringify(adminData));
+
+        // Hiển thị thông báo
         alert('Đăng nhập thành công! Chào mừng ' + admin.name);
+        
+        // Chuyển đến trang dashboard
         window.location.href = 'admin-dashboard.html';
         
     } else {
+        // Hiển thị alert lỗi
         const errorAlert = document.getElementById('error-alert');
         errorAlert.classList.add('show');
         
