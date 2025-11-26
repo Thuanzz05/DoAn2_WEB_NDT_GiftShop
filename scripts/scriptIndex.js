@@ -3,15 +3,18 @@ function updateMenuByLoginStatus() {
     const userData = JSON.parse(localStorage.getItem('userData'));
     const isLoggedIn = userData && userData.isLoggedIn;
     
+    const accountDropdown = document.querySelector('.account-dropdown');
     const accountSubmenu = document.querySelector('.account-submenu');
+    const accountLink = accountDropdown?.querySelector('a');
     
-    if (accountSubmenu) {
+    if (accountDropdown && accountSubmenu && accountLink) {
         if (isLoggedIn) {
-            // Đã đăng nhập: Hiện "Quản lý tài khoản", ẩn "Đăng ký"
+            // Đã đăng nhập: Hiển thị tên người dùng, hiện "Quản lý tài khoản", ẩn "Đăng ký"
+            accountLink.innerHTML = `<i class="fas fa-user"></i> ${userData.name} <i class="fas fa-angle-down"></i>`;
+            
             accountSubmenu.innerHTML = `
                 <li><a href="account.html"><i class="fas fa-user-circle"></i> Quản lý tài khoản</a></li>
-                <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
-            `;
+                <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>`;
             
             // Thêm sự kiện đăng xuất
             const logoutBtn = document.getElementById('logout-btn');
@@ -26,7 +29,9 @@ function updateMenuByLoginStatus() {
                 });
             }
         } else {
-            // Chưa đăng nhập: Ẩn "Quản lý tài khoản", hiện "Đăng nhập" và "Đăng ký"
+            // Chưa đăng nhập: Hiện chữ "Tài khoản", hiển thị "Đăng nhập" và "Đăng ký"
+            accountLink.innerHTML = `<i class="fas fa-user"></i> Tài khoản <i class="fas fa-angle-down"></i>`;
+            
             accountSubmenu.innerHTML = `
                 <li><a href="login-register.html"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a></li>
                 <li><a href="login-register.html#register" id="go-to-register"><i class="fas fa-user-plus"></i> Đăng ký</a></li>

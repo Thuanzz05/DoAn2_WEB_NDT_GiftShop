@@ -9,7 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/styleIndex.css">
     <link rel="stylesheet" type="text/css" href="styles/styleNews.css">
-    <script src="scripts/scriptIndex.js"></script>
     <link rel="icon" href="images/iconWeb.png" type="image/x-icon">
 </head>
 <body>
@@ -24,10 +23,16 @@
                         </ul>
                     </div>
                     <div class="top-right">
-                        <ul class="account-submenu">
-                            <li><a href="login-register.html"><i class="fas fa-user"></i> Đăng nhập</a></li>
-                            <li><a href="login-register.html#register" id="go-to-register"><i class="fas fa-user-plus"></i> Đăng ký</a></li>
-                        </ul>
+                        <ul>
+							<li class="account-dropdown">
+								<a href="#"><i class="fas fa-user"></i> Tài khoản <i class="fas fa-angle-down"></i></a>
+								<ul class="account-submenu">
+									<li><a href="account.html"><i class="fas fa-user-circle"></i> Quản lý tài khoản</a></li>
+									<li><a href="login-register.html" target="_blank"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a></li>
+									<li><a href="login-register.html#register" target="_blank" id="go-to-register"><i class="fas fa-user-plus"></i> Đăng ký</a></li>
+								</ul>
+							</li>
+						</ul>
                     </div>
                 </div>
             </div>
@@ -330,5 +335,6 @@
         </div>
     </div>
 	<div id="backtop"><i class="fa-solid fa-angle-up"></i></div>
+    <script src="scripts/scriptIndex.js"></script>
 </body>
 </html>

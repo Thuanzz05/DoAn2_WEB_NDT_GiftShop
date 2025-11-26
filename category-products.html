@@ -8,8 +8,7 @@
     <link rel="stylesheet" type="text/css" href="styles/styleCategory-products.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-	<script src="scripts/scriptIndex.js"></script>
-	<script src="scripts/scriptCategory-products.js"></script>
+	
     <link rel="icon" href="images/iconWeb.png" type="image/x-icon">
 </head>
 
@@ -25,9 +24,15 @@
                         </ul>
                     </div>
                     <div class="top-right">
-                        <ul class="account-submenu">
-                            <li><a href="login-register.html"><i class="fas fa-user"></i> Đăng nhập</a></li>
-                            <li><a href="login-register.html#register" id="go-to-register"><i class="fas fa-user-plus"></i> Đăng ký</a></li>
+                        <ul>
+                            <li class="account-dropdown">
+                                <a href="#"><i class="fas fa-user"></i> Tài khoản <i class="fas fa-angle-down"></i></a>
+                                <ul class="account-submenu">
+                                    <li><a href="account.html"><i class="fas fa-user-circle"></i> Quản lý tài khoản</a></li>
+                                    <li><a href="login-register.html" target="_blank"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a></li>
+                                    <li><a href="login-register.html#register" target="_blank" id="go-to-register"><i class="fas fa-user-plus"></i> Đăng ký</a></li>
+                                </ul>
+                            </li>                   
                         </ul>
                     </div>
                 </div>
@@ -198,6 +203,7 @@
         </div>
     </div>
 	<div id="backtop"><i class="fa-solid fa-angle-up"></i></div>
+    <script src="scripts/scriptCategory-products.js"></script>
     <script src="scripts/scriptIndex.js"></script>
 </body>
 </html>
