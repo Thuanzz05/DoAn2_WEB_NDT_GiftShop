@@ -1,13 +1,12 @@
-// qlsp
 document.addEventListener('DOMContentLoaded', function() {
-    loadCategories();
-    loadProducts();
-    setupSearch();
-    setupForm();
+    taiDanhMuc();
+    taiSanPham();
+    thietLapTimKiem();
+    thietLapForm();
 });
 
-// Load danh mục vào dropdown
-function loadCategories() {
+/*  - Lấy danh mục từ localStorage - Hiển thị vào dropdown để chọn */
+function taiDanhMuc() {
     const categories = JSON.parse(localStorage.getItem('categories') || '[]');
     const select = document.getElementById('product-category');
     
@@ -21,23 +20,20 @@ function loadCategories() {
     });
 }
 
-// Load danh sách sản phẩm (chỉ hiển thị sản phẩm admin - ID < 100)
-function loadProducts() {
+/* - Lấy sản phẩm từ localStorage- Hiển thị thông tin sản phẩm và danh mục- Tạo nút sửa/xóa cho mỗi sản phẩm */
+function taiSanPham() {
     const products = JSON.parse(localStorage.getItem('products') || '[]');
     const categories = JSON.parse(localStorage.getItem('categories') || '[]');
     const tbody = document.getElementById('product-list');
     
-    // Lọc chỉ lấy sản phẩm admin (ID < 100), bỏ qua sản phẩm demo (ID 100-107)
-    const adminProducts = products.filter(p => p.id < 100);
-    
-    if (adminProducts.length === 0) {
+    if (products.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="text-center">Chưa có sản phẩm nào</td></tr>';
         return;
     }
     
     tbody.innerHTML = '';
     
-    adminProducts.forEach(product => {
+    products.forEach(product => {
         const category = categories.find(c => c.id == product.categoryId);
         const categoryName = category ? category.name : 'N/A';
         
@@ -49,10 +45,10 @@ function loadProducts() {
             <td>${parseInt(product.price).toLocaleString('vi-VN')}₫</td>
             <td>${product.stock}</td>
             <td>
-                <button class="btn-icon" onclick="editProduct(${product.id})" title="Sửa">
+                <button class="btn-icon" onclick="suaSanPham(${product.id})" title="Sửa">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn-icon btn-danger" onclick="deleteProduct(${product.id})" title="Xóa">
+                <button class="btn-icon btn-danger" onclick="xoaSanPham(${product.id})" title="Xóa">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
@@ -61,18 +57,24 @@ function loadProducts() {
     });
 }
 
-// Setup form submit
-function setupForm() {
-    const form = document.getElementById('product-form');
+/* 
+   - Gọi hàm luuSanPham khi submit
+   */
+function thietLapForm() {
+        const formSanPham = document.getElementById('product-form');
     
-    form.addEventListener('submit', function(e) {
+    formSanPham.addEventListener('submit', function(e) {
         e.preventDefault();
-        saveProduct();
+        luuSanPham();
     });
 }
 
-// Lưu sản phẩm (Thêm hoặc Sửa)
-function saveProduct() {
+/* 
+   - Lấy thông tin từ form
+   - Kiểm tra dữ liệu hợp lệ
+   - Thêm mới hoặc cập nhật sản phẩm
+   */
+function luuSanPham() {
     const id = document.getElementById('product-id').value;
     const name = document.getElementById('product-name').value.trim();
     const categoryId = document.getElementById('product-category').value;
@@ -115,7 +117,7 @@ function saveProduct() {
         }
     } else {
         // Thêm sản phẩm mới
-        // Lọc chỉ lấy sản phẩm admin (ID < 100) để tạo ID mới
+        // Lấy ID max từ sản phẩm admin (ID < 100), đảm bảo không bị chồng ID với demo
         const adminProducts = products.filter(p => p.id < 100);
         const newId = adminProducts.length > 0 ? Math.max(...adminProducts.map(p => p.id)) + 1 : 1;
         
@@ -135,13 +137,17 @@ function saveProduct() {
     // Lưu vào localStorage
     localStorage.setItem('products', JSON.stringify(products));
     
-    // Reset form và reload
-    resetForm();
-    loadProducts();
+    // Đặt lại form và tải lại danh sách
+    datLaiForm();
+    taiSanPham();
 }
 
-// Sửa sản phẩm
-function editProduct(id) {
+/* 
+   - Tìm sản phẩm theo ID
+   - Điền thông tin vào form
+   - Chuyển form sang chế độ sửa
+  */
+function suaSanPham(id) {
     const products = JSON.parse(localStorage.getItem('products') || '[]');
     const product = products.find(p => p.id == id);
     
@@ -166,8 +172,12 @@ function editProduct(id) {
     document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
 }
 
-// Xóa sản phẩm
-function deleteProduct(id) {
+/* 
+   - Xác nhận trước khi xóa
+   - Xóa sản phẩm khỏi localStorage
+   - Cập nhật lại danh sách
+   */
+function xoaSanPham(id) {
     if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
         return;
     }
@@ -178,18 +188,27 @@ function deleteProduct(id) {
     localStorage.setItem('products', JSON.stringify(products));
     
     alert('Đã xóa sản phẩm thành công!');
-    loadProducts();
+    taiSanPham();
 }
 
-// Reset form
-function resetForm() {
+/* 
+   ĐẶT LẠI FORM
+   - Xóa tất cả dữ liệu trong form
+   - Đặt lại tiêu đề form
+  */
+function datLaiForm() {
     document.getElementById('product-form').reset();
     document.getElementById('product-id').value = '';
     document.getElementById('form-title').textContent = 'Thêm sản phẩm mới';
 }
 
-// Tìm kiếm sản phẩm
-function setupSearch() {
+/* 
+   THIẾT LẬP TÌM KIẾM
+   - Tìm kiếm theo tên sản phẩm
+   - Lọc kết quả realtime khi gõ
+   - Ẩn/hiện các dòng phù hợp
+ */
+function thietLapTimKiem() {
     const searchInput = document.getElementById('search-input');
     
     searchInput.addEventListener('input', function() {

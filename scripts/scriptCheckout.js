@@ -31,6 +31,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Sự kiện áp dụng mã giảm giá
+    const applyCheckoutCouponBtn = document.getElementById('checkout-apply-coupon');
+    if (applyCheckoutCouponBtn) {
+        applyCheckoutCouponBtn.addEventListener('click', applyCheckoutCoupon);
+    }
 });
 
 // Tự động điền thông tin user vào form
@@ -81,16 +87,40 @@ function updateOrderSummary(cart) {
     });
     
     const shipping = subtotal >= 500000 ? 0 : 30000;
-    const total = subtotal + shipping;     // Tổng cộng
+    
+    // Tính giảm giá từ mã đã áp dụng
+    const appliedCoupon = JSON.parse(localStorage.getItem('appliedCoupon')) || null;
+    let discount = 0;
+    
+    if (appliedCoupon) {
+        if (appliedCoupon.type === 'percent') {
+            discount = Math.floor(subtotal * appliedCoupon.value / 100);
+        } else if (appliedCoupon.type === 'amount') {
+            discount = appliedCoupon.value;
+        }
+        discount = Math.min(discount, subtotal);
+    }
+    
+    const total = subtotal - discount + shipping;     // Tổng cộng
     
     // Cập nhật thông tin giá
     const priceSummary = document.querySelector('.price-summary');
     if (priceSummary) {
-        priceSummary.innerHTML = `
+        let priceHTML = `
             <div class="price-row">
                 <span>Tạm tính</span>
                 <span>${subtotal.toLocaleString()}₫</span>
-            </div>
+            </div>`;
+        
+        if (discount > 0) {
+            priceHTML += `
+            <div class="price-row" style="color: #4caf50;">
+                <span>Giảm giá</span>
+                <span>-${discount.toLocaleString()}₫</span>
+            </div>`;
+        }
+        
+        priceHTML += `
             <div class="price-row">
                 <span>Phí vận chuyển</span>
                 <span>${shipping.toLocaleString()}₫</span>
@@ -98,8 +128,9 @@ function updateOrderSummary(cart) {
             <div class="price-row total">
                 <span>Tổng cộng</span>
                 <span>${total.toLocaleString()}₫</span>
-            </div>
-        `;
+            </div>`;
+        
+        priceSummary.innerHTML = priceHTML;
     }
 }
 
@@ -178,7 +209,21 @@ function processOrder() {
         subtotal += item.price * item.quantity;
     });
     const shipping = subtotal >= 500000 ? 0 : 30000;
-    const total = subtotal + shipping;
+    
+    // Tính giảm giá từ mã đã áp dụng
+    const appliedCoupon = JSON.parse(localStorage.getItem('appliedCoupon')) || null;
+    let discount = 0;
+    
+    if (appliedCoupon) {
+        if (appliedCoupon.type === 'percent') {
+            discount = Math.floor(subtotal * appliedCoupon.value / 100);
+        } else if (appliedCoupon.type === 'amount') {
+            discount = appliedCoupon.value;
+        }
+        discount = Math.min(discount, subtotal);
+    }
+    
+    const total = subtotal - discount + shipping;
 
     // Lấy thông tin user đang đăng nhập
     const userData = JSON.parse(localStorage.getItem('userData'));
@@ -194,6 +239,8 @@ function processOrder() {
             address: `${street}, ${ward}, ${district}, ${province}`
         },
         items: cart,
+        subtotal: subtotal,
+        discount: discount,
         totalPrice: total,
         shippingFee: shipping,
         paymentMethod: paymentMethod,
@@ -206,8 +253,9 @@ function processOrder() {
     // Lưu đơn hàng vào localStorage
     saveOrder(newOrder);
     
-    // Xóa giỏ hàng sau khi đặt hàng thành công
+    // Xóa giỏ hàng và mã giảm giá sau khi đặt hàng thành công
     localStorage.removeItem('cart');
+    localStorage.removeItem('appliedCoupon');
     
     // Hiển thị thông báo thành công
     alert('Đặt hàng thành công! Đơn hàng của bạn sẽ được xử lý sớm nhất.');
@@ -278,3 +326,56 @@ function syncOrderToAdmin(order) {
     localStorage.setItem('orders', JSON.stringify(adminOrders));
 }
 
+// Áp dụng mã giảm giá ở trang checkout
+function applyCheckoutCoupon() {
+    const couponCode = document.getElementById('checkout-coupon-code').value.trim().toUpperCase();
+    const messageElement = document.getElementById('checkout-coupon-message');
+    
+    if (!couponCode) {
+        if (messageElement) messageElement.textContent = 'Vui lòng nhập mã giảm giá';
+        return;
+    }
+    
+    // Lấy danh sách mã giảm giá từ admin
+    const promotions = JSON.parse(localStorage.getItem('promotions') || '[]');
+    const coupon = promotions.find(p => p.code.toUpperCase() === couponCode);
+    
+    if (!coupon) {
+        if (messageElement) messageElement.textContent = 'Mã giảm giá không hợp lệ hoặc đã hết hạn!';
+        messageElement.style.color = '#d32f2f';
+        localStorage.removeItem('appliedCoupon');
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        updateOrderSummary(cart);
+        return;
+    }
+    
+    // Kiểm tra ngày hết hạn
+    if (coupon.endDate) {
+        const expiry = new Date(coupon.endDate);
+        const today = new Date();
+        if (today > expiry) {
+            if (messageElement) messageElement.textContent = 'Mã giảm giá đã hết hạn!';
+            messageElement.style.color = '#d32f2f';
+            localStorage.removeItem('appliedCoupon');
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            updateOrderSummary(cart);
+            return;
+        }
+    }
+    
+    // Lưu mã giảm giá đã áp dụng
+    localStorage.setItem('appliedCoupon', JSON.stringify(coupon));
+    
+    let discountText = '';
+    if (coupon.type === 'percent') {
+        discountText = `Giảm ${coupon.value}%`;
+    } else if (coupon.type === 'amount') {
+        discountText = `Giảm ${coupon.value.toLocaleString()}₫`;
+    }
+    
+    if (messageElement) messageElement.textContent = `✓ Áp dụng thành công: ${discountText}`;
+    messageElement.style.color = '#4caf50';
+    
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    updateOrderSummary(cart);
+}

@@ -19,6 +19,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Reload dữ liệu đơn hàng khi tab được focus lại
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden && document.getElementById('orders')?.classList.contains('active')) {
+            loadOrders();
+        }
+    });
+    
+    // Reload dữ liệu khi quay lại trang account
+    window.addEventListener('focus', function() {
+        if (document.getElementById('orders')?.classList.contains('active')) {
+            loadOrders();
+        }
+    });
+
     // Xử lý form chỉnh sửa thông tin
     document.getElementById('edit-form').addEventListener('submit', handleEditSubmit);
 

@@ -645,6 +645,7 @@ document.addEventListener('DOMContentLoaded', function() {
     khoiTaoSanPhamCu(); // Khởi tạo 18 sản phẩm demo (100-117)
     khoiTaoFlashSaleProducts(); // Khởi tạo 8 sản phẩm Flash Sale
     xoaSanPhamLoi(); // Xóa những sản phẩm lỗi/không hợp lệ
+    khoiTaoMaGiamGia(); // Khởi tạo mã giảm giá demo
     taiSanPhamTuAdmin();
     taiDanhMuc();
 });
@@ -873,3 +874,54 @@ document.addEventListener('DOMContentLoaded', function() {
         taiSanPhamTheoDanhMuc();
     }
 });
+
+// Khởi tạo mã giảm giá demo
+function khoiTaoMaGiamGia() {
+    const existingPromotions = JSON.parse(localStorage.getItem('promotions') || '[]');
+    
+    // Nếu đã có mã giảm giá rồi, không tạo lại
+    if (existingPromotions.length > 0) {
+        return;
+    }
+    
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const nextMonth = new Date(today);
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    
+    const demoPromotions = [
+        {
+            id: 1,
+            code: 'SALE50',
+            name: 'Giảm 50%',
+            type: 'percent',
+            value: 50,
+            startDate: today.toISOString().split('T')[0],
+            endDate: nextMonth.toISOString().split('T')[0],
+            description: 'Mã giảm giá 50% cho tất cả sản phẩm'
+        },
+        {
+            id: 2,
+            code: 'SAVE100K',
+            name: 'Giảm 100K',
+            type: 'amount',
+            value: 100000,
+            startDate: today.toISOString().split('T')[0],
+            endDate: nextMonth.toISOString().split('T')[0],
+            description: 'Mã giảm giá 100.000đ cho đơn hàng trên 200K'
+        },
+        {
+            id: 3,
+            code: 'FREESHIP',
+            name: 'Miễn phí vận chuyển',
+            type: 'percent',
+            value: 100,
+            startDate: today.toISOString().split('T')[0],
+            endDate: nextMonth.toISOString().split('T')[0],
+            description: 'Miễn phí vận chuyển cho tất cả đơn hàng'
+        }
+    ];
+    
+    localStorage.setItem('promotions', JSON.stringify(demoPromotions));
+}

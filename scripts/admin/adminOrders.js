@@ -40,7 +40,7 @@ function loadOrders() {
         console.log('Processing order:', order); // Debug
         
         // Lấy tên khách hàng từ nhiều nguồn
-        let customerName = 'Khách vãng lai';
+        let customerName = '';
         if (order.customerName) {
             customerName = order.customerName;
         } else if (order.customerId) {
@@ -117,14 +117,15 @@ function saveOrder() {
     // Lấy tên khách hàng
     const customers = JSON.parse(localStorage.getItem('customers') || '[]');
     const customer = customers.find(c => c.id == customerId);
-    const customerName = customer ? customer.name : 'Khách vãng lai';
+    const customerName = customer ? customer.name : '';
     
     let orders = JSON.parse(localStorage.getItem('orders') || '[]');
     
     if (id) {
         const index = orders.findIndex(o => o.id == id);
         if (index !== -1) {
-            orders[index] = {
+            const oldOrder = orders[index];
+            const updatedOrder = {
                 ...orders[index],
                 id: parseInt(id),
                 code,
@@ -136,6 +137,25 @@ function saveOrder() {
                 payment,
                 note
             };
+            orders[index] = updatedOrder;
+            
+            // Đồng bộ cập nhật status vào orders_${email} của người dùng
+            // Tìm kiếm theo code (mã đơn hàng DHxxxxxx)
+            if (oldOrder.code) {
+                // Tìm email từ orders_* keys
+                const allKeys = Object.keys(localStorage);
+                const userOrdersKeys = allKeys.filter(key => key.startsWith('orders_'));
+                
+                userOrdersKeys.forEach(key => {
+                    let userOrders = JSON.parse(localStorage.getItem(key) || '[]');
+                    const userOrderIndex = userOrders.findIndex(o => o.id === oldOrder.code || o.id === code);
+                    if (userOrderIndex !== -1) {
+                        userOrders[userOrderIndex].status = status;
+                        localStorage.setItem(key, JSON.stringify(userOrders));
+                    }
+                });
+            }
+            
             alert('Đã cập nhật đơn hàng!');
         }
     } else {
@@ -181,8 +201,27 @@ function deleteOrder(id) {
     if (!confirm('Xóa đơn hàng này?')) return;
     
     let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const orderToDelete = orders.find(o => o.id == id);
+    
+    // Xóa khỏi orders chính
     orders = orders.filter(o => o.id != id);
     localStorage.setItem('orders', JSON.stringify(orders));
+    
+    // Nếu đơn hàng có code (mã đơn hàng), cũng xóa khỏi orders_${email}
+    if (orderToDelete && orderToDelete.code) {
+        const allKeys = Object.keys(localStorage);
+        const userOrdersKeys = allKeys.filter(key => key.startsWith('orders_'));
+        
+        userOrdersKeys.forEach(key => {
+            let userOrders = JSON.parse(localStorage.getItem(key) || '[]');
+            userOrders = userOrders.filter(o => o.id !== orderToDelete.code);
+            if (userOrders.length > 0) {
+                localStorage.setItem(key, JSON.stringify(userOrders));
+            } else {
+                localStorage.removeItem(key);
+            }
+        });
+    }
     
     alert('Đã xóa đơn hàng!');
     loadOrders();

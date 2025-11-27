@@ -142,27 +142,38 @@
 					</table>
 					
 					<div class="cart-actions">
-						<div class="cart-coupon">
-							<input type="text" placeholder="Mã giảm giá">
-							<button>Áp dụng</button>
-						</div>
 						<button class="cart-update">Cập nhật giỏ hàng</button>
 					</div>
 					
 					<div class="cart-summary">
 						<h2>TỔNG GIỎ HÀNG</h2>
+						
+						<!-- Phần nhập mã giảm giá -->
+						<div class="coupon-section" style="margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px;">
+							<p style="margin-bottom: 10px; font-weight: bold;">Có mã giảm giá?</p>
+							<div style="display: flex; gap: 5px;">
+								<input type="text" id="coupon-code" placeholder="Nhập mã giảm giá" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+								<button id="apply-coupon-btn" style="padding: 8px 15px; background: #ff6b6b; color: white; border: none; border-radius: 4px; cursor: pointer;">Áp dụng</button>
+							</div>
+							<p id="coupon-message" style="margin-top: 10px; font-size: 12px; color: #666;"></p>
+						</div>
+						
 						<table class="cart-summary-table">
 							<tr>
 								<th>Tạm tính</th>
-								<td>0₫</td>
+								<td id="subtotal">0₫</td>
+							</tr>
+							<tr id="discount-row" style="display: none;">
+								<th>Giảm giá</th>
+								<td id="discount-amount">0₫</td>
 							</tr>
 							<tr>
 								<th>Phí vận chuyển</th>
-								<td>0₫</td>
+								<td id="shipping">0₫</td>
 							</tr>
 							<tr class="total">
 								<th>Tổng</th>
-								<td>0₫</td>
+								<td id="total">0₫</td>
 							</tr>
 						</table>
 						<a href="checkout.html" class="checkout-button">TIẾN HÀNH THANH TOÁN</a>
