@@ -1,8 +1,39 @@
 document.addEventListener('DOMContentLoaded', function() {
+    syncAccountsToCustomers(); // Đồng bộ accounts sang customers
     loadCustomers();
     setupForm();
     setupSearch();
 });
+
+// Đồng bộ tài khoản đã đăng ký sang danh sách khách hàng
+function syncAccountsToCustomers() {
+    const accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
+    const customers = JSON.parse(localStorage.getItem('customers') || '[]');
+    
+    let hasNewCustomers = false;
+    
+    accounts.forEach(account => {
+        // Kiểm tra xem account này có trong customers chưa
+        if (!customers.some(c => c.email === account.email)) {
+            const newCustomerId = customers.length > 0 ? Math.max(...customers.map(c => c.id || 0)) + 1 : 1;
+            customers.push({
+                id: newCustomerId,
+                name: account.name,
+                email: account.email,
+                phone: account.phone || '',
+                address: account.address || '',
+                joinDate: account.joinDate || new Date().toISOString().split('T')[0]
+            });
+            hasNewCustomers = true;
+            console.log('Đã thêm khách hàng từ account:', account.name);
+        }
+    });
+    
+    if (hasNewCustomers) {
+        localStorage.setItem('customers', JSON.stringify(customers));
+        console.log('Đã cập nhật danh sách khách hàng');
+    }
+}
 
 function loadCustomers() {
     const customers = JSON.parse(localStorage.getItem('customers') || '[]');

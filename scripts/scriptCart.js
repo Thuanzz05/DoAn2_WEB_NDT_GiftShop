@@ -183,7 +183,7 @@ function applyCoupon() {
         discountText = `Giảm ${coupon.value.toLocaleString()}₫`;
     }
     
-    if (messageElement) messageElement.textContent = `✓ Áp dụng thành công: ${discountText}`;
+    if (messageElement) messageElement.textContent = `Áp dụng thành công: ${discountText}`;
     messageElement.style.color = '#4caf50';
     
     updateCartDisplay();

@@ -50,4 +50,53 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!checkAdminLogin()) {
         return;
     }
+    
+    // Setup responsive menu toggle
+    setupResponsiveMenu();
 });
+
+// Setup Responsive Menu Toggle
+function setupResponsiveMenu() {
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    
+    if (!menuToggle || !sidebar) return;
+    
+    // Toggle menu khi click button
+    menuToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+    });
+    
+    // Đóng menu khi click vào menu item
+    const menuItems = sidebar.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+        item.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+        });
+    });
+    
+    // Đóng menu khi click logout
+    const logoutLink = sidebar.querySelector('.logout a');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+        });
+    }
+    
+    // Đóng menu khi click bên ngoài sidebar
+    document.addEventListener('click', function(event) {
+        const isClickInsideSidebar = sidebar.contains(event.target);
+        const isClickToggle = menuToggle.contains(event.target);
+        
+        if (!isClickInsideSidebar && !isClickToggle) {
+            sidebar.classList.remove('active');
+        }
+    });
+    
+    // Đóng menu khi resize màn hình về desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            sidebar.classList.remove('active');
+        }
+    });
+}

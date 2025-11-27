@@ -146,7 +146,7 @@ if (loginTab && registerTab && loginForm && registerForm) {
             const customers = JSON.parse(localStorage.getItem('customers') || '[]');
             // Kiểm tra xem đã có trong customers chưa (theo email)
             if (!customers.some(c => c.email === email)) {
-                const newCustomerId = customers.length > 0 ? Math.max(...customers.map(c => c.id)) + 1 : 1;
+                const newCustomerId = customers.length > 0 ? Math.max(...customers.map(c => c.id || 0)) + 1 : 1;
                 customers.push({
                     id: newCustomerId,
                     name: name,
@@ -156,6 +156,9 @@ if (loginTab && registerTab && loginForm && registerForm) {
                     joinDate: new Date().toISOString().split('T')[0] // Format YYYY-MM-DD
                 });
                 localStorage.setItem('customers', JSON.stringify(customers));
+                console.log('Đã thêm khách hàng vào danh sách:', { id: newCustomerId, name, email });
+            } else {
+                console.log('Khách hàng đã tồn tại');
             }
             
             alert('Đăng ký thành công! Vui lòng đăng nhập.');

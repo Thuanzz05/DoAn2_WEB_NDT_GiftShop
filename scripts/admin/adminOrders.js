@@ -24,7 +24,7 @@ function loadCustomersToSelect() {
 }
 
 function loadOrders() {
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const orders = JSON.parse(localStorage.getItem('adminOrders') || '[]');
     const tbody = document.getElementById('order-list');
     
     console.log('Loading orders:', orders); // Debug
@@ -119,7 +119,7 @@ function saveOrder() {
     const customer = customers.find(c => c.id == customerId);
     const customerName = customer ? customer.name : '';
     
-    let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    let orders = JSON.parse(localStorage.getItem('adminOrders') || '[]');
     
     if (id) {
         const index = orders.findIndex(o => o.id == id);
@@ -174,13 +174,13 @@ function saveOrder() {
         alert('Đã thêm đơn hàng!');
     }
     
-    localStorage.setItem('orders', JSON.stringify(orders));
+    localStorage.setItem('adminOrders', JSON.stringify(orders));
     resetForm();
     loadOrders();
 }
 
 function editOrder(id) {
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const orders = JSON.parse(localStorage.getItem('adminOrders') || '[]');
     const order = orders.find(o => o.id == id);
     
     if (order) {
@@ -200,12 +200,12 @@ function editOrder(id) {
 function deleteOrder(id) {
     if (!confirm('Xóa đơn hàng này?')) return;
     
-    let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    let orders = JSON.parse(localStorage.getItem('adminOrders') || '[]');
     const orderToDelete = orders.find(o => o.id == id);
     
-    // Xóa khỏi orders chính
+    // Xóa khỏi adminOrders
     orders = orders.filter(o => o.id != id);
-    localStorage.setItem('orders', JSON.stringify(orders));
+    localStorage.setItem('adminOrders', JSON.stringify(orders));
     
     // Nếu đơn hàng có code (mã đơn hàng), cũng xóa khỏi orders_${email}
     if (orderToDelete && orderToDelete.code) {
@@ -264,7 +264,7 @@ function setupSearch() {
 
 // Xem chi tiết đơn hàng
 function viewOrderDetails(id) {
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const orders = JSON.parse(localStorage.getItem('adminOrders') || '[]');
     const order = orders.find(o => o.id == id);
     
     if (!order) {

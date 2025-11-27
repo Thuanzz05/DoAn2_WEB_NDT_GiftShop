@@ -282,13 +282,9 @@ function generateAdminId() {
 
 // Lưu đơn hàng vào localStorage
 function saveOrder(order) {
-    // Lấy danh sách đơn hàng hiện tại
+    // Lưu vào mảng user orders
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
-    
-    // Thêm đơn hàng mới
     orders.push(order);
-    
-    // Lưu lại
     localStorage.setItem('orders', JSON.stringify(orders));
     
     // Nếu user đang đăng nhập, thêm vào đơn hàng của user đó
@@ -298,18 +294,18 @@ function saveOrder(order) {
         localStorage.setItem(`orders_${order.userId}`, JSON.stringify(userOrders));
     }
     
-    // Đồng bộ với admin orders
+    // Đồng bộ với admin orders (lưu vào mảng riêng)
     syncOrderToAdmin(order);
 }
 
-// Đồng bộ đơn hàng với admin
+// Đồng bộ đơn hàng với admin (lưu vào adminOrders riêng)
 function syncOrderToAdmin(order) {
-    let adminOrders = JSON.parse(localStorage.getItem('orders')) || [];
+    let adminOrders = JSON.parse(localStorage.getItem('adminOrders')) || [];
     
     const adminOrder = {
-        id: generateAdminId(), // Tạo ID số duy nhất cho admin
-        code: order.id, // Giữ mã đơn hàng đầy đủ DHxxxx
-        customerId: order.userId !== 'guest' ? 1 : 0, // Tạm thời set customerId = 1 cho user đã đăng nhập
+        id: generateAdminId(),
+        code: order.id,
+        customerId: order.userId !== 'guest' ? 1 : 0,
         customerName: order.customerInfo.fullname,
         customerEmail: order.customerInfo.email,
         customerPhone: order.customerInfo.phone,
@@ -318,12 +314,12 @@ function syncOrderToAdmin(order) {
         total: order.totalPrice,
         payment: order.paymentMethod,
         status: order.status,
-        date: new Date(order.orderDate).toISOString().split('T')[0], // Format YYYY-MM-DD
+        date: new Date(order.orderDate).toISOString().split('T')[0],
         note: order.note
     };
     
     adminOrders.push(adminOrder);
-    localStorage.setItem('orders', JSON.stringify(adminOrders));
+    localStorage.setItem('adminOrders', JSON.stringify(adminOrders));
 }
 
 // Áp dụng mã giảm giá ở trang checkout
@@ -373,7 +369,7 @@ function applyCheckoutCoupon() {
         discountText = `Giảm ${coupon.value.toLocaleString()}₫`;
     }
     
-    if (messageElement) messageElement.textContent = `✓ Áp dụng thành công: ${discountText}`;
+    if (messageElement) messageElement.textContent = `Áp dụng thành công: ${discountText}`;
     messageElement.style.color = '#4caf50';
     
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
