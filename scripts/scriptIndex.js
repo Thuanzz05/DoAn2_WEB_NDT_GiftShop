@@ -43,8 +43,25 @@ function updateMenuByLoginStatus() {
 // Gọi hàm khi load trang
 document.addEventListener('DOMContentLoaded', function() {
     updateMenuByLoginStatus();
-    
+    setupSearchForm();
 });
+
+// Setup xử lý form tìm kiếm
+function setupSearchForm() {
+    const searchForm = document.getElementById('search-form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const searchInput = document.getElementById('search-input');
+            const query = searchInput.value.trim();
+            
+            if (query) {
+                // Redirect tới trang search-results với query parameter
+                window.location.href = `search-results.html?q=${encodeURIComponent(query)}`;
+            }
+        });
+    }
+}
 
 
 // --slideshow--
@@ -875,53 +892,3 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Khởi tạo mã giảm giá demo
-function khoiTaoMaGiamGia() {
-    const existingPromotions = JSON.parse(localStorage.getItem('promotions') || '[]');
-    
-    // Nếu đã có mã giảm giá rồi, không tạo lại
-    if (existingPromotions.length > 0) {
-        return;
-    }
-    
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const nextMonth = new Date(today);
-    nextMonth.setMonth(nextMonth.getMonth() + 1);
-    
-    const demoPromotions = [
-        {
-            id: 1,
-            code: 'SALE50',
-            name: 'Giảm 50%',
-            type: 'percent',
-            value: 50,
-            startDate: today.toISOString().split('T')[0],
-            endDate: nextMonth.toISOString().split('T')[0],
-            description: 'Mã giảm giá 50% cho tất cả sản phẩm'
-        },
-        {
-            id: 2,
-            code: 'SAVE100K',
-            name: 'Giảm 100K',
-            type: 'amount',
-            value: 100000,
-            startDate: today.toISOString().split('T')[0],
-            endDate: nextMonth.toISOString().split('T')[0],
-            description: 'Mã giảm giá 100.000đ cho đơn hàng trên 200K'
-        },
-        {
-            id: 3,
-            code: 'FREESHIP',
-            name: 'Miễn phí vận chuyển',
-            type: 'percent',
-            value: 100,
-            startDate: today.toISOString().split('T')[0],
-            endDate: nextMonth.toISOString().split('T')[0],
-            description: 'Miễn phí vận chuyển cho tất cả đơn hàng'
-        }
-    ];
-    
-    localStorage.setItem('promotions', JSON.stringify(demoPromotions));
-}

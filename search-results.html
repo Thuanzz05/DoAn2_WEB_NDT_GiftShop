@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Kết quả tìm kiếm - NDT Gift Shop</title>
+		<link rel="stylesheet" type="text/css" href="styles/styleIndex.css">
+		
+		<!-- icons -->
+		<link rel="stylesheet" href="fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/all.min.css">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+		<!-- jQuery -->
+		<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+		
+		<link rel="icon" href="images/iconWeb.png" type="image/x-icon">
+	</head>
+	<body>
+		<div id="header">
+			<div id="header-top">
+				<div id="top">
+					<div class="container">
+						<div class="top-left">
+							<ul>
+								<li><i class="fas fa-phone-alt"></i> Hotline: <a href="#">0329.649.661</a></li>
+								<li><i class="fas fa-envelope"></i> Email: <a href="#">thuantoppo@gmail.com</a></li>
+							</ul>
+						</div>
+						<div class="top-right">
+							<ul>
+								<li class="account-dropdown">
+									<a href="#"><i class="fas fa-user"></i> Tài khoản <i class="fas fa-angle-down"></i></a>
+									<ul class="account-submenu">
+										<li><a href="account.html"><i class="fas fa-user-circle"></i> Quản lý tài khoản</a></li>
+										<li><a href="login-register.html" target="_blank"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a></li>
+										<li><a href="login-register.html#register" target="_blank" id="go-to-register"><i class="fas fa-user-plus"></i> Đăng ký</a></li>
+									</ul>
+								</li>
+								<li>
+									<a href="admin-login.html" target="_blank"><i class="fas fa-user-shield"></i> Quản trị</a>
+								</li>
+							</ul>
+						</div>					
+					</div>
+				</div>
+				<div id="banner">
+					<div class="container">
+						<div class="logo">
+							<a href="index.html"><img src="images/logo.png" alt="NDT Gift Logo"></a>
+						</div>
+						<div class="contact-info">
+							<div class="contact-item">
+								<i class="fas fa-truck"></i>
+								<div class="text">
+									<p>Miễn phí vận chuyển</p>
+									<span>Đơn hàng từ 500.000đ</span>
+								</div>
+							</div>
+						</div>
+						<div class="contact-item">
+								<i class="fas fa-sync"></i>
+								<div class="text">
+									<p>Đổi trả dễ dàng</p>
+									<span>Trong vòng 7 ngày</span>
+								</div>
+						</div>
+						<div class="contact-item">
+							<i class="fas fa-headset"></i>
+							<div class="text">
+								<p>Hỗ trợ 24/7</p>
+								<span>Mọi lúc mọi nơi</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="header-bot">
+				<div id="menu">
+					<div class="container">
+						<ul class="main-menu">
+							<li><a href="index.html">Trang chủ</a></li>
+							<li><a href="about-us.html">Giới thiệu</a></li>
+							<li class="dropdown">
+								<a href="#">Sản phẩm <i class="fas fa-angle-down"></i></a>
+								<ul class="sub-menu">
+									<li><a href="category-products.html">Set quà tặng</a></li>
+									<li><a href="category-products.html">Phụ kiện trang trí</a></li>
+									<li><a href="category-products.html">Thú bông</a></li>
+									<li><a href="category-products.html">Quà tặng giáng sinh</a></li>
+									<li><a href="category-products.html">Mèo thần tài</a></li>
+									<li><a href="category-products.html">Mô hình anime</a></li>
+									<li><a href="category-products.html">Móc khóa</a></li>
+									<li><a href="category-products.html">Văn phòng phẩm</a></li>
+									<li><a href="category-products.html">Quạt cầm tay mini</a></li>
+								</ul>
+							</li>
+							<li><a href="news.html">Tin tức</a></li>
+							<li><a href="#footer">Liên hệ</a></li>
+							<li>
+								<div class="search-box">
+									<form id="search-form" method="get">
+										<input type="text" id="search-input" placeholder="Tìm kiếm sản phẩm..." required>
+										<button type="submit"><i class="fas fa-search"></i></button>
+									</form>
+								</div>
+							</li>
+							<li><a href="cart.html" id="cart-link"><i class="fas fa-shopping-cart"></i> Giỏ hàng</a></li>						
+						</ul>
+					</div>			
+				</div>
+			</div>
+		</div>
+
+		<!-- Main Content -->
+		<div id="main-content">
+			<div class="container">
+				<div class="breadcrumb">
+					<a href="index.html">Trang chủ</a>
+					<span> / Kết quả tìm kiếm: <strong id="search-keyword"></strong></span>
+				</div>
+
+				<div class="search-results-section" style="margin: 40px 0;">
+					<h1 style="margin-bottom: 30px;">Kết quả tìm kiếm cho: <span id="search-query"></span></h1>
+					
+					<div id="search-results" class="product-grid">
+						<!-- Sản phẩm sẽ được thêm vào đây -->
+					</div>
+
+					<div id="no-results" style="display: none; text-align: center; padding: 40px;">
+						<i class="fas fa-search" style="font-size: 48px; color: #ccc; margin-bottom: 20px;"></i>
+						<h2>Không tìm thấy sản phẩm nào</h2>
+						<p>Vui lòng thử tìm kiếm với từ khóa khác</p>
+						<a href="index.html" class="btn btn-primary" style="margin-top: 20px; display: inline-block; padding: 10px 20px; background: #B53740; color: white; text-decoration: none; border-radius: 5px;">Quay lại trang chủ</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Footer Section -->
+		<div id="footer">
+			<div class="container">
+				<div class="footer-top">
+					<div class="footer-contact-info">						
+						<h3>NDT GIFT SHOP</h3>
+						<div class="logo-footer">
+							<img src="images/logo-footer.webp" alt="ND Gift Shop Logo">
+						</div>
+						<p>Chuyên cung cấp quà tặng độc đáo cho mọi dịp. Chúng tôi cung cấp các sản phẩm chất lượng cao với dịch vụ khách hàng xuất sắc.</p>
+						<div class="contact-row">
+							<i class="fa fa-envelope"><p>thuantoppo@gmail.com</p></i>
+						</div>
+						<div class="contact-row">
+							<i class="fa fa-phone"><p>0329.649.661</p></i>
+						</div>
+						<h4>KẾT NỐI</h4>
+						<div class="social-links">
+                            <a href="https://www.facebook.com/thuan3101zz"><i class="fab fa-facebook"></i></a>
+                            <a href="https://www.instagram.com/thuan_zz05/"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.youtube.com/@thuan_zz05"><i class="fab fa-youtube"></i></a>
+                            <a href="https://www.facebook.com/thuan3101zz"><i class="fab fa-twitter"></i></a>
+                        </div>
+					</div>
+					<div class="footer-customer-service">
+						<h3>CHĂM SÓC KHÁCH HÀNG</h3>
+						<ul class="service-links">
+							<li><a href="#">Hướng dẫn mua sắm</a></li>
+							<li><a href="#">Phương thức thanh toán</a></li>
+							<li><a href="#">Chính sách vận chuyển</a></li>
+							<li><a href="#">Chính sách đổi trả</a></li>
+							<li><a href="#">Thông tin bảo hành</a></li>
+							<li><a href="#">Câu hỏi thường gặp (FAQs)</a></li>
+						</ul>
+					</div>
+					<div class="footer-google-map">
+						<h3>SƠ ĐỒ ĐƯỜNG ĐI</h3>
+						<div class="google-map">
+							<iframe 
+								src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3250.770354682322!2d106.05742777461784!3d20.94222538068551!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135a30555555555%3A0x39a8acd006ab8e69!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBTxrAgUGjhuqFtIEvhu7kgVGh14bqtdCBIxrBuZSBZw6puLCBDxqEgc-G7nyAy!5e1!3m2!1svi!2s!4v1743934157841!5m2!1svi!2s" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+							</iframe>
+						</div>
+					</div>
+				</div>				
+				<div class="footer-bot">
+					<p>© Bản quyền thuộc về NDT Gift Shop. Cung cấp bởi Nguyễn Duy Thuấn.</p>
+				</div>
+			</div>
+		</div>
+
+		<script src="scripts/jquery-3.7.1.min.js"></script>
+		<script src="scripts/scriptIndex.js"></script>
+		<script src="scripts/scriptSearchResults.js"></script>
+	</body>
+</html>

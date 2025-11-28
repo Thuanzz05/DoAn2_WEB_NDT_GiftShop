@@ -97,8 +97,8 @@
 							<li><a href="#footer">Liên hệ</a></li>
 							<li>
 								<div class="search-box">
-									<form action="#" method="get">
-										<input type="text" placeholder="Tìm kiếm sản phẩm...">
+									<form id="search-form" method="get">
+										<input type="text" id="search-input" placeholder="Tìm kiếm sản phẩm..." required>
 										<button type="submit"><i class="fas fa-search"></i></button>
 									</form>
 								</div>
@@ -367,11 +367,11 @@
 					<h2 class="section-title">SẢN PHẨM BÁN CHẠY</h2>
 					<div class="title-underline"></div>		
 					<div class="product-grid">
-						<!-- Prod1 -->
-						<div class="product-item" >
-							<div class="product-image">
-								<a href="product-detail.html">
-									<img src="images/product1.webp" alt="Set 4 mô hình em bé">
+					<!-- Prod1 -->
+					<div class="product-item" >
+						<div class="product-image">
+							<a href="product-detail.html?id=1">
+								<img src="images/product1.webp" alt="Set 4 mô hình em bé">
 								</a>
 								<div class="product-buttons">
 									<button class="add-to-cart"><i class="fa fa-shopping-cart"></i></button>
@@ -384,11 +384,11 @@
 								</div>
 							</div>
 						</div>
-						<!-- Product 2 -->
-						<div class="product-item">
-							<div class="product-image">
-								<a href="#">
-									<img src="images/product2.webp" alt="Mô hình tượng Shin">
+					<!-- Product 2 -->
+					<div class="product-item">
+						<div class="product-image">
+							<a href="product-detail.html?id=2">
+								<img src="images/product2.webp" alt="Mô hình tượng Shin">
 									<span class="sale-tag">-30%</span>
 								</a>
 								<div class="product-buttons">
@@ -403,11 +403,11 @@
 								</div>
 							</div>
 						</div>					
-						<!-- Product 3 -->
-						<div class="product-item">
-							<div class="product-image">
-								<a href="#">
-									<img src="images/product3.webp" alt="Set 6 mô hình lợn">
+					<!-- Product 3 -->
+					<div class="product-item">
+						<div class="product-image">
+							<a href="product-detail.html?id=3">
+								<img src="images/product3.webp" alt="Set 6 mô hình lợn">
 									<span class="sale-tag">-30%</span>
 								</a>
 								<div class="product-buttons">
@@ -422,11 +422,11 @@
 								</div>
 							</div>
 						</div>				
-						<!-- Product 4 -->
-						<div class="product-item">
-							<div class="product-image">
-								<a href="#">
-									<img src="images/product4.webp" alt="Mô hình mông Silicon">
+					<!-- Product 4 -->
+					<div class="product-item">
+						<div class="product-image">
+							<a href="product-detail.html?id=4">
+								<img src="images/product4.webp" alt="Mô hình mông Silicon">
 									<span class="sale-tag">-50%</span>
 								</a>
 								<div class="product-buttons">
@@ -441,10 +441,10 @@
 								</div>
 							</div>
 						</div>
-						<!-- Product 5 -->
-						<div class="product-item">
-							<div class="product-image">
-								<a href="#"><img src="images/product5.webp" alt="Mô hình mông Silicon"></a>
+					<!-- Product 5 -->
+					<div class="product-item">
+						<div class="product-image">
+							<a href="product-detail.html?id=5"><img src="images/product5.webp" alt="Mô hình mông Silicon"></a>
 								<div class="product-buttons">
 									<button class="add-to-cart"><i class="fa fa-shopping-cart"></i></button>
 								</div>
@@ -456,12 +456,12 @@
 								</div>
 							</div>
 						</div>
-						<!-- Product 6 -->
-						<div class="product-item">
-							<div class="product-image">
-								<a href="#">
-									<img src="images/product6.webp" alt="Mô hình mông Silicon">
-								</a>
+					<!-- Product 6 -->
+					<div class="product-item">
+						<div class="product-image">
+							<a href="product-detail.html?id=6">
+								<img src="images/product6.webp" alt="Mô hình mông Silicon">
+							</a>
 								<div class="product-buttons">
 									<button class="add-to-cart"><i class="fa fa-shopping-cart"></i></button>
 								</div>
@@ -473,12 +473,12 @@
 								</div>
 							</div>
 						</div>
-						<!-- Product 7 -->
-						<div class="product-item">
-							<div class="product-image">
-								<a href="#">
-									<img src="images/product7.webp" alt="Mô hình mông Silicon">
-								</a>
+					<!-- Product 7 -->
+					<div class="product-item">
+						<div class="product-image">
+							<a href="product-detail.html?id=7">
+								<img src="images/product7.webp" alt="Mô hình mông Silicon">
+							</a>
 								<div class="product-buttons">
 									<button class="add-to-cart"><i class="fa fa-shopping-cart"></i></button>
 								</div>
@@ -490,12 +490,12 @@
 								</div>
 							</div>
 						</div>
-						<!-- Product 8 -->
-						<div class="product-item">
-							<div class="product-image">
-								<a href="#">
-									<img src="images/product8.webp" alt="Mô hình mông Silicon">
-								</a>
+					<!-- Product 8 -->
+					<div class="product-item">
+						<div class="product-image">
+							<a href="product-detail.html?id=8">
+								<img src="images/product8.webp" alt="Mô hình mông Silicon">
+							</a>
 								<div class="product-buttons">
 									<button class="add-to-cart"><i class="fa fa-shopping-cart"></i></button>
 								</div>
@@ -525,11 +525,11 @@
 					</div>
 					
 					<div class="new-products-grid">
-						<!-- Product 1 -->
-						<div class="new-product-item">
-							<div class="new-product-image">
-								<a href="#">
-									<img src="images/new-product1.webp" alt="Set mô hình">
+					<!-- Product 1 -->
+					<div class="new-product-item">
+						<div class="new-product-image">
+							<a href="product-detail.html?id=9">
+								<img src="images/new-product1.webp" alt="Set mô hình">
 									<span class="new-tag">New</span>
 								</a>
 								<div class="new-product-buttons">
@@ -543,11 +543,11 @@
 								</div>
 							</div>
 						</div>						
-						<!-- Product 2 -->
-						<div class="new-product-item">
-							<div class="new-product-image">
-								<a href="#">
-									<img src="images/new-product2.webp" alt="Set mô hình">
+					<!-- Product 2 -->
+					<div class="new-product-item">
+						<div class="new-product-image">
+							<a href="product-detail.html?id=10">
+								<img src="images/new-product2.webp" alt="Set mô hình">
 									<span class="new-tag">New</span>
 								</a>
 								<div class="new-product-buttons">
@@ -561,11 +561,11 @@
 								</div>
 							</div>
 						</div>						
-						<!-- Product 3 -->
-						<div class="new-product-item">
-							<div class="new-product-image">
-								<a href="#">
-									<img src="images/new-product3.webp" alt="Set mô hình">
+					<!-- Product 3 -->
+					<div class="new-product-item">
+						<div class="new-product-image">
+							<a href="product-detail.html?id=11">
+								<img src="images/new-product3.webp" alt="Set mô hình">
 									<span class="new-tag">New</span>
 								</a>
 								<div class="new-product-buttons">
@@ -579,11 +579,11 @@
 								</div>
 							</div>
 						</div>						
-						<!-- Product 4 -->
-						<div class="new-product-item">
-							<div class="new-product-image">
-								<a href="#">
-									<img src="images/new-product4.webp" alt="Móc khóa anime">
+					<!-- Product 4 -->
+					<div class="new-product-item">
+						<div class="new-product-image">
+							<a href="product-detail.html?id=12">
+								<img src="images/new-product4.webp" alt="Móc khóa anime">
 									<span class="new-tag">New</span>
 								</a>
 								<div class="new-product-buttons">
@@ -597,11 +597,11 @@
 								</div>
 							</div>
 						</div>			
-						<!-- Product 5 -->
-						<div class="new-product-item">
-							<div class="new-product-image">
-								<a href="#">
-									<img src="images/new-product5.webp" alt="Mô hình gấu dâu">
+					<!-- Product 5 -->
+					<div class="new-product-item">
+						<div class="new-product-image">
+							<a href="product-detail.html?id=13">
+								<img src="images/new-product5.webp" alt="Mô hình gấu dâu">
 									<span class="new-tag">New</span>
 									<span class="sale-tag">-15%</span>
 								</a>
@@ -617,11 +617,11 @@
 								</div>
 							</div>
 						</div>
-						<!-- Product 6 -->
-						<div class="new-product-item">
-							<div class="new-product-image">
-								<a href="#">
-									<img src="images/new-product6.webp" alt="Mô hình thần tài">
+					<!-- Product 6 -->
+					<div class="new-product-item">
+						<div class="new-product-image">
+							<a href="product-detail.html?id=14">
+								<img src="images/new-product6.webp" alt="Mô hình thần tài">
 									<span class="new-tag">New</span>
 								</a>
 								<div class="new-product-buttons">
@@ -635,11 +635,11 @@
 								</div>
 							</div>
 						</div>
-						<!-- Product 7 -->
-						<div class="new-product-item">
-							<div class="new-product-image">
-								<a href="#">
-									<img src="images/new-product7.webp" alt="Set quà tặng">
+					<!-- Product 7 -->
+					<div class="new-product-item">
+						<div class="new-product-image">
+							<a href="product-detail.html?id=15">
+								<img src="images/new-product7.webp" alt="Set quà tặng">
 									<span class="new-tag">New</span>
 								</a>
 								<div class="new-product-buttons">
@@ -653,11 +653,11 @@
 								</div>
 							</div>
 						</div>
-						<!-- Product 8 -->
-						<div class="new-product-item">
-							<div class="new-product-image">
-								<a href="#">
-									<img src="images/new-product8.webp" alt="Set quà tặng">
+					<!-- Product 8 -->
+					<div class="new-product-item">
+						<div class="new-product-image">
+							<a href="product-detail.html?id=16">
+								<img src="images/new-product8.webp" alt="Set quà tặng">
 									<span class="new-tag">New</span>
 								</a>
 								<div class="new-product-buttons">
@@ -671,11 +671,11 @@
 								</div>
 							</div>
 						</div>
-						<!-- Product 9 -->
-						<div class="new-product-item">
-							<div class="new-product-image">
-								<a href="#">
-									<img src="images/new-product9.webp" alt="Set quà tặng">
+					<!-- Product 9 -->
+					<div class="new-product-item">
+						<div class="new-product-image">
+							<a href="product-detail.html?id=17">
+								<img src="images/new-product9.webp" alt="Set quà tặng">
 									<span class="new-tag">New</span>
 									<span class="sale-tag">-30%</span>
 								</a>
@@ -691,11 +691,11 @@
 								</div>
 							</div>
 						</div>
-						<!-- Product 10 -->
-						<div class="new-product-item">
-							<div class="new-product-image">
-								<a href="#">
-									<img src="images/new-product10.webp" alt="Set quà tặng">
+					<!-- Product 10 -->
+					<div class="new-product-item">
+						<div class="new-product-image">
+							<a href="product-detail.html?id=18">
+								<img src="images/new-product10.webp" alt="Set quà tặng">
 									<span class="new-tag">New</span>
 									<span class="sale-tag">-36%</span>
 								</a>
