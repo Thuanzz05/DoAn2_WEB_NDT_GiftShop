@@ -663,16 +663,24 @@ document.addEventListener('DOMContentLoaded', function() {
     khoiTaoFlashSaleProducts(); // Khởi tạo 8 sản phẩm Flash Sale
     xoaSanPhamLoi(); // Xóa những sản phẩm lỗi/không hợp lệ
     khoiTaoMaGiamGia(); // Khởi tạo mã giảm giá demo
-    taiSanPhamTuAdmin();
     taiDanhMuc();
+    
+    // Delay taiSanPhamTuAdmin để đảm bảo DOM hoàn toàn render
+    setTimeout(function() {
+        taiSanPhamTuAdmin();
+    }, 100);
 });
 
 // Load sản phẩm từ localStorage (chỉ thêm sản phẩm admin vào "SẢN PHẨM MỚI")
 function taiSanPhamTuAdmin() {
     const products = JSON.parse(localStorage.getItem('products') || '[]');
     
-    // Lọc chỉ lấy sản phẩm admin (ID < 100), bỏ qua sản phẩm demo (ID 100-107)
-    const adminProducts = products.filter(p => p.id < 100);
+    // Lọc chỉ lấy sản phẩm admin (ID < 100), bỏ qua sản phẩm demo (ID 100-117 và Flash Sale)
+    const adminProducts = products.filter(p => {
+        return typeof p.id === 'number' && p.id < 100 && !String(p.id).startsWith('fs');
+    });
+    
+    console.log('Admin products found:', adminProducts.length);
     
     if (adminProducts.length === 0) {
         console.log('Chưa có sản phẩm nào từ admin');
@@ -688,30 +696,43 @@ function taiSanPhamTuAdmin() {
             const productHTML = createNewProductCard(product);
             newProductGrid.insertAdjacentHTML('afterbegin', productHTML);
         });
+        console.log('Added admin products to new products section');
+    } else {
+        console.log('Could not find new-products-grid element');
     }
 }
 
-// Tạo HTML card sản phẩm mới
+// Tạo HTML card sản phẩm mới (với fallback cho trường bị thiếu)
 function createNewProductCard(product) {
+    const imageUrl = product.image || 'images/default-product.jpg';
+    const productName = product.name || 'Sản phẩm không tên';
+    const price = product.price ? parseInt(product.price).toLocaleString('vi-VN') : '0';
+    const oldPrice = product.oldPrice ? parseInt(product.oldPrice).toLocaleString('vi-VN') : null;
+    const productId = product.id;
+    
+    const priceHTML = oldPrice && product.oldPrice > product.price
+        ? `<span class="current-price">${price}₫</span><span class="old-price">${oldPrice}₫</span>`
+        : `<span class="current-price">${price}₫</span>`;
+    
     return `
         <div class="new-product-item">
             <div class="new-product-image">
-                <a href="product-detail.html?id=${product.id}">
-                    <img src="${product.image}" alt="${product.name}" onerror="this.src='images/default-product.jpg'">
+                <a href="product-detail.html?id=${productId}">
+                    <img src="${imageUrl}" alt="${productName}" onerror="this.src='images/default-product.jpg'">
                     <span class="new-tag">New</span>
                 </a>
                 <div class="new-product-buttons">
-                    <button class="add-to-cart" data-product-id="${product.id}">
+                    <button class="add-to-cart" data-product-id="${productId}">
                         <i class="fa fa-shopping-cart"></i>
                     </button>
                 </div>
             </div>
             <div class="new-product-info">
                 <h3 class="new-product-name">
-                    <a href="product-detail.html?id=${product.id}">${product.name}</a>
+                    <a href="product-detail.html?id=${productId}">${productName}</a>
                 </h3>
                 <div class="new-product-price">
-                    <span class="current-price">${parseInt(product.price).toLocaleString('vi-VN')}₫</span>
+                    ${priceHTML}
                 </div>
             </div>
         </div>

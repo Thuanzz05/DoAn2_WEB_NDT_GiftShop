@@ -39,24 +39,26 @@ function ensureDemoProductsInStorage() {
     if (!demoExists) {
         // Khởi tạo demo products
         const demoProducts = [
+            // SẢN PHẨM BÁN CHẠY (ID 100-107)
             { id: 100, name: 'Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm', price: 180000, image: 'images/product1.webp', category: 'Trang trí', description: 'Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm dễ thương nhiều màu sắc trang trí nhà cửa, bàn làm việc. Sản phẩm làm từ chất liệu nhựa cao cấp, bền đẹp theo thời gian.' },
-            { id: 101, name: 'Mô hình tượng Shin bút chì cosplay Phật Tổ', price: 300000, image: 'images/product2.webp', category: 'Trang trí', description: 'Mô hình tượng Shin bút chì cosplay Phật Tổ vô cùng độc đáo và dễ thương. Sản phẩm làm từ chất liệu cao cấp, màu sắc tươi sáng.' },
-            { id: 102, name: 'Set 6 mô hình lợn hồng heo hồng đế bàn mini', price: 70000, image: 'images/product3.webp', category: 'Trang trí', description: 'Set 6 mô hình lợn hồng heo hồng đế bàn mini dễ thương. Thiết kế nhỏ gọn, vừa vặn trên bàn làm việc hoặc bàn học.' },
-            { id: 103, name: 'Mô hình mông Silicon Gấu Thỏ Chó Heo Rắp đồ chơi', price: 75000, image: 'images/product4.webp', category: 'Đồ chơi', description: 'Mô hình mông Silicon Gấu Thỏ Chó Heo Rắp đồ chơi. Chất liệu silicone mềm mại, an toàn cho trẻ em. Hình dáng dễ thương, sinh động.' },
+            { id: 101, name: 'Mô hình tượng Shin bút chì cosplay Phật Tổ', price: 300000, oldPrice: 430000, image: 'images/product2.webp', category: 'Trang trí', description: 'Mô hình tượng Shin bút chì cosplay Phật Tổ vô cùng độc đáo và dễ thương. Sản phẩm làm từ chất liệu cao cấp, màu sắc tươi sáng.' },
+            { id: 102, name: 'Set 6 mô hình lợn hồng heo hồng đế bàn mini', price: 70000, oldPrice: 100000, image: 'images/product3.webp', category: 'Trang trí', description: 'Set 6 mô hình lợn hồng heo hồng đế bàn mini dễ thương. Thiết kế nhỏ gọn, vừa vặn trên bàn làm việc hoặc bàn học.' },
+            { id: 103, name: 'Mô hình mông Silicon Gấu Thỏ Chó Heo Rắp đồ chơi', price: 75000, oldPrice: 150000, image: 'images/product4.webp', category: 'Đồ chơi', description: 'Mô hình mông Silicon Gấu Thỏ Chó Heo Rắp đồ chơi. Chất liệu silicone mềm mại, an toàn cho trẻ em. Hình dáng dễ thương, sinh động.' },
             { id: 104, name: 'Tượng mèo thần tài trắng khăn xanh', price: 130000, image: 'images/product5.webp', category: 'Trang trí', description: 'Tượng mèo thần tài trắng khăn xanh may mắn. Hình tượng truyền thống, mang lại may mắn và tài lộc. Thiết kế tinh tế, phù hợp để trang trí.' },
             { id: 105, name: 'Mô hình Blind Box mèo Xiêm Thái Lan', price: 63000, image: 'images/product6.webp', category: 'Đồ chơi', description: 'Mô hình Blind Box mèo Xiêm Thái Lan độc đáo. Mỗi hộp là một bất ngờ, có thể nhận được nhiều mẫu khác nhau.' },
             { id: 106, name: 'Set 4 mô hình mèo thần tài tròn', price: 60000, image: 'images/product7.webp', category: 'Trang trí', description: 'Set 4 mô hình mèo thần tài tròn may mắn. Bộ sưu tập 4 mèo với màu sắc khác nhau, mang lại không khí vui vẻ.' },
             { id: 107, name: 'Mô hình 4 mèo thần tài may mắn', price: 50000, image: 'images/product8.webp', category: 'Trang trí', description: 'Mô hình 4 mèo thần tài may mắn. Tập hợp 4 chú mèo với biểu cảm dễ thương, phù hợp làm quà tặng.' },
+            // SẢN PHẨM MỚI (ID 108-117)
             { id: 108, name: 'Set mô hình Shiba thần tài hoa anh đào', price: 150000, image: 'images/new-product1.webp', category: 'Trang trí', description: 'Set mô hình Shiba thần tài hoa anh đào độc đáo. Kết hợp giữa chó Shiba dễ thương và hoa anh đào, mang lại cảm giác mùa xuân.' },
             { id: 109, name: 'Set 3 mô hình chú vịt vàng cosplay Phi công', price: 210000, image: 'images/new-product2.webp', category: 'Đồ chơi', description: 'Set 3 mô hình chú vịt vàng cosplay Phi công. Hình ảnh độc đáo, mang tính hài hước. Phù hợp làm quà tặng vui vẻ.' },
             { id: 110, name: 'Set 4 mô hình cừu Dory', price: 215000, image: 'images/new-product3.webp', category: 'Đồ chơi', description: 'Set 4 mô hình cừu Dory. Bộ sưu tập 4 chú cừu với biểu cảm khác nhau, thích hợp để sưu tầm.' },
             { id: 111, name: 'Set mô hình Phúc Lộc Thọ Thần Tài', price: 80000, image: 'images/new-product4.webp', category: 'Trang trí', description: 'Set mô hình Phúc Lộc Thọ Thần Tài. Tượng truyền thống mang ý nghĩa may mắn, tài lộc, sức khỏe. Quà tặng ý nghĩa cho gia đình.' },
-            { id: 112, name: 'Mô hình gấu dâu Lotso mini', price: 204000, image: 'images/new-product5.webp', category: 'Đồ chơi', description: 'Mô hình gấu dâu Lotso mini. Hình gấu bông dâu rất dễ thương, nhỏ gọn, dễ mang theo. Quà tặng hoàn hảo cho bé yêu.' },
+            { id: 112, name: 'Mô hình gấu dâu Lotso mini', price: 204000, oldPrice: 240000, image: 'images/new-product5.webp', category: 'Đồ chơi', description: 'Mô hình gấu dâu Lotso mini. Hình gấu bông dâu rất dễ thương, nhỏ gọn, dễ mang theo. Quà tặng hoàn hảo cho bé yêu.' },
             { id: 113, name: 'Set 4 mô hình thần tài trắng vui vẻ', price: 183000, image: 'images/new-product6.webp', category: 'Trang trí', description: 'Set 4 mô hình thần tài trắng vui vẻ. Bộ sưu tập tượng thần tài trắng với biểu cảm tươi cười, trang trí phòng khách.' },
             { id: 114, name: 'Mô hình gấu trúc Panda vịt vàng', price: 150000, image: 'images/new-product7.webp', category: 'Trang trí', description: 'Mô hình gấu trúc Panda vịt vàng. Sự kết hợp dễ thương giữa gấu trúc và vịt vàng, mang đến cảm giác vui vẻ.' },
             { id: 115, name: 'Tượng mèo thần tài trắng khăn xanh (Mẫu 2)', price: 130000, image: 'images/new-product8.webp', category: 'Trang trí', description: 'Tượng mèo thần tài trắng khăn xanh mẫu 2. Phiên bản khác của mèo thần tài may mắn, khác biệt trong chi tiết thiết kế.' },
-            { id: 116, name: 'Set mô hình 5 Ông già Noel dễ thương', price: 140000, image: 'images/new-product9.webp', category: 'Trang trí', description: 'Set mô hình 5 Ông già Noel dễ thương. Bộ sưu tập các mẫu Ông già Noel với biểu cảm vui vẻ, phù hợp cho mùa lễ.' },
-            { id: 117, name: 'Đèn led Quả cầu tuyết Ông già Noel, Tuần lộc', price: 180000, image: 'images/new-product10.webp', category: 'Trang trí', description: 'Đèn led Quả cầu tuyết Ông già Noel, Tuần lộc. Đèn trang trí lễ hội với hình ảnh ấm cúng, thích hợp cho mùa giáng sinh.' }
+            { id: 116, name: 'Set mô hình 5 Ông già Noel dễ thương', price: 140000, oldPrice: 200000, image: 'images/new-product9.webp', category: 'Trang trí', description: 'Set mô hình 5 Ông già Noel dễ thương. Bộ sưu tập các mẫu Ông già Noel với biểu cảm vui vẻ, phù hợp cho mùa lễ.' },
+            { id: 117, name: 'Đèn led Quả cầu tuyết Ông già Noel, Tuần lộc', price: 180000, oldPrice: 280000, image: 'images/new-product10.webp', category: 'Trang trí', description: 'Đèn led Quả cầu tuyết Ông già Noel, Tuần lộc. Đèn trang trí lễ hội với hình ảnh ấm cúng, thích hợp cho mùa giáng sinh.' }
         ];
         demoProducts.forEach(product => {
             products.push(product);
@@ -117,7 +119,16 @@ function loadFlashSaleProductData(productId) {
 //Hàm load dữ liệu sản phẩm từ localStorage (ID 100-117 hoặc admin products)
 function loadProductDataFromLocalStorage(productId) {
     const products = JSON.parse(localStorage.getItem('products')) || [];
-    const product = products.find(p => p.id == productId || p.id === parseInt(productId));
+    
+    // Tìm sản phẩm theo ID - hỗ trợ cả số và chuỗi
+    const product = products.find(p => {
+        // So sánh số nguyên
+        if (typeof p.id === 'number' && typeof productId === 'string') {
+            return p.id === parseInt(productId);
+        }
+        // So sánh trực tiếp
+        return p.id == productId;
+    });
     
     if (product) {
         productData = {
