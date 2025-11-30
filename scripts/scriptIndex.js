@@ -945,5 +945,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.location.pathname.includes('category-products')) {
         taiSanPhamTheoDanhMuc();
     }
+    
+    // Xử lý click icon Messenger
+    const messengerIcon = document.getElementById('messenger-icon');
+    if (messengerIcon) {
+        messengerIcon.addEventListener('click', function() {
+            // Chuyển hướng tới Facebook Messenger
+            window.open('https://www.facebook.com/thuanzz05', '_blank');
+        });
+    }
 });
 
