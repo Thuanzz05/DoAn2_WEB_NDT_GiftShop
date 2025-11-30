@@ -307,7 +307,7 @@ function syncOrderToAdmin(order) {
         code: order.id,
         customerId: order.userId !== 'guest' ? 1 : 0,
         customerName: order.customerInfo.fullname,
-        customerEmail: order.customerInfo.email,
+        customerEmail: order.customerInfo.email,  // QUAN TRỌNG: Lưu email để sync sau này
         customerPhone: order.customerInfo.phone,
         customerAddress: order.customerInfo.address,
         items: order.items,

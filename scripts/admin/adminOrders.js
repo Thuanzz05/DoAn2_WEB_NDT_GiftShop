@@ -114,57 +114,52 @@ function saveOrder() {
         return;
     }
     
-    // Lấy tên khách hàng
+    // Lấy tên khách hàng và email
     const customers = JSON.parse(localStorage.getItem('customers') || '[]');
     const customer = customers.find(c => c.id == customerId);
     const customerName = customer ? customer.name : '';
+    const customerEmail = customer ? customer.email : '';
     
     let orders = JSON.parse(localStorage.getItem('adminOrders') || '[]');
     
     if (id) {
+        // Cập nhật đơn hàng hiện có
         const index = orders.findIndex(o => o.id == id);
         if (index !== -1) {
-            const oldOrder = orders[index];
+            const oldStatus = orders[index].status;
+            const newStatus = status;
+            
             const updatedOrder = {
                 ...orders[index],
                 id: parseInt(id),
                 code,
                 customerId: parseInt(customerId),
                 customerName,
+                customerEmail,  // Lưu email để không cần lookup lần sau
                 date,
-                status,
+                status: newStatus,
                 total: parseInt(total),
                 payment,
                 note
             };
             orders[index] = updatedOrder;
             
-            // Đồng bộ cập nhật status vào orders_${email} của người dùng
-            // Tìm kiếm theo code (mã đơn hàng DHxxxxxx)
-            if (oldOrder.code) {
-                // Tìm email từ orders_* keys
-                const allKeys = Object.keys(localStorage);
-                const userOrdersKeys = allKeys.filter(key => key.startsWith('orders_'));
-                
-                userOrdersKeys.forEach(key => {
-                    let userOrders = JSON.parse(localStorage.getItem(key) || '[]');
-                    const userOrderIndex = userOrders.findIndex(o => o.id === oldOrder.code || o.id === code);
-                    if (userOrderIndex !== -1) {
-                        userOrders[userOrderIndex].status = status;
-                        localStorage.setItem(key, JSON.stringify(userOrders));
-                    }
-                });
+            // ===== ĐỒNG BỘ NGƯỢC VỀ USER =====
+            if (customerEmail && oldStatus !== newStatus) {
+                syncAdminOrderToUser(code, customerEmail, newStatus);
             }
             
             alert('Đã cập nhật đơn hàng!');
         }
     } else {
+        // Tạo đơn hàng mới
         const newId = orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1;
         orders.push({
             id: newId,
             code,
             customerId: parseInt(customerId),
             customerName,
+            customerEmail,  // Lưu email để không cần lookup lần sau
             date,
             status,
             total: parseInt(total),
@@ -177,6 +172,35 @@ function saveOrder() {
     localStorage.setItem('adminOrders', JSON.stringify(orders));
     resetForm();
     loadOrders();
+}
+
+// ===== HÀM ĐỒNG BỘ =====
+// Đồng bộ từ admin sang user (admin thay đổi → user nhìn thấy)
+function syncAdminOrderToUser(userOrderId, email, newStatus) {
+    try {
+        const userOrdersKey = `orders_${email}`;
+        let userOrders = JSON.parse(localStorage.getItem(userOrdersKey) || '[]');
+        
+        const userOrderIndex = userOrders.findIndex(o => o.id === userOrderId);
+        if (userOrderIndex === -1) {
+            console.warn(`User order with id ${userOrderId} not found for ${email}`);
+            return;
+        }
+        
+        // Cập nhật status
+        userOrders[userOrderIndex].status = newStatus;
+        if (newStatus === 'cancelled') {
+            userOrders[userOrderIndex].cancelledDate = new Date().toISOString();
+        }
+        if (newStatus === 'delivered') {
+            userOrders[userOrderIndex].deliveredDate = new Date().toISOString();
+        }
+        
+        localStorage.setItem(userOrdersKey, JSON.stringify(userOrders));
+        console.log(`User order ${userOrderId} synced: status=${newStatus}, email=${email}`);
+    } catch (err) {
+        console.error('Error syncing admin order to user:', err);
+    }
 }
 
 function editOrder(id) {

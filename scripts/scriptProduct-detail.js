@@ -90,6 +90,11 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     updateCartCount();
     updateMenuByLoginStatus();
+    
+    // Load đánh giá sản phẩm
+    if (productId) {
+        loadProductReviews(productId);
+    }
 });
 
 //Hàm load dữ liệu Flash Sale product từ localStorage
@@ -410,4 +415,58 @@ function updateMenuByLoginStatus() {
             `;
         }
     }
+}
+
+// Hàm hiển thị đánh giá sản phẩm từ localStorage
+function loadProductReviews(productId) {
+    const allReviews = JSON.parse(localStorage.getItem('productReviews') || '[]');
+    
+    // Lọc đánh giá theo sản phẩm
+    const productReviews = allReviews.filter(r => r.productId == productId || r.productName === productData.name);
+    
+    const container = document.getElementById('product-reviews-container');
+    if (!container) return;
+    
+    if (productReviews.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Chưa có đánh giá nào. Hãy mua sản phẩm và chia sẻ cảm nhận của bạn!</p>';
+        return;
+    }
+    
+    // Tính điểm trung bình
+    const avgRating = (productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length).toFixed(1);
+    
+    let reviewsHTML = `
+        <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #ddd;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="font-size: 36px; font-weight: bold; color: #f39c12;">${avgRating}</div>
+                <div>
+                    <div style="margin-bottom: 5px;">
+                        ${Array(5).fill(0).map((_, i) => `<span style="color: ${i < Math.round(avgRating) ? '#f39c12' : '#ddd'}; font-size: 20px;">★</span>`).join('')}
+                    </div>
+                    <p style="margin: 5px 0; color: #666;">Dựa trên ${productReviews.length} đánh giá</p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Hiển thị từng đánh giá
+    productReviews.forEach(review => {
+        const reviewDate = new Date(review.reviewDate).toLocaleDateString('vi-VN');
+        reviewsHTML += `
+            <div style="padding: 15px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                    <div>
+                        <p style="margin: 0; font-weight: bold; color: #333;">${review.reviewerName}</p>
+                        <p style="margin: 5px 0; font-size: 12px; color: #999;">${reviewDate}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        ${Array(5).fill(0).map((_, i) => `<span style="color: ${i < review.rating ? '#f39c12' : '#ddd'}; font-size: 16px;">★</span>`).join('')}
+                    </div>
+                </div>
+                ${review.comment ? `<p style="margin: 10px 0; color: #555; line-height: 1.5;">${review.comment}</p>` : ''}
+            </div>
+        `;
+    });
+    
+    container.innerHTML = reviewsHTML;
 }

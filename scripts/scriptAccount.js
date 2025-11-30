@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Reload dữ liệu đơn hàng khi tab được focus lại
     document.addEventListener('visibilitychange', function() {
         if (!document.hidden && document.getElementById('orders')?.classList.contains('active')) {
+            syncOrdersFromAdmin();
             loadOrders();
         }
     });
@@ -29,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Reload dữ liệu khi quay lại trang account
     window.addEventListener('focus', function() {
         if (document.getElementById('orders')?.classList.contains('active')) {
+            syncOrdersFromAdmin();
             loadOrders();
         }
     });
@@ -265,6 +267,9 @@ function loadOrders() {
     const userData = JSON.parse(localStorage.getItem('userData'));
     if (!userData) return;
     
+    // Sync với admin trước khi hiển thị
+    syncOrdersFromAdmin();
+    
     // Lấy đơn hàng của user hiện tại
     const userOrders = JSON.parse(localStorage.getItem(`orders_${userData.email}`)) || [];
     
@@ -345,6 +350,20 @@ function loadOrders() {
                     <p style="margin: 0; color: #666;"><strong>Ghi chú:</strong> ${order.note}</p>
                 </div>
                 ` : ''}
+                
+                <div class="order-actions" style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn-action" onclick="handleCancelOrder('${order.id}', '${userData.email}')" style="flex: 1; min-width: 120px; padding: 8px 12px; background-color: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                        Hủy đơn hàng
+                    </button>
+                    
+                    <button class="btn-action" onclick="handleConfirmDelivery('${order.id}', '${userData.email}')" style="flex: 1; min-width: 140px; padding: 8px 12px; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                        Xác nhận nhận hàng
+                    </button>
+                    
+                    <button class="btn-action" onclick="handleOpenReview('${order.id}', '${userData.email}')" style="flex: 1; min-width: 120px; padding: 8px 12px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                        Đánh giá
+                    </button>
+                </div>
             </div>
         `;
     });
@@ -384,4 +403,293 @@ function getPaymentMethodText(method) {
         'momo': 'Ví điện tử MoMo'
     };
     return methodMap[method] || 'COD';
+}
+
+// Hủy đơn hàng - với cảnh báo
+function handleCancelOrder(orderId, email) {
+    const userOrders = JSON.parse(localStorage.getItem(`orders_${email}`)) || [];
+    const order = userOrders.find(o => o.id === orderId);
+    
+    if (!order) {
+        alert('Không tìm thấy đơn hàng');
+        return;
+    }
+    
+    // Kiểm tra trạng thái
+    if (order.status !== 'pending') {
+        alert(`Chỉ có thể hủy đơn hàng ở trạng thái "Chờ xử lý". Đơn hàng hiện tại: ${getOrderStatusText(order.status)}`);
+        return;
+    }
+    
+    // Xác nhận từ user
+    if (!confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
+        return;
+    }
+    
+    // Cập nhật trạng thái ở user
+    const orderIndex = userOrders.findIndex(o => o.id === orderId);
+    if (orderIndex !== -1) {
+        userOrders[orderIndex].status = 'cancelled';
+        userOrders[orderIndex].cancelledDate = new Date().toISOString();
+        localStorage.setItem(`orders_${email}`, JSON.stringify(userOrders));
+    }
+    
+    // Đồng bộ ngay tới admin
+    syncUserOrderToAdmin(orderId, email, 'cancelled');
+    
+    alert('Đơn hàng đã được hủy thành công!');
+    loadOrders();
+}
+
+// Xác nhận nhận hàng - với cảnh báo
+function handleConfirmDelivery(orderId, email) {
+    const userOrders = JSON.parse(localStorage.getItem(`orders_${email}`)) || [];
+    const order = userOrders.find(o => o.id === orderId);
+    
+    if (!order) {
+        alert('Không tìm thấy đơn hàng');
+        return;
+    }
+    
+    // Kiểm tra trạng thái
+    if (order.status !== 'shipping') {
+        alert(`Chỉ có thể xác nhận nhận hàng khi đơn đang được giao. Đơn hàng hiện tại: ${getOrderStatusText(order.status)}`);
+        return;
+    }
+    
+    // Xác nhận từ user
+    if (!confirm('Xác nhận rằng bạn đã nhận được đơn hàng?')) {
+        return;
+    }
+    
+    // Cập nhật trạng thái ở user
+    const orderIndex = userOrders.findIndex(o => o.id === orderId);
+    if (orderIndex !== -1) {
+        userOrders[orderIndex].status = 'delivered';
+        userOrders[orderIndex].deliveredDate = new Date().toISOString();
+        localStorage.setItem(`orders_${email}`, JSON.stringify(userOrders));
+    }
+    
+    // Đồng bộ ngay tới admin
+    syncUserOrderToAdmin(orderId, email, 'delivered');
+    
+    alert('Xác nhận nhận hàng thành công! Bây giờ bạn có thể đánh giá sản phẩm.');
+    loadOrders();
+}
+
+// Đánh giá sản phẩm - với cảnh báo
+function handleOpenReview(orderId, email) {
+    const userOrders = JSON.parse(localStorage.getItem(`orders_${email}`)) || [];
+    const order = userOrders.find(o => o.id === orderId);
+    
+    if (!order) {
+        alert('Không tìm thấy đơn hàng');
+        return;
+    }
+    
+    // Kiểm tra trạng thái
+    if (order.status !== 'delivered') {
+        alert(`Chỉ có thể đánh giá sản phẩm khi đơn hàng đã được giao. Đơn hàng hiện tại: ${getOrderStatusText(order.status)}`);
+        return;
+    }
+    
+    // Tạo modal đánh giá
+    openReviewModal(orderId, email, order);
+}
+
+// ===== HÀM ĐỒNG BỘ ĐƠN HÀNG =====
+
+// Đồng bộ trạng thái từ adminOrders xuống user orders (admin thay đổi → user nhìn thấy)
+function syncOrdersFromAdmin() {
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (!userData) return;
+    
+    const email = userData.email;
+    const userOrders = JSON.parse(localStorage.getItem(`orders_${email}`)) || [];
+    const adminOrders = JSON.parse(localStorage.getItem('adminOrders')) || [];
+    
+    let updated = false;
+    
+    userOrders.forEach(userOrder => {
+        // Tìm order tương ứng ở admin qua code (code ở admin = id ở user)
+        const adminOrder = adminOrders.find(ao => ao.code === userOrder.id);
+        
+        if (adminOrder && adminOrder.status !== userOrder.status) {
+            console.log(`Syncing order ${userOrder.id}: ${userOrder.status} → ${adminOrder.status}`);
+            userOrder.status = adminOrder.status;
+            if (adminOrder.cancelledDate) userOrder.cancelledDate = adminOrder.cancelledDate;
+            if (adminOrder.deliveredDate) userOrder.deliveredDate = adminOrder.deliveredDate;
+            updated = true;
+        }
+    });
+    
+    if (updated) {
+        localStorage.setItem(`orders_${email}`, JSON.stringify(userOrders));
+        console.log('User orders synced from admin');
+    }
+}
+
+// Đồng bộ từ user sang admin (user thay đổi → admin nhìn thấy)
+function syncUserOrderToAdmin(userOrderId, email, newStatus) {
+    try {
+        // Lấy thông tin admin order
+        const adminOrders = JSON.parse(localStorage.getItem('adminOrders')) || [];
+        const adminOrderIndex = adminOrders.findIndex(ao => ao.code === userOrderId);
+        
+        if (adminOrderIndex === -1) {
+            console.warn(`Admin order with code ${userOrderId} not found`);
+            return;
+        }
+        
+        // Cập nhật status
+        adminOrders[adminOrderIndex].status = newStatus;
+        if (newStatus === 'cancelled') {
+            adminOrders[adminOrderIndex].cancelledDate = new Date().toISOString();
+        }
+        if (newStatus === 'delivered') {
+            adminOrders[adminOrderIndex].deliveredDate = new Date().toISOString();
+        }
+        
+        localStorage.setItem('adminOrders', JSON.stringify(adminOrders));
+        console.log(`Admin order ${userOrderId} synced: status=${newStatus}`);
+    } catch (err) {
+        console.error('Error syncing user order to admin:', err);
+    }
+}
+
+// Mở modal đánh giá sản phẩm
+function openReviewModal(orderId, email, order) {
+    // Tạo modal HTML
+    const modalHTML = `
+        <div id="review-modal-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 2000;">
+            <div style="background: white; padding: 30px; border-radius: 8px; max-width: 600px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0; font-size: 20px; color: #333;">Đánh giá sản phẩm</h3>
+                    <button onclick="closeReviewModal()" style="border: none; background: none; font-size: 28px; cursor: pointer; padding: 0; color: #999;">&times;</button>
+                </div>
+                <div id="review-items-container" style="margin-bottom: 20px;"></div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                    <button onclick="closeReviewModal()" style="padding: 10px 20px; background: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Hủy</button>
+                    <button onclick="submitReview('${orderId}', '${email}')" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Gửi đánh giá</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Tạo form đánh giá cho từng sản phẩm
+    const container = document.getElementById('review-items-container');
+    container.innerHTML = '';
+    
+    order.items.forEach((item, index) => {
+        const itemHTML = `
+            <div style="border: 1px solid #e0e0e0; padding: 15px; margin-bottom: 15px; border-radius: 6px; background: #fafafa;">
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <img src="${item.image}" alt="${item.name}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+                    <div style="flex: 1;">
+                        <p style="margin: 0; font-weight: bold; color: #333; font-size: 14px;">${item.name}</p>
+                        <p style="margin: 5px 0; color: #666; font-size: 13px;">Số lượng: ${item.quantity}</p>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 12px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #333; font-size: 14px;">Đánh giá <span style="color: #e74c3c;">*</span></label>
+                    <div style="display: flex; gap: 8px;">
+                        ${[1,2,3,4,5].map(star => `
+                            <input type="radio" name="rating_${index}" value="${star}" id="star_${index}_${star}" style="display: none;">
+                            <label for="star_${index}_${star}" onclick="updateStarDisplay(${index}, ${star})" style="font-size: 28px; cursor: pointer; color: #ddd; transition: color 0.2s;" class="star-label" data-index="${index}" data-value="${star}">★</label>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 6px; font-weight: bold; color: #333; font-size: 14px;">Bình luận (Tùy chọn)</label>
+                    <textarea name="comment_${index}" placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." style="width: 100%; min-height: 70px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: Arial, sans-serif; font-size: 13px; resize: vertical; box-sizing: border-box;"></textarea>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', itemHTML);
+    });
+}
+
+// Cập nhật hiển thị sao khi click
+function updateStarDisplay(index, rating) {
+    const labels = document.querySelectorAll(`.star-label[data-index="${index}"]`);
+    labels.forEach(label => {
+        if (parseInt(label.getAttribute('data-value')) <= rating) {
+            label.style.color = '#f39c12';
+        } else {
+            label.style.color = '#ddd';
+        }
+    });
+}
+
+// Đóng modal đánh giá
+function closeReviewModal() {
+    const modal = document.getElementById('review-modal-overlay');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Gửi đánh giá
+function submitReview(orderId, email) {
+    const userOrders = JSON.parse(localStorage.getItem(`orders_${email}`)) || [];
+    const order = userOrders.find(o => o.id === orderId);
+    
+    if (!order) {
+        alert('Lỗi: không tìm thấy thông tin đơn hàng');
+        return;
+    }
+    
+    let hasError = false;
+    const reviews = [];
+    const itemCount = order.items.length;
+    
+    // Thu thập dữ liệu đánh giá từ form
+    for (let i = 0; i < itemCount; i++) {
+        const rating = document.querySelector(`input[name="rating_${i}"]:checked`);
+        if (!rating) {
+            alert('Vui lòng đánh giá tất cả sản phẩm!');
+            hasError = true;
+            break;
+        }
+        
+        const comment = document.querySelector(`textarea[name="comment_${i}"]`).value.trim();
+        reviews.push({
+            rating: parseInt(rating.value),
+            comment: comment
+        });
+    }
+    
+    if (hasError) return;
+    
+    // Cập nhật reviews ở user order
+    const orderIndex = userOrders.findIndex(o => o.id === orderId);
+    if (orderIndex !== -1) {
+        userOrders[orderIndex].reviews = reviews;
+        userOrders[orderIndex].reviewedDate = new Date().toISOString();
+        localStorage.setItem(`orders_${email}`, JSON.stringify(userOrders));
+        
+        // Lưu review vào danh sách đánh giá tập trung
+        const allReviews = JSON.parse(localStorage.getItem('productReviews') || '[]');
+        order.items.forEach((item, idx) => {
+            allReviews.push({
+                orderId: orderId,
+                productId: item.id,
+                productName: item.name,
+                rating: reviews[idx].rating,
+                comment: reviews[idx].comment,
+                reviewDate: new Date().toISOString(),
+                reviewerName: JSON.parse(localStorage.getItem('userData')).name,
+                reviewerEmail: email
+            });
+        });
+        localStorage.setItem('productReviews', JSON.stringify(allReviews));
+        
+        alert('Cảm ơn bạn đã đánh giá! Đánh giá của bạn sẽ giúp cải thiện chất lượng dịch vụ.');
+        closeReviewModal();
+        loadOrders();
+    }
 }

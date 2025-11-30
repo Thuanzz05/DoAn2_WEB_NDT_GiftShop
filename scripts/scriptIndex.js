@@ -640,13 +640,16 @@ function khoiTaoSanPhamCu() {
 function xoaSanPhamLoi() {
     const products = JSON.parse(localStorage.getItem('products') || '[]');
     
-    // Lọc bỏ những sản phẩm có ảnh là default-product.jpg hoặc không hợp lệ
+    // Giữ lại các sản phẩm có trường ảnh hợp lệ.
+    // Trường hợp sản phẩm admin không nhập ảnh sẽ được gán ảnh mặc định,
+    // không nên xóa sản phẩm chỉ vì dùng ảnh mặc định.
     const validProducts = products.filter(product => {
-        // Nếu không có ảnh hoặc ảnh là default-product.jpg thì loại bỏ
-        if (!product.image || product.image.includes('default-product')) {
+        // Nếu không có trường image (undefined/null/empty) thì loại bỏ
+        if (!product.image || String(product.image).trim() === '') {
             return false;
         }
-        // Giữ lại những sản phẩm có ảnh hợp lệ
+
+        // Người quản trị có thể để ảnh mặc định 'default-product.jpg' — vẫn giữ lại
         return true;
     });
     
@@ -681,26 +684,57 @@ function taiSanPhamTuAdmin() {
     });
     
     console.log('Admin products found:', adminProducts.length);
-    
+
+    const newProductGrid = document.querySelector('#new-products .new-products-grid');
+    if (!newProductGrid) {
+        console.log('Could not find new-products-grid element');
+        return;
+    }
+
+    // Xóa các sản phẩm admin đã chèn trước đó để tránh trùng lặp khi gọi lại
+    const existingAdminNodes = newProductGrid.querySelectorAll('.new-product-item.admin-added');
+    existingAdminNodes.forEach(node => node.remove());
+
     if (adminProducts.length === 0) {
         console.log('Chưa có sản phẩm nào từ admin');
         return;
     }
-    
-    //  THÊM VÀO ĐẦU PHẦN SẢN PHẨM MỚI
-    const newProductGrid = document.querySelector('#new-products .new-products-grid');
-    
-    if (newProductGrid) {
-        // Thêm sản phẩm admin vào đầu danh sách (trước 10 sản phẩm demo)
-        adminProducts.forEach(product => {
-            const productHTML = createNewProductCard(product);
-            newProductGrid.insertAdjacentHTML('afterbegin', productHTML);
-        });
-        console.log('Added admin products to new products section');
-    } else {
-        console.log('Could not find new-products-grid element');
-    }
+
+    // Thêm sản phẩm admin vào đầu danh sách (đánh dấu bằng class 'admin-added')
+    adminProducts.forEach(product => {
+        // tạo DOM từ chuỗi HTML và đánh dấu
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = createNewProductCard(product).trim();
+        const el = wrapper.firstElementChild;
+        if (el) {
+            el.classList.add('admin-added');
+            el.setAttribute('data-admin-id', product.id);
+            newProductGrid.insertBefore(el, newProductGrid.firstChild);
+            console.log('Inserted admin product into DOM:', product.id, product.name);
+        }
+    });
+    console.log('Added admin products to new products section');
 }
+
+// Lắng nghe sự thay đổi localStorage (ứng dụng khi thêm sản phẩm trên tab/admin khác)
+window.addEventListener('storage', function(e) {
+    if (e.key === 'products') {
+        taiSanPhamTuAdmin();
+    }
+});
+
+// Ensure admin products are rendered also on full load / pageshow (covers reloads and navigation)
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        taiSanPhamTuAdmin();
+    }, 200);
+});
+
+window.addEventListener('pageshow', function() {
+    setTimeout(function() {
+        taiSanPhamTuAdmin();
+    }, 200);
+});
 
 // Tạo HTML card sản phẩm mới (với fallback cho trường bị thiếu)
 function createNewProductCard(product) {

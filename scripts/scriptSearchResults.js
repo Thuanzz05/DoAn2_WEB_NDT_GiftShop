@@ -188,8 +188,7 @@ function updateMenuByLoginStatus() {
             
             accountSubmenu.innerHTML = `
                 <li><a href="login-register.html"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a></li>
-                <li><a href="login-register.html#register" id="go-to-register"><i class="fas fa-user-plus"></i> Đăng ký</a></li>
-            `;
+                <li><a href="login-register.html#register" id="go-to-register"><i class="fas fa-user-plus"></i> Đăng ký</a></li>`;
         }
     }
 }

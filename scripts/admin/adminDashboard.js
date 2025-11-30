@@ -1,6 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     taiThongKe();
+    setupReportExport();
 });
+
+function setupReportExport() {
+    const btn = document.getElementById('export-report-btn');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+        xuatBaoCaoDonHangCSV();
+    });
+}
 
 function taiThongKe() {
     // Đếm sản phẩm từ localStorage
@@ -58,4 +67,59 @@ function taiThongKe() {
         'Hoàn tất': totalByStatus.completed.toLocaleString('vi-VN') + '₫',
         'Đã hủy': totalByStatus.cancelled.toLocaleString('vi-VN') + '₫'
     });
+}
+
+// Xuất báo cáo đơn hàng thành CSV
+function xuatBaoCaoDonHangCSV() {
+    const orders = JSON.parse(localStorage.getItem('adminOrders') || '[]');
+
+    if (!orders || orders.length === 0) {
+        alert('Không có đơn hàng để xuất báo cáo.');
+        return;
+    }
+
+    // Chuẩn bị header
+    const headers = ['Order ID', 'Ngày', 'Khách hàng', 'Email', 'Tổng tiền', 'Trạng thái', 'Mặt hàng (tên x số lượng)'];
+
+    // Chuyển orders sang dòng CSV
+    const rows = orders.map(o => {
+        const id = o.id ?? '';
+        const date = o.date || o.createdAt || '';
+        const customerName = o.customerName || o.customer?.name || o.customerId || '';
+        const email = o.customer?.email || o.email || '';
+        const total = (o.total || 0);
+
+        // items: hỗ trợ cả mảng items hoặc object
+        let itemsText = '';
+        if (Array.isArray(o.items)) {
+            itemsText = o.items.map(it => `${it.name || it.productName || it.productId} x${it.quantity||it.qty||1}`).join(' | ');
+        } else if (o.items && typeof o.items === 'object') {
+            try { itemsText = JSON.stringify(o.items); } catch(e) { itemsText = String(o.items); }
+        }
+
+        // Escape values that may contain commas
+        const escape = v => `"${String(v).replace(/"/g, '""')}"`;
+
+        return [id, date, customerName, email, total, o.status || '', itemsText].map(escape).join(',');
+    });
+
+    // Thêm BOM UTF-8 để Excel trên Windows nhận diện đúng encoding (giúp hiển thị tiếng Việt)
+    const csvBody = [headers.join(','), ...rows].join('\r\n');
+    const csvContent = '\uFEFF' + csvBody; // prepend BOM
+
+    // Tạo file blob và download (UTF-8 với BOM)
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    const now = new Date();
+    const filename = `report_orders_${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}.csv`;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    alert('Đã tải xuống báo cáo: ' + filename);
 }
