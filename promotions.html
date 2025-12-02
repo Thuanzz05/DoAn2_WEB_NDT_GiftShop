@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh mục sản phẩm - NDT Gift</title>
-    <link rel="stylesheet" type="text/css" href="styles/styleIndex.css">
-    <link rel="stylesheet" type="text/css" href="styles/styleCategory-products.css">
+    <title>Mã Giảm Giá - NDT Gift Shop</title>
+    <link rel="stylesheet" href="styles/styleIndex.css">
+    <link rel="stylesheet" href="styles/stylePromotions.css">
+    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-	
     <link rel="icon" href="images/iconWeb.png" type="image/x-icon">
 </head>
-
 <body>
+    <!-- Header -->
     <div id="header">
         <div id="header-top">
             <div id="top">
@@ -32,9 +31,12 @@
                                     <li><a href="login-register.html" target="_blank"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a></li>
                                     <li><a href="login-register.html#register" target="_blank" id="go-to-register"><i class="fas fa-user-plus"></i> Đăng ký</a></li>
                                 </ul>
-                            </li>                   
+                            </li>
+                            <li>
+                                <a href="admin-login.html" target="_blank"><i class="fas fa-user-shield"></i> Quản trị</a>
+                            </li>
                         </ul>
-                    </div>
+                    </div>					
                 </div>
             </div>
             <div id="banner">
@@ -52,11 +54,11 @@
                         </div>
                     </div>
                     <div class="contact-item">
-                        <i class="fas fa-sync"></i>
-                        <div class="text">
-                            <p>Đổi trả dễ dàng</p>
-                            <span>Trong vòng 7 ngày</span>
-                        </div>
+                            <i class="fas fa-sync"></i>
+                            <div class="text">
+                                <p>Đổi trả dễ dàng</p>
+                                <span>Trong vòng 7 ngày</span>
+                            </div>
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-headset"></i>
@@ -89,75 +91,45 @@
                             </ul>
                         </li>
                         <li><a href="news.html">Tin tức</a></li>
-                        <li><a href="promotions.html" style="color: white; font-weight: bold;">Mã Giảm Giá</a></li>
+                        <li><a href="promotions.html" style="color: White; font-weight: bold;">Mã Giảm Giá</a></li>
                         <li><a href="#footer">Liên hệ</a></li>
                         <li>
                             <div class="search-box">
-                                <form action="#" method="get">
-                                    <input type="text" placeholder="Tìm kiếm sản phẩm...">
+                                <form id="search-form" method="get">
+                                    <input type="text" id="search-input" placeholder="Tìm kiếm sản phẩm..." required>
                                     <button type="submit"><i class="fas fa-search"></i></button>
                                 </form>
                             </div>
                         </li>
-                        <li><a href="cart.html"><i class="fas fa-shopping-cart"></i> Giỏ hàng</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="container">
-        <div id="sidebar">
-            <h2><i class="fas fa-bars"></i> Danh mục</h2>
-            <ul class="category-list">
-                <li><a href="category-products.html?id=1" class="active">Set quà tặng</a></li>
-                <li><a href="category-products.html?id=2">Phụ kiện trang trí</a></li>
-                <li><a href="category-products.html?id=3">Thú bông</a></li>
-                <li><a href="category-products.html?id=4">Quà tặng giáng sinh</a></li>
-                <li><a href="category-products.html?id=5">Mèo thần tài</a></li>
-                <li><a href="category-products.html?id=6">Mô hình Anime</a></li>
-                <li><a href="category-products.html?id=7">Hộp mica</a></li>
-                <li><a href="category-products.html?id=8">Túi, hộp đựng quà</a></li>
-                <li><a href="category-products.html?id=9">Móc khóa</a></li>
-                <li><a href="category-products.html?id=10">Quạt cầm tay mini</a></li>
-            </ul>
+    <!-- Content -->
+    <div class="promo-container">
+        <div class="promo-header">
+            <h1> Mã Giảm Giá</h1>
+            <p>Khám phá các mã giảm giá hấp dẫn và tiết kiệm khi mua sắm</p>
         </div>
 
-        <div id="category-content">
-            <div class="category-header">
-                <h1 id="category-title">Set quà tặng</h1>
-                <div class="category-filter">
-                    <form action="" method="get">
-                        <select id="sort-by" name="sort">
-                            <option value="default">Sắp xếp theo</option>
-                            <option value="price-asc">Giá tăng dần</option>
-                            <option value="price-desc">Giá giảm dần</option>
-                            <option value="name-asc">Tên A-Z</option>
-                            <option value="name-desc">Tên Z-A</option>
-                        </select>
-                    </form>
-                </div>
-            </div>
-
-            <div class="category-products">
-                <!-- Sản phẩm sẽ được load động từ JavaScript -->
-            </div>
-
-            <div class="pagination">
-                <a href="category-products.html" class="prev-page" aria-disabled="true"><i class="fas fa-chevron-left"></i></a>
-                <div class="page-numbers">
-                    <span class="current-page">1</span> / <span class="total-pages">2</span>
-                </div>
-                <a href="category-products.html" class="next-page"><i class="fas fa-chevron-right"></i></a>
-            </div>
+        <div class="promo-filters">
+            <button class="filter-btn active" onclick="filterPromos('all')">Tất cả</button>
+            <button class="filter-btn" onclick="filterPromos('active')"> Đang có hiệu lực</button>
+            <button class="filter-btn" onclick="filterPromos('expired')"> Đã hết hạn</button>
+            <button class="filter-btn" onclick="filterPromos('percent')"> Giảm %</button>
+            <button class="filter-btn" onclick="filterPromos('amount')"> Giảm tiền</button>
         </div>
+
+        <div id="promo-list" class="promo-grid"></div>
     </div>
 
-    <!-- Footer Section -->
+    <!-- Footer -->
     <div id="footer">
         <div class="container">
             <div class="footer-top">
-                <div class="footer-contact-info">
+                <div class="footer-contact-info">						
                     <h3>NDT GIFT SHOP</h3>
                     <div class="logo-footer">
                         <img src="images/logo-footer.webp" alt="ND Gift Shop Logo">
@@ -196,16 +168,17 @@
                         </iframe>
                     </div>
                 </div>
-            </div>
-
+            </div>				
             <div class="footer-bot">
                 <p>© Bản quyền thuộc về NDT Gift Shop. Cung cấp bởi Nguyễn Duy Thuấn.</p>
             </div>
         </div>
     </div>
-	<div id="backtop"><i class="fa-solid fa-angle-up"></i></div>
+
+    <div id="backtop"><i class="fa-solid fa-angle-up"></i></div>
     <div id="messenger-icon" title="Nhắn tin với chúng tôi"><i class="fab fa-facebook-messenger"></i></div>
-    <script src="scripts/scriptCategory-products.js"></script>
+
     <script src="scripts/scriptIndex.js"></script>
+    <script src="scripts/scriptPromotions.js"></script>
 </body>
 </html>
