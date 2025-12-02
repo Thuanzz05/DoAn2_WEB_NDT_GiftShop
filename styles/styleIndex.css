@@ -1582,6 +1582,7 @@ ul {
   right: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
+    z-index: 1002;
 }
 
 #backtop:hover {
@@ -1605,7 +1606,7 @@ ul {
   cursor: pointer;
   font-size: 24px;
   transition: all 0.3s ease;
-  z-index: 999;
+    z-index: 1003;
 }
 
 #messenger-icon:hover {

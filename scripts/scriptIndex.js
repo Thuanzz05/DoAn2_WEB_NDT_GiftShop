@@ -435,14 +435,24 @@ document.addEventListener('DOMContentLoaded', function() {
 // Khởi tạo 18 sản phẩm demo từ HTML vào localStorage
 // ID 100-107: SẢN PHẨM BÁN CHẠY (8 sản phẩm)
 // ID 108-117: SẢN PHẨM MỚI (10 sản phẩm)
+function _dedupeProducts(products) {
+    const seen = new Set();
+    const out = [];
+    for (const p of products) {
+        const key = String(p.id);
+        if (!seen.has(key)) {
+            seen.add(key);
+            out.push(p);
+        }
+    }
+    return out;
+}
+
 function khoiTaoSanPhamCu() {
-    const existingProducts = JSON.parse(localStorage.getItem('products') || '[]');
-    
-    // Chỉ khởi tạo nếu chưa có sản phẩm nào hoặc chỉ có sản phẩm từ admin (ID < 100)
-    const hasOldProducts = existingProducts.some(p => p.id >= 100);
-    
-    if (hasOldProducts) return; // Đã khởi tạo rồi, không cần làm lại
-    
+    // load and dedupe existing products
+    let existingProducts = JSON.parse(localStorage.getItem('products') || '[]');
+    existingProducts = _dedupeProducts(existingProducts);
+
     // ============ SẢN PHẨM BÁN CHẠY (ID 100-107) ============
     const sanPhamBanChay = [
         {
@@ -526,8 +536,8 @@ function khoiTaoSanPhamCu() {
             section: 'bestsellers'
         }
     ];
-    
-    // ============ SẢN PHẨM MỚI (ID 108-117) ============
+
+    // ============ SẢN PHẨM MỚI ============
     const sanPhamMoi = [
         {
             id: 108,
@@ -629,11 +639,73 @@ function khoiTaoSanPhamCu() {
             description: 'Đèn led Quả cầu tuyết Ông già Noel, Tuần lộc. Đèn trang trí lễ hội với hình ảnh ấm cúng, thích hợp cho mùa giáng sinh.',
             section: 'newproducts'
         }
+        ,
+        {
+            id: 118,
+            name: 'Set quà tặng Văn Phòng Premium',
+            price: 320000,
+            image: 'images/new-product11.webp',
+            categoryId: 1,
+            stock: 999,
+            description: 'Set quà tặng văn phòng gồm sổ tay bìa da, bút kim loại và phụ kiện trang trí bàn làm việc sang trọng.',
+            section: 'newproducts'
+        },
+        {
+            id: 119,
+            name: 'Set chăm sóc da Mini',
+            price: 420000,
+            image: 'images/new-product12.webp',
+            categoryId: 1,
+            stock: 999,
+            description: 'Bộ mini chăm sóc da gồm sữa rửa mặt, tinh chất và mặt nạ thư giãn — quà tặng chăm sóc sắc đẹp ý nghĩa.',
+            section: 'newproducts'
+        },
+        {
+            id: 120,
+            name: 'Set trà Pha Lê Cao Cấp',
+            price: 380000,
+            image: 'images/new-product13.webp',
+            categoryId: 1,
+            stock: 999,
+            description: 'Set trà gồm ấm trà pha lê và hộp trà đặc sản, thiết kế hộp quà tinh tế, phù hợp tặng đối tác.',
+            section: 'newproducts'
+        },
+        {
+            id: 121,
+            name: 'Set nến thơm & Socola',
+            price: 260000,
+            image: 'images/new-product14.webp',
+            categoryId: 1,
+            stock: 999,
+            description: 'Hộp quà lãng mạn gồm nến thơm cao cấp và socola nhập khẩu, thích hợp tặng người thương.',
+            section: 'newproducts'
+        },
+        {
+            id: 122,
+            name: 'Set tiện ích Du Lịch',
+            price: 480000,
+            image: 'images/new-product15.webp',
+            categoryId: 4,
+            stock: 999,
+            description: 'Set du lịch gồm túi đựng đồ, móc khóa đa năng và bộ vệ sinh mini — quà tặng tiện dụng cho người đi công tác.',
+            section: 'newproducts'
+        }
     ];
-    
-    // Thêm các sản phẩm demo vào danh sách
-    const allProducts = [...existingProducts, ...sanPhamBanChay, ...sanPhamMoi];
-    localStorage.setItem('products', JSON.stringify(allProducts));
+
+    // Merge demo products into existingProducts only if missing
+    const demoProducts = [...sanPhamBanChay, ...sanPhamMoi];
+    const missing = demoProducts.filter(dp => !existingProducts.some(ep => String(ep.id) === String(dp.id)));
+
+    if (missing.length > 0) {
+        const merged = [...existingProducts, ...missing];
+        const normalized = _dedupeProducts(merged);
+        localStorage.setItem('products', JSON.stringify(normalized));
+        console.log(`Added ${missing.length} missing demo product(s) to localStorage.`);
+    } else {
+        // ensure localStorage is deduped
+        localStorage.setItem('products', JSON.stringify(existingProducts));
+        console.log('Demo products already present; ensured deduplication.');
+    }
 }
 
 // Xóa những sản phẩm lỗi (không có ảnh hợp lệ)
@@ -674,16 +746,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 100);
 });
 
-// Load sản phẩm từ localStorage (chỉ thêm sản phẩm admin vào "SẢN PHẨM MỚI")
+// Load sản phẩm từ localStorage (thêm tất cả sản phẩm mới: admin + demo)
 function taiSanPhamTuAdmin() {
     const products = JSON.parse(localStorage.getItem('products') || '[]');
     
-    // Lọc chỉ lấy sản phẩm admin (ID < 100), bỏ qua sản phẩm demo (ID 100-117 và Flash Sale)
-    const adminProducts = products.filter(p => {
-        return typeof p.id === 'number' && p.id < 100 && !String(p.id).startsWith('fs');
+    // Display all new products: admin (ID < 100) AND demo with section='newproducts' (IDs 100-122)
+    const newProducts = products.filter(p => {
+        // Include admin products (ID < 100) or demo products marked as newproducts
+        const isAdmin = typeof p.id === 'number' && p.id < 100 && !String(p.id).startsWith('fs');
+        const isNewDemo = p.section === 'newproducts';
+        return isAdmin || isNewDemo;
     });
     
-    console.log('Admin products found:', adminProducts.length);
+    console.log('New products to display:', newProducts.length);
 
     const newProductGrid = document.querySelector('#new-products .new-products-grid');
     if (!newProductGrid) {
@@ -691,29 +766,29 @@ function taiSanPhamTuAdmin() {
         return;
     }
 
-    // Xóa các sản phẩm admin đã chèn trước đó để tránh trùng lặp khi gọi lại
-    const existingAdminNodes = newProductGrid.querySelectorAll('.new-product-item.admin-added');
-    existingAdminNodes.forEach(node => node.remove());
+    // Clear any previously inserted new product items to prevent duplicates
+    const existingNodes = newProductGrid.querySelectorAll('.new-product-item.new-product-added');
+    existingNodes.forEach(node => node.remove());
 
-    if (adminProducts.length === 0) {
-        console.log('Chưa có sản phẩm nào từ admin');
+    if (newProducts.length === 0) {
+        console.log('No new products to display');
         return;
     }
 
-    // Thêm sản phẩm admin vào đầu danh sách (đánh dấu bằng class 'admin-added')
-    adminProducts.forEach(product => {
+    // Add all new products to the grid (marked with class 'new-product-added')
+    newProducts.forEach(product => {
         // tạo DOM từ chuỗi HTML và đánh dấu
         const wrapper = document.createElement('div');
         wrapper.innerHTML = createNewProductCard(product).trim();
         const el = wrapper.firstElementChild;
         if (el) {
-            el.classList.add('admin-added');
-            el.setAttribute('data-admin-id', product.id);
+            el.classList.add('new-product-added');
+            el.setAttribute('data-product-id-new', product.id);
             newProductGrid.insertBefore(el, newProductGrid.firstChild);
-            console.log('Inserted admin product into DOM:', product.id, product.name);
+            console.log('Inserted new product into DOM:', product.id, product.name);
         }
     });
-    console.log('Added admin products to new products section');
+    console.log('Added new products to new products section');
 }
 
 // Lắng nghe sự thay đổi localStorage (ứng dụng khi thêm sản phẩm trên tab/admin khác)
