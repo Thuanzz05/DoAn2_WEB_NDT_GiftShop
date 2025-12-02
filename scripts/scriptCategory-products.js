@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadCategoryProducts();
     setupSortListener();
     updateMenuByLoginStatus();
+    updateActiveCategoryLink();
 });
 
 // Tải sản phẩm theo danh mục
@@ -204,6 +205,24 @@ function updateCartCount() {
             link.textContent = `${link.textContent} (${totalItems})`;
         }
     });
+}
+
+// Cập nhật active state cho sidebar category link
+function updateActiveCategoryLink() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryId = parseInt(urlParams.get('id')) || 1;
+    
+    // Xóa class active từ tất cả sidebar links
+    const sidebarLinks = document.querySelectorAll('.category-list a');
+    sidebarLinks.forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    // Thêm class active cho link hiện tại
+    const activeLink = document.querySelector(`.category-list a[href*="id=${categoryId}"]`);
+    if (activeLink) {
+        activeLink.classList.add('active');
+    }
 }
 
 // Kiểm tra trạng thái đăng nhập và cập nhật menu

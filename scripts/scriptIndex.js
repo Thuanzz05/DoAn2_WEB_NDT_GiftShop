@@ -757,12 +757,9 @@ function taiSanPhamTuAdmin() {
         const isNewDemo = p.section === 'newproducts';
         return isAdmin || isNewDemo;
     });
-    
-    console.log('New products to display:', newProducts.length);
 
     const newProductGrid = document.querySelector('#new-products .new-products-grid');
     if (!newProductGrid) {
-        console.log('Could not find new-products-grid element');
         return;
     }
 
