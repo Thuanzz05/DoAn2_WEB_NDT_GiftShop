@@ -874,19 +874,22 @@ document.addEventListener('click', function(e) {
 function khoiTaoFlashSaleProducts() {
     let products = JSON.parse(localStorage.getItem('products')) || [];
     
-    // Kiểm tra xem Flash Sale products đã có không
-    const flashSaleExists = products.some(p => p.id && typeof p.id === 'string' && p.id.startsWith('fs-'));
+    // Xóa Flash Sale products cũ (không có categoryId)
+    products = products.filter(p => !(p.id && typeof p.id === 'string' && p.id.startsWith('fs-') && !p.categoryId));
+    
+    // Kiểm tra xem Flash Sale products mới (có categoryId) đã có không
+    const flashSaleExists = products.some(p => p.id && typeof p.id === 'string' && p.id.startsWith('fs-') && p.categoryId);
     
     if (!flashSaleExists) {
         const flashSaleProducts = [
-            { id: 'fs-1', name: 'Bộ đồ chơi lego lắp ráp chủ đề Giáng Sinh', price: 200000, oldPrice: 250000, discount: -20, image: 'images/flash_sale_1.webp', sold: 205, progress: 82, description: 'Bộ đồ chơi lego cao cấp lắp ráp chủ đề Giáng Sinh, phù hợp cho trẻ em và người lớn. Gồm các mô hình trang trí Noel, cây thông, ông già Noel và nhiều chi tiết khác. Chất liệu an toàn, không độc hại.', category: 'Đồ chơi' },
-            { id: 'fs-2', name: 'Set mô hình 5 Ông già Noel dễ thương', price: 140000, oldPrice: 200000, discount: -30, image: 'images/flash_sale_2.webp', sold: 55, progress: 55, description: 'Set 5 mô hình ông già Noel dễ thương với các biểu cảm khác nhau. Chất liệu PVC cao cấp, màu sắc sáng, độc đáo. Dùng để trang trí nhà cửa, cửa hàng, bàn làm việc.', category: 'Trang trí' },
-            { id: 'fs-3', name: 'Cốc ly hình cây thông Giáng Sinh 3D', price: 160000, oldPrice: 200000, discount: -20, image: 'images/flash_sale_3.webp', sold: 90, progress: 72, description: 'Cốc ly hình cây thông Giáng Sinh 3D với thiết kế độc đáo, nắp và khay giữ. Chất liệu sứ cao cấp, in hình đẹp mắt, không độc hại. Phù hợp làm quà tặng.', category: 'Cốc tách' },
-            { id: 'fs-4', name: 'Cốc ly sứ Christmas hộp quà tặng ngôi sao', price: 200000, oldPrice: 300000, discount: -33, image: 'images/flash_sale_4.webp', sold: 52, progress: 52, description: 'Cốc ly sứ cao cấp với họa tiết Christmas ngôi sao lấp lánh. Đi kèm hộp quà đẹp, in logo nhãn hiệu. Dùng đựng nước, cà phê, trà, là quà tặng tuyệt vời.', category: 'Cốc tách' },
-            { id: 'fs-5', name: 'Đèn LED trang trí cây thông Giáng Sinh', price: 150000, oldPrice: 200000, discount: -25, image: 'images/flash_sale_5.webp', sold: 85, progress: 68, description: 'Đèn LED trang trí cây thông Giáng Sinh với 100 bóng LED sáng đa màu, dây dài 10m. Tiết kiệm điện, sáng lâu, an toàn tuyệt đối. Chế độ nhấp nháy tự động.', category: 'Trang trí' },
-            { id: 'fs-6', name: 'Set hộp quà trang trí Noel cao cấp', price: 180000, oldPrice: 300000, discount: -40, image: 'images/flash_sale_6.webp', sold: 45, progress: 45, description: 'Set 3 hộp quà trang trí Noel cao cấp với họa tiết đặc biệt, màu sắc rực rỡ. Chất liệu carton dày, bền bỉ. Dùng đựng quà tặng hoặc trang trí nhà cửa.', category: 'Hộp quà' },
-            { id: 'fs-7', name: 'Tất treo Giáng Sinh họa tiết đáng yêu', price: 85000, oldPrice: 100000, discount: -15, image: 'images/flash_sale_7.webp', sold: 95, progress: 76, description: 'Tất treo Giáng Sinh họa tiết đáng yêu với màu đỏ, xanh, trắng. Chất liệu cotton mềm mại, ấm áp. Treo trên cây thông, tường, cửa sổ để trang trí.', category: 'Trang trí' },
-            { id: 'fs-8', name: 'Set chuông vàng trang trí Giáng Sinh', price: 130000, oldPrice: 200000, discount: -35, image: 'images/flash_sale_8.webp', sold: 60, progress: 60, description: 'Set 5 chuông vàng trang trí Giáng Sinh với âm thanh rung chuông dễ nghe. Chất liệu kim loại cao cấp, bền bỉ, sáng bóng. Treo trên cây thông hoặc tường.', category: 'Trang trí' }
+            { id: 'fs-1', name: 'Bộ đồ chơi lego lắp ráp chủ đề Giáng Sinh', price: 200000, oldPrice: 250000, discount: -20, image: 'images/flash_sale_1.webp', sold: 205, progress: 82, description: 'Bộ đồ chơi lego cao cấp lắp ráp chủ đề Giáng Sinh, phù hợp cho trẻ em và người lớn. Gồm các mô hình trang trí Noel, cây thông, ông già Noel và nhiều chi tiết khác. Chất liệu an toàn, không độc hại.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+            { id: 'fs-2', name: 'Set mô hình 5 Ông già Noel dễ thương', price: 140000, oldPrice: 200000, discount: -30, image: 'images/flash_sale_2.webp', sold: 55, progress: 55, description: 'Set 5 mô hình ông già Noel dễ thương với các biểu cảm khác nhau. Chất liệu PVC cao cấp, màu sắc sáng, độc đáo. Dùng để trang trí nhà cửa, cửa hàng, bàn làm việc.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+            { id: 'fs-3', name: 'Cốc ly hình cây thông Giáng Sinh 3D', price: 160000, oldPrice: 200000, discount: -20, image: 'images/flash_sale_3.webp', sold: 90, progress: 72, description: 'Cốc ly hình cây thông Giáng Sinh 3D với thiết kế độc đáo, nắp và khay giữ. Chất liệu sứ cao cấp, in hình đẹp mắt, không độc hại. Phù hợp làm quà tặng.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+            { id: 'fs-4', name: 'Cốc ly sứ Christmas hộp quà tặng ngôi sao', price: 200000, oldPrice: 300000, discount: -33, image: 'images/flash_sale_4.webp', sold: 52, progress: 52, description: 'Cốc ly sứ cao cấp với họa tiết Christmas ngôi sao lấp lánh. Đi kèm hộp quà đẹp, in logo nhãn hiệu. Dùng đựng nước, cà phê, trà, là quà tặng tuyệt vời.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+            { id: 'fs-5', name: 'Đèn LED trang trí cây thông Giáng Sinh', price: 150000, oldPrice: 200000, discount: -25, image: 'images/flash_sale_5.webp', sold: 85, progress: 68, description: 'Đèn LED trang trí cây thông Giáng Sinh với 100 bóng LED sáng đa màu, dây dài 10m. Tiết kiệm điện, sáng lâu, an toàn tuyệt đối. Chế độ nhấp nháy tự động.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+            { id: 'fs-6', name: 'Set hộp quà trang trí Noel cao cấp', price: 180000, oldPrice: 300000, discount: -40, image: 'images/flash_sale_6.webp', sold: 45, progress: 45, description: 'Set 3 hộp quà trang trí Noel cao cấp với họa tiết đặc biệt, màu sắc rực rỡ. Chất liệu carton dày, bền bỉ. Dùng đựng quà tặng hoặc trang trí nhà cửa.', categoryId: 8, category: 'Túi, hộp đựng quà' },
+            { id: 'fs-7', name: 'Tất treo Giáng Sinh họa tiết đáng yêu', price: 85000, oldPrice: 100000, discount: -15, image: 'images/flash_sale_7.webp', sold: 95, progress: 76, description: 'Tất treo Giáng Sinh họa tiết đáng yêu với màu đỏ, xanh, trắng. Chất liệu cotton mềm mại, ấm áp. Treo trên cây thông, tường, cửa sổ để trang trí.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+            { id: 'fs-8', name: 'Set chuông vàng trang trí Giáng Sinh', price: 130000, oldPrice: 200000, discount: -35, image: 'images/flash_sale_8.webp', sold: 60, progress: 60, description: 'Set 5 chuông vàng trang trí Giáng Sinh với âm thanh rung chuông dễ nghe. Chất liệu kim loại cao cấp, bền bỉ, sáng bóng. Treo trên cây thông hoặc tường.', categoryId: 4, category: 'Quà tặng giáng sinh' }
         ];
         
         flashSaleProducts.forEach(product => {
@@ -909,11 +912,11 @@ function khoiTaoDanhMucMacDinh() {
             { id: 3, name: 'Thú bông', description: 'Gấu bông và thú nhồi bông các loại' },
             { id: 4, name: 'Quà tặng giáng sinh', description: 'Phụ kiện và quà tặng mùa Giáng sinh' },
             { id: 5, name: 'Mèo thần tài', description: 'Tượng mèo thần tài may mắn' },
-            { id: 6, name: 'Hộp mica', description: 'Hộp mica độc đáo và ý nghĩa' },
+            { id: 6, name: 'Mô hình anime', description: 'Mô hình anime độc đáo và ý nghĩa' },
             { id: 7, name: 'Móc khóa', description: 'Móc khóa độc đáo và ý nghĩa' },
-            { id: 8, name: 'Bút', description: 'Bút độc đáo và ý nghĩa' },
-            { id: 9, name: 'Sổ vở', description: 'Sổ vở độc đáo và ý nghĩa' },
-            { id: 10, name: 'Mô hình', description: 'Mô hình độc đáo và ý nghĩa' }
+            { id: 8, name: 'Túi, hộp đựng quà', description: 'Túi và hộp đựng quà tặng' },
+            { id: 9, name: 'Quạt cầm tay mini', description: 'Quạt cầm tay mini độc đáo' },
+            { id: 10, name: 'Văn phòng phẩm', description: 'Văn phòng phẩm độc đáo và ý nghĩa' }
         ];
         localStorage.setItem('categories', JSON.stringify(danhMucMacDinh));
     }

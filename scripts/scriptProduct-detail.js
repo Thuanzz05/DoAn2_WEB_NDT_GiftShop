@@ -1,24 +1,34 @@
 // Khai báo biến global productData
 let productData = {};
 
+// Hàm lấy tên danh mục từ ID
+function getCategoryNameById(categoryId) {
+    const categories = JSON.parse(localStorage.getItem('categories') || '[]');
+    const category = categories.find(c => c.id === categoryId);
+    return category ? category.name : 'Không xác định';
+}
+
 // Flash Sale Products Data (để sẵn sàng nếu cần)
 const flashSaleProductsData = {
-    'fs-1': { id: 'fs-1', name: 'Bộ đồ chơi lego lắp ráp chủ đề Giáng Sinh', price: 200000, oldPrice: 250000, discount: -20, image: 'images/flash_sale_1.webp', sold: 205, progress: 82, description: 'Bộ đồ chơi lego cao cấp lắp ráp chủ đề Giáng Sinh, phù hợp cho trẻ em và người lớn. Gồm các mô hình trang trí Noel, cây thông, ông già Noel và nhiều chi tiết khác. Chất liệu an toàn, không độc hại.', category: 'Đồ chơi' },
-    'fs-2': { id: 'fs-2', name: 'Set mô hình 5 Ông già Noel dễ thương', price: 140000, oldPrice: 200000, discount: -30, image: 'images/flash_sale_2.webp', sold: 55, progress: 55, description: 'Set 5 mô hình ông già Noel dễ thương với các biểu cảm khác nhau. Chất liệu PVC cao cấp, màu sắc sáng, độc đáo. Dùng để trang trí nhà cửa, cửa hàng, bàn làm việc.', category: 'Trang trí' },
-    'fs-3': { id: 'fs-3', name: 'Cốc ly hình cây thông Giáng Sinh 3D', price: 160000, oldPrice: 200000, discount: -20, image: 'images/flash_sale_3.webp', sold: 90, progress: 72, description: 'Cốc ly hình cây thông Giáng Sinh 3D với thiết kế độc đáo, nắp và khay giữ. Chất liệu sứ cao cấp, in hình đẹp mắt, không độc hại. Phù hợp làm quà tặng.', category: 'Cốc tách' },
-    'fs-4': { id: 'fs-4', name: 'Cốc ly sứ Christmas hộp quà tặng ngôi sao', price: 200000, oldPrice: 300000, discount: -33, image: 'images/flash_sale_4.webp', sold: 52, progress: 52, description: 'Cốc ly sứ cao cấp với họa tiết Christmas ngôi sao lấp lánh. Đi kèm hộp quà đẹp, in logo nhãn hiệu. Dùng đựng nước, cà phê, trà, là quà tặng tuyệt vời.', category: 'Cốc tách' },
-    'fs-5': { id: 'fs-5', name: 'Đèn LED trang trí cây thông Giáng Sinh', price: 150000, oldPrice: 200000, discount: -25, image: 'images/flash_sale_5.webp', sold: 85, progress: 68, description: 'Đèn LED trang trí cây thông Giáng Sinh với 100 bóng LED sáng đa màu, dây dài 10m. Tiết kiệm điện, sáng lâu, an toàn tuyệt đối. Chế độ nhấp nháy tự động.', category: 'Trang trí' },
-    'fs-6': { id: 'fs-6', name: 'Set hộp quà trang trí Noel cao cấp', price: 180000, oldPrice: 300000, discount: -40, image: 'images/flash_sale_6.webp', sold: 45, progress: 45, description: 'Set 3 hộp quà trang trí Noel cao cấp với họa tiết đặc biệt, màu sắc rực rỡ. Chất liệu carton dày, bền bỉ. Dùng đựng quà tặng hoặc trang trí nhà cửa.', category: 'Hộp quà' },
-    'fs-7': { id: 'fs-7', name: 'Tất treo Giáng Sinh họa tiết đáng yêu', price: 85000, oldPrice: 100000, discount: -15, image: 'images/flash_sale_7.webp', sold: 95, progress: 76, description: 'Tất treo Giáng Sinh họa tiết đáng yêu với màu đỏ, xanh, trắng. Chất liệu cotton mềm mại, ấm áp. Treo trên cây thông, tường, cửa sổ để trang trí.', category: 'Trang trí' },
-    'fs-8': { id: 'fs-8', name: 'Set chuông vàng trang trí Giáng Sinh', price: 130000, oldPrice: 200000, discount: -35, image: 'images/flash_sale_8.webp', sold: 60, progress: 60, description: 'Set 5 chuông vàng trang trí Giáng Sinh với âm thanh rung chuông dễ nghe. Chất liệu kim loại cao cấp, bền bỉ, sáng bóng. Treo trên cây thông hoặc tường.', category: 'Trang trí' }
+    'fs-1': { id: 'fs-1', name: 'Bộ đồ chơi lego lắp ráp chủ đề Giáng Sinh', price: 200000, oldPrice: 250000, discount: -20, image: 'images/flash_sale_1.webp', sold: 205, progress: 82, description: 'Bộ đồ chơi lego cao cấp lắp ráp chủ đề Giáng Sinh, phù hợp cho trẻ em và người lớn. Gồm các mô hình trang trí Noel, cây thông, ông già Noel và nhiều chi tiết khác. Chất liệu an toàn, không độc hại.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+    'fs-2': { id: 'fs-2', name: 'Set mô hình 5 Ông già Noel dễ thương', price: 140000, oldPrice: 200000, discount: -30, image: 'images/flash_sale_2.webp', sold: 55, progress: 55, description: 'Set 5 mô hình ông già Noel dễ thương với các biểu cảm khác nhau. Chất liệu PVC cao cấp, màu sắc sáng, độc đáo. Dùng để trang trí nhà cửa, cửa hàng, bàn làm việc.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+    'fs-3': { id: 'fs-3', name: 'Cốc ly hình cây thông Giáng Sinh 3D', price: 160000, oldPrice: 200000, discount: -20, image: 'images/flash_sale_3.webp', sold: 90, progress: 72, description: 'Cốc ly hình cây thông Giáng Sinh 3D với thiết kế độc đáo, nắp và khay giữ. Chất liệu sứ cao cấp, in hình đẹp mắt, không độc hại. Phù hợp làm quà tặng.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+    'fs-4': { id: 'fs-4', name: 'Cốc ly sứ Christmas hộp quà tặng ngôi sao', price: 200000, oldPrice: 300000, discount: -33, image: 'images/flash_sale_4.webp', sold: 52, progress: 52, description: 'Cốc ly sứ cao cấp với họa tiết Christmas ngôi sao lấp lánh. Đi kèm hộp quà đẹp, in logo nhãn hiệu. Dùng đựng nước, cà phê, trà, là quà tặng tuyệt vời.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+    'fs-5': { id: 'fs-5', name: 'Đèn LED trang trí cây thông Giáng Sinh', price: 150000, oldPrice: 200000, discount: -25, image: 'images/flash_sale_5.webp', sold: 85, progress: 68, description: 'Đèn LED trang trí cây thông Giáng Sinh với 100 bóng LED sáng đa màu, dây dài 10m. Tiết kiệm điện, sáng lâu, an toàn tuyệt đối. Chế độ nhấp nháy tự động.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+    'fs-6': { id: 'fs-6', name: 'Set hộp quà trang trí Noel cao cấp', price: 180000, oldPrice: 300000, discount: -40, image: 'images/flash_sale_6.webp', sold: 45, progress: 45, description: 'Set 3 hộp quà trang trí Noel cao cấp với họa tiết đặc biệt, màu sắc rực rỡ. Chất liệu carton dày, bền bỉ. Dùng đựng quà tặng hoặc trang trí nhà cửa.', categoryId: 8, category: 'Túi, hộp đựng quà' },
+    'fs-7': { id: 'fs-7', name: 'Tất treo Giáng Sinh họa tiết đáng yêu', price: 85000, oldPrice: 100000, discount: -15, image: 'images/flash_sale_7.webp', sold: 95, progress: 76, description: 'Tất treo Giáng Sinh họa tiết đáng yêu với màu đỏ, xanh, trắng. Chất liệu cotton mềm mại, ấm áp. Treo trên cây thông, tường, cửa sổ để trang trí.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+    'fs-8': { id: 'fs-8', name: 'Set chuông vàng trang trí Giáng Sinh', price: 130000, oldPrice: 200000, discount: -35, image: 'images/flash_sale_8.webp', sold: 60, progress: 60, description: 'Set 5 chuông vàng trang trí Giáng Sinh với âm thanh rung chuông dễ nghe. Chất liệu kim loại cao cấp, bền bỉ, sáng bóng. Treo trên cây thông hoặc tường.', categoryId: 4, category: 'Quà tặng giáng sinh' }
 };
 
 // Hàm khởi tạo Flash Sale products vào localStorage nếu chưa có
 function ensureFlashSaleProductsInStorage() {
     let products = JSON.parse(localStorage.getItem('products')) || [];
     
-    // Kiểm tra xem Flash Sale products đã có trong localStorage chưa
-    const flashSaleExists = products.some(p => p.id && typeof p.id === 'string' && p.id.startsWith('fs-'));
+    // Xóa Flash Sale products cũ (có categoryId = undefined)
+    products = products.filter(p => !(p.id && typeof p.id === 'string' && p.id.startsWith('fs-') && !p.categoryId));
+    
+    // Kiểm tra xem Flash Sale products mới (có categoryId) đã có trong localStorage chưa
+    const flashSaleExists = products.some(p => p.id && typeof p.id === 'string' && p.id.startsWith('fs-') && p.categoryId);
     
     if (!flashSaleExists) {
         // Thêm các Flash Sale products vào localStorage
@@ -33,32 +43,35 @@ function ensureFlashSaleProductsInStorage() {
 function ensureDemoProductsInStorage() {
     let products = JSON.parse(localStorage.getItem('products')) || [];
     
-    // Kiểm tra xem demo products đã có không
-    const demoExists = products.some(p => p.id >= 100 && p.id <= 117);
+    // Xóa demo products cũ (ID 100-117 không có categoryId)
+    products = products.filter(p => !(p.id >= 100 && p.id <= 117 && !p.categoryId));
     
-    if (!demoExists) {
+    // Kiểm tra xem demo products mới (có categoryId) đã có không
+    const demoExistsWithCategory = products.some(p => p.id >= 100 && p.id <= 117 && p.categoryId);
+    
+    if (!demoExistsWithCategory) {
         // Khởi tạo demo products
         const demoProducts = [
             // SẢN PHẨM BÁN CHẠY (ID 100-107)
-            { id: 100, name: 'Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm', price: 180000, image: 'images/product1.webp', category: 'Trang trí', description: 'Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm dễ thương nhiều màu sắc trang trí nhà cửa, bàn làm việc. Sản phẩm làm từ chất liệu nhựa cao cấp, bền đẹp theo thời gian.' },
-            { id: 101, name: 'Mô hình tượng Shin bút chì cosplay Phật Tổ', price: 300000, oldPrice: 430000, image: 'images/product2.webp', category: 'Trang trí', description: 'Mô hình tượng Shin bút chì cosplay Phật Tổ vô cùng độc đáo và dễ thương. Sản phẩm làm từ chất liệu cao cấp, màu sắc tươi sáng.' },
-            { id: 102, name: 'Set 6 mô hình lợn hồng heo hồng đế bàn mini', price: 70000, oldPrice: 100000, image: 'images/product3.webp', category: 'Trang trí', description: 'Set 6 mô hình lợn hồng heo hồng đế bàn mini dễ thương. Thiết kế nhỏ gọn, vừa vặn trên bàn làm việc hoặc bàn học.' },
-            { id: 103, name: 'Mô hình mông Silicon Gấu Thỏ Chó Heo Rắp đồ chơi', price: 75000, oldPrice: 150000, image: 'images/product4.webp', category: 'Đồ chơi', description: 'Mô hình mông Silicon Gấu Thỏ Chó Heo Rắp đồ chơi. Chất liệu silicone mềm mại, an toàn cho trẻ em. Hình dáng dễ thương, sinh động.' },
-            { id: 104, name: 'Tượng mèo thần tài trắng khăn xanh', price: 130000, image: 'images/product5.webp', category: 'Trang trí', description: 'Tượng mèo thần tài trắng khăn xanh may mắn. Hình tượng truyền thống, mang lại may mắn và tài lộc. Thiết kế tinh tế, phù hợp để trang trí.' },
-            { id: 105, name: 'Mô hình Blind Box mèo Xiêm Thái Lan', price: 63000, image: 'images/product6.webp', category: 'Đồ chơi', description: 'Mô hình Blind Box mèo Xiêm Thái Lan độc đáo. Mỗi hộp là một bất ngờ, có thể nhận được nhiều mẫu khác nhau.' },
-            { id: 106, name: 'Set 4 mô hình mèo thần tài tròn', price: 60000, image: 'images/product7.webp', category: 'Trang trí', description: 'Set 4 mô hình mèo thần tài tròn may mắn. Bộ sưu tập 4 mèo với màu sắc khác nhau, mang lại không khí vui vẻ.' },
-            { id: 107, name: 'Mô hình 4 mèo thần tài may mắn', price: 50000, image: 'images/product8.webp', category: 'Trang trí', description: 'Mô hình 4 mèo thần tài may mắn. Tập hợp 4 chú mèo với biểu cảm dễ thương, phù hợp làm quà tặng.' },
+            { id: 100, name: 'Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm', price: 180000, image: 'images/product1.webp', category: 'Trang trí', categoryId: 5, description: 'Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm dễ thương nhiều màu sắc trang trí nhà cửa, bàn làm việc. Sản phẩm làm từ chất liệu nhựa cao cấp, bền đẹp theo thời gian.' },
+            { id: 101, name: 'Mô hình tượng Shin bút chì cosplay Phật Tổ', price: 300000, oldPrice: 430000, image: 'images/product2.webp', category: 'Trang trí', categoryId: 2, description: 'Mô hình tượng Shin bút chì cosplay Phật Tổ vô cùng độc đáo và dễ thương. Sản phẩm làm từ chất liệu cao cấp, màu sắc tươi sáng.' },
+            { id: 102, name: 'Set 6 mô hình lợn hồng heo hồng đế bàn mini', price: 70000, oldPrice: 100000, image: 'images/product3.webp', category: 'Trang trí', categoryId: 3, description: 'Set 6 mô hình lợn hồng heo hồng đế bàn mini dễ thương. Thiết kế nhỏ gọn, vừa vặn trên bàn làm việc hoặc bàn học.' },
+            { id: 103, name: 'Mô hình mông Silicon Gấu Thỏ Chó Heo Rắp đồ chơi', price: 75000, oldPrice: 150000, image: 'images/product4.webp', category: 'Đồ chơi', categoryId: 3, description: 'Mô hình mông Silicon Gấu Thỏ Chó Heo Rắp đồ chơi. Chất liệu silicone mềm mại, an toàn cho trẻ em. Hình dáng dễ thương, sinh động.' },
+            { id: 104, name: 'Tượng mèo thần tài trắng khăn xanh', price: 130000, image: 'images/product5.webp', category: 'Trang trí', categoryId: 5, description: 'Tượng mèo thần tài trắng khăn xanh may mắn. Hình tượng truyền thống, mang lại may mắn và tài lộc. Thiết kế tinh tế, phù hợp để trang trí.' },
+            { id: 105, name: 'Mô hình Blind Box mèo Xiêm Thái Lan', price: 63000, image: 'images/product6.webp', category: 'Đồ chơi', categoryId: 3, description: 'Mô hình Blind Box mèo Xiêm Thái Lan độc đáo. Mỗi hộp là một bất ngờ, có thể nhận được nhiều mẫu khác nhau.' },
+            { id: 106, name: 'Set 4 mô hình mèo thần tài tròn', price: 60000, image: 'images/product7.webp', category: 'Trang trí', categoryId: 5, description: 'Set 4 mô hình mèo thần tài tròn may mắn. Bộ sưu tập 4 mèo với màu sắc khác nhau, mang lại không khí vui vẻ.' },
+            { id: 107, name: 'Mô hình 4 mèo thần tài may mắn', price: 50000, image: 'images/product8.webp', category: 'Trang trí', categoryId: 5, description: 'Mô hình 4 mèo thần tài may mắn. Tập hợp 4 chú mèo với biểu cảm dễ thương, phù hợp làm quà tặng.' },
             // SẢN PHẨM MỚI (ID 108-117)
-            { id: 108, name: 'Set mô hình Shiba thần tài hoa anh đào', price: 150000, image: 'images/new-product1.webp', category: 'Trang trí', description: 'Set mô hình Shiba thần tài hoa anh đào độc đáo. Kết hợp giữa chó Shiba dễ thương và hoa anh đào, mang lại cảm giác mùa xuân.' },
-            { id: 109, name: 'Set 3 mô hình chú vịt vàng cosplay Phi công', price: 210000, image: 'images/new-product2.webp', category: 'Đồ chơi', description: 'Set 3 mô hình chú vịt vàng cosplay Phi công. Hình ảnh độc đáo, mang tính hài hước. Phù hợp làm quà tặng vui vẻ.' },
-            { id: 110, name: 'Set 4 mô hình cừu Dory', price: 215000, image: 'images/new-product3.webp', category: 'Đồ chơi', description: 'Set 4 mô hình cừu Dory. Bộ sưu tập 4 chú cừu với biểu cảm khác nhau, thích hợp để sưu tầm.' },
-            { id: 111, name: 'Set mô hình Phúc Lộc Thọ Thần Tài', price: 80000, image: 'images/new-product4.webp', category: 'Trang trí', description: 'Set mô hình Phúc Lộc Thọ Thần Tài. Tượng truyền thống mang ý nghĩa may mắn, tài lộc, sức khỏe. Quà tặng ý nghĩa cho gia đình.' },
-            { id: 112, name: 'Mô hình gấu dâu Lotso mini', price: 204000, oldPrice: 240000, image: 'images/new-product5.webp', category: 'Đồ chơi', description: 'Mô hình gấu dâu Lotso mini. Hình gấu bông dâu rất dễ thương, nhỏ gọn, dễ mang theo. Quà tặng hoàn hảo cho bé yêu.' },
-            { id: 113, name: 'Set 4 mô hình thần tài trắng vui vẻ', price: 183000, image: 'images/new-product6.webp', category: 'Trang trí', description: 'Set 4 mô hình thần tài trắng vui vẻ. Bộ sưu tập tượng thần tài trắng với biểu cảm tươi cười, trang trí phòng khách.' },
-            { id: 114, name: 'Mô hình gấu trúc Panda vịt vàng', price: 150000, image: 'images/new-product7.webp', category: 'Trang trí', description: 'Mô hình gấu trúc Panda vịt vàng. Sự kết hợp dễ thương giữa gấu trúc và vịt vàng, mang đến cảm giác vui vẻ.' },
-            { id: 115, name: 'Tượng mèo thần tài trắng khăn xanh (Mẫu 2)', price: 130000, image: 'images/new-product8.webp', category: 'Trang trí', description: 'Tượng mèo thần tài trắng khăn xanh mẫu 2. Phiên bản khác của mèo thần tài may mắn, khác biệt trong chi tiết thiết kế.' },
-            { id: 116, name: 'Set mô hình 5 Ông già Noel dễ thương', price: 140000, oldPrice: 200000, image: 'images/new-product9.webp', category: 'Trang trí', description: 'Set mô hình 5 Ông già Noel dễ thương. Bộ sưu tập các mẫu Ông già Noel với biểu cảm vui vẻ, phù hợp cho mùa lễ.' },
-            { id: 117, name: 'Đèn led Quả cầu tuyết Ông già Noel, Tuần lộc', price: 180000, oldPrice: 280000, image: 'images/new-product10.webp', category: 'Trang trí', description: 'Đèn led Quả cầu tuyết Ông già Noel, Tuần lộc. Đèn trang trí lễ hội với hình ảnh ấm cúng, thích hợp cho mùa giáng sinh.' }
+            { id: 108, name: 'Set mô hình Shiba thần tài hoa anh đào', price: 150000, image: 'images/new-product1.webp', category: 'Trang trí', categoryId: 5, description: 'Set mô hình Shiba thần tài hoa anh đào độc đáo. Kết hợp giữa chó Shiba dễ thương và hoa anh đào, mang lại cảm giác mùa xuân.' },
+            { id: 109, name: 'Set 3 mô hình chú vịt vàng cosplay Phi công', price: 210000, image: 'images/new-product2.webp', category: 'Đồ chơi', categoryId: 3, description: 'Set 3 mô hình chú vịt vàng cosplay Phi công. Hình ảnh độc đáo, mang tính hài hước. Phù hợp làm quà tặng vui vẻ.' },
+            { id: 110, name: 'Set 4 mô hình cừu Dory', price: 215000, image: 'images/new-product3.webp', category: 'Đồ chơi', categoryId: 3, description: 'Set 4 mô hình cừu Dory. Bộ sưu tập 4 chú cừu với biểu cảm khác nhau, thích hợp để sưu tầm.' },
+            { id: 111, name: 'Set mô hình Phúc Lộc Thọ Thần Tài', price: 80000, image: 'images/new-product4.webp', category: 'Trang trí', categoryId: 5, description: 'Set mô hình Phúc Lộc Thọ Thần Tài. Tượng truyền thống mang ý nghĩa may mắn, tài lộc, sức khỏe. Quà tặng ý nghĩa cho gia đình.' },
+            { id: 112, name: 'Mô hình gấu dâu Lotso mini', price: 204000, oldPrice: 240000, image: 'images/new-product5.webp', category: 'Đồ chơi', categoryId: 3, description: 'Mô hình gấu dâu Lotso mini. Hình gấu bông dâu rất dễ thương, nhỏ gọn, dễ mang theo. Quà tặng hoàn hảo cho bé yêu.' },
+            { id: 113, name: 'Set 4 mô hình thần tài trắng vui vẻ', price: 183000, image: 'images/new-product6.webp', category: 'Trang trí', categoryId: 5, description: 'Set 4 mô hình thần tài trắng vui vẻ. Bộ sưu tập tượng thần tài trắng với biểu cảm tươi cười, trang trí phòng khách.' },
+            { id: 114, name: 'Mô hình gấu trúc Panda vịt vàng', price: 150000, image: 'images/new-product7.webp', category: 'Trang trí', categoryId: 5, description: 'Mô hình gấu trúc Panda vịt vàng. Sự kết hợp dễ thương giữa gấu trúc và vịt vàng, mang đến cảm giác vui vẻ.' },
+            { id: 115, name: 'Tượng mèo thần tài trắng khăn xanh (Mẫu 2)', price: 130000, image: 'images/new-product8.webp', category: 'Trang trí', categoryId: 5, description: 'Tượng mèo thần tài trắng khăn xanh mẫu 2. Phiên bản khác của mèo thần tài may mắn, khác biệt trong chi tiết thiết kế.' },
+            { id: 116, name: 'Set mô hình 5 Ông già Noel dễ thương', price: 140000, oldPrice: 200000, image: 'images/new-product9.webp', category: 'Trang trí', categoryId: 4, description: 'Set mô hình 5 Ông già Noel dễ thương. Bộ sưu tập các mẫu Ông già Noel với biểu cảm vui vẻ, phù hợp cho mùa lễ.' },
+            { id: 117, name: 'Đèn led Quả cầu tuyết Ông già Noel, Tuần lộc', price: 180000, oldPrice: 280000, image: 'images/new-product10.webp', category: 'Trang trí', categoryId: 4, description: 'Đèn led Quả cầu tuyết Ông già Noel, Tuần lộc. Đèn trang trí lễ hội với hình ảnh ấm cúng, thích hợp cho mùa giáng sinh.' }
         ];
         demoProducts.forEach(product => {
             products.push(product);
@@ -94,6 +107,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load đánh giá sản phẩm
     if (productId) {
         loadProductReviews(productId);
+        // Cập nhật rating display và sản phẩm liên quan
+        setTimeout(() => {
+            updateProductRatingDisplay(productId);
+            loadRelatedProducts(productId);
+        }, 100);
     }
 });
 
@@ -142,6 +160,7 @@ function loadProductDataFromLocalStorage(productId) {
             price: product.price,
             image: product.image,
             category: product.category || 'Không xác định',
+            categoryId: product.categoryId || null,
             description: product.description || 'Mô tả sản phẩm',
             oldPrice: product.oldPrice || product.price
         };
@@ -193,9 +212,12 @@ function updatePageWithFlashSaleData(product) {
         const descriptionElement = document.querySelector('.product-description');
         if (descriptionElement) descriptionElement.textContent = product.description;
         
-        // Cập nhật danh mục
+        // Cập nhật danh mục - lấy tên từ categoryId
         const categoryLink = document.querySelector('.product-category a');
-        if (categoryLink) categoryLink.textContent = product.category;
+        if (categoryLink) {
+            const categoryName = product.categoryId ? getCategoryNameById(product.categoryId) : product.category;
+            categoryLink.textContent = categoryName;
+        }
         
         // Cập nhật breadcrumb
         const breadcrumb = document.querySelector('.breadcrumb-product');
@@ -233,9 +255,12 @@ function updatePageWithProductData(product) {
         const descriptionElement = document.querySelector('.product-description');
         if (descriptionElement) descriptionElement.textContent = product.description;
         
-        // Cập nhật danh mục
+        // Cập nhật danh mục - lấy tên từ categoryId
         const categoryLink = document.querySelector('.product-category a');
-        if (categoryLink) categoryLink.textContent = product.category;
+        if (categoryLink) {
+            const categoryName = product.categoryId ? getCategoryNameById(product.categoryId) : product.category;
+            categoryLink.textContent = categoryName;
+        }
         
         // Cập nhật breadcrumb
         const breadcrumb = document.querySelector('.breadcrumb-product');
@@ -469,4 +494,138 @@ function loadProductReviews(productId) {
     });
     
     container.innerHTML = reviewsHTML;
+}
+
+// Hàm lấy rating trung bình từ localStorage
+function getProductRating(productId) {
+    const allReviews = JSON.parse(localStorage.getItem('productReviews') || '[]');
+    const productReviews = allReviews.filter(r => r.productId == productId);
+    
+    if (productReviews.length === 0) {
+        return { rating: 0, count: 0 };
+    }
+    
+    const avgRating = productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length;
+    return {
+        rating: parseFloat(avgRating.toFixed(1)),
+        count: productReviews.length
+    };
+}
+
+// Hàm cập nhật rating sao trên trang
+function updateProductRatingDisplay(productId) {
+    const ratingData = getProductRating(productId);
+    const ratingDiv = document.querySelector('.product-rating');
+    
+    if (!ratingDiv) return;
+    
+    const starsHTML = Array(5).fill(0).map((_, i) => {
+        if (i < Math.floor(ratingData.rating)) {
+            return '<i class="fas fa-star" style="color: #ffb100;"></i>';
+        } else if (i < Math.ceil(ratingData.rating) && ratingData.rating % 1 !== 0) {
+            return '<i class="fas fa-star-half-alt" style="color: #ffb100;"></i>';
+        } else {
+            return '<i class="fas fa-star" style="color: #ddd;"></i>';
+        }
+    }).join('');
+    
+    const starsDiv = ratingDiv.querySelector('.stars');
+    const reviewCountDiv = ratingDiv.querySelector('.review-count');
+    
+    if (starsDiv) {
+        starsDiv.innerHTML = starsHTML;
+    }
+    if (reviewCountDiv) {
+        if (ratingData.count > 0) {
+            reviewCountDiv.textContent = `${ratingData.rating} (${ratingData.count} đánh giá)`;
+        } else {
+            reviewCountDiv.textContent = `0 (Chưa có đánh giá)`;
+        }
+    }
+}
+
+// Hàm lấy sản phẩm liên quan từ localStorage
+function loadRelatedProducts(currentProductId) {
+    const products = JSON.parse(localStorage.getItem('products') || '[]');
+    const currentProduct = products.find(p => p.id == currentProductId);
+    
+    if (!currentProduct) return;
+    
+    // Tìm sản phẩm cùng categoryId, loại trừ sản phẩm hiện tại, lấy 4 sản phẩm
+    const relatedProducts = products
+        .filter(p => p.categoryId === currentProduct.categoryId && p.id != currentProductId)
+        .slice(0, 4);
+    
+    const grid = document.querySelector('.related-products-grid');
+    if (!grid) return;
+    
+    if (relatedProducts.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 20px; color: #999;">Không có sản phẩm liên quan</p>';
+        return;
+    }
+    
+    let html = '';
+    relatedProducts.forEach(product => {
+        // Tính toán % giảm giá nếu có
+        const discount = product.oldPrice ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
+        
+        html += `
+            <div class="product-item">
+                <div class="product-image">
+                    <a href="product-detail.html?id=${product.id}">
+                        <img src="${product.image}" alt="${product.name}" onerror="this.src='images/default-product.jpg'">
+                        ${product.oldPrice ? `<span class="sale-tag">-${discount}%</span>` : ''}
+                    </a>
+                    <div class="product-buttons">
+                        <button class="add-to-cart" data-product-id="${product.id}"><i class="fa fa-shopping-cart"></i></button>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name"><a href="product-detail.html?id=${product.id}">${product.name}</a></h3>
+                    <div class="product-price">
+                        <span class="current-price">${product.price.toLocaleString('vi-VN')}₫</span>
+                        ${product.oldPrice ? `<span class="old-price">${product.oldPrice.toLocaleString('vi-VN')}₫</span>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    grid.innerHTML = html;
+    
+    // Thêm event listener cho các nút "Thêm vào giỏ hàng"
+    grid.querySelectorAll('.add-to-cart').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productId = this.getAttribute('data-product-id');
+            addToCartFromRelated(productId);
+        });
+    });
+}
+
+// Hàm thêm sản phẩm vào giỏ từ sản phẩm liên quan
+function addToCartFromRelated(productId) {
+    const products = JSON.parse(localStorage.getItem('products') || '[]');
+    const product = products.find(p => p.id == productId);
+    
+    if (!product) return;
+    
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existingItem = cart.find(item => item.id == productId);
+    
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            quantity: 1
+        });
+    }
+    
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+    alert(`"${product.name}" đã được thêm vào giỏ hàng!`);
 }
