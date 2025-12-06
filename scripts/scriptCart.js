@@ -78,7 +78,21 @@ function updateQuantity(index, quantity) {
     quantity = parseInt(quantity); 
     if (isNaN(quantity) || quantity < 1) quantity = 1;     // Kiểm tra và xác nhận giá trị nhập vào
     
-    cart[index].quantity = quantity;     // Cập nhật số lượng sản phẩm trong giỏ hàng
+    // Kiểm tra tồn kho
+    const products = JSON.parse(localStorage.getItem('products') || '[]');
+    const currentProduct = products.find(p => String(p.id) === String(cart[index].id));
+    const stock = currentProduct ? parseInt(currentProduct.stock) || 0 : 0;
+    
+    if (quantity > stock) {
+        alert(`Tồn kho không đủ! Chỉ còn ${stock} sản phẩm.`);
+        // Đặt lại số lượng bằng stock hiện tại
+        cart[index].quantity = Math.min(cart[index].quantity, stock);
+        if (cart[index].quantity === 0) {
+            cart.splice(index, 1);
+        }
+    } else {
+        cart[index].quantity = quantity;     // Cập nhật số lượng sản phẩm trong giỏ hàng
+    }
     
     localStorage.setItem('cart', JSON.stringify(cart));     // Lưu lại giỏ hàng vào localStorage
     updateCartDisplay();

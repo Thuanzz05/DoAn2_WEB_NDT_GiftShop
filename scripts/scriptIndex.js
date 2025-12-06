@@ -119,13 +119,32 @@ window.onscroll = function() {
 
 // Thêm sản phẩm vào giỏ hàng
 function addToCart(product) {
+    // Lấy stock từ localStorage, không phải từ object product
+    const products = JSON.parse(localStorage.getItem('products') || '[]');
+    const productInStorage = products.find(p => String(p.id) === String(product.id) || p.name === product.name);
+    const stock = productInStorage ? parseInt(productInStorage.stock) || 0 : 0;
+    
+    if (stock === 0) {
+        alert('Sản phẩm đã hết hàng! Không thể thêm vào giỏ hàng.');
+        return;
+    }
+    
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    const existingProductIndex = cart.findIndex(item => item.id === product.id);
+    const existingProductIndex = cart.findIndex(item => String(item.id) === String(product.id));
 
     if (existingProductIndex !== -1) {
-        cart[existingProductIndex].quantity++;
+        const newQuantity = cart[existingProductIndex].quantity + 1;
+        if (newQuantity > stock) {
+            alert(`Tồn kho không đủ! Chỉ còn ${stock} sản phẩm.`);
+            return;
+        }
+        cart[existingProductIndex].quantity = newQuantity;
     } else {
+        if (1 > stock) {
+            alert(`Tồn kho không đủ! Chỉ còn ${stock} sản phẩm.`);
+            return;
+        }
         cart.push(product);
     }
 
@@ -243,20 +262,35 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // 2. XỬ LÝ THÊM SẢN PHẨM VÀO GIỎ HÀNG - SẢN PHẨM BÁN CHẠY & SẢN PHẨM MỚI
-    const addToCartButtons = document.querySelectorAll('.add-to-cart');
-    
-    addToCartButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
+    // 2. EVENT DELEGATION FOR ADD-TO-CART BUTTONS (works for both static and dynamic elements)
+    document.addEventListener('click', function(e) {
+        const button = e.target.closest('.add-to-cart');
+        if (!button) return;
+        
+        e.preventDefault();
+        
+        // Ưu tiên: Nếu button có data-product-id (bestseller/new products), sử dụng nó
+        let productId = button.getAttribute('data-product-id');
+        
+        if (productId) {
+            // Trường hợp 1: Button có data-product-id (bestseller/new products render tĩnh + admin products)
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const product = products.find(p => String(p.id) === String(productId));
             
-            const productItem = this.closest('.product-item') || this.closest('.new-product-item');
+            if (product) {
+                addToCart(product);
+            } else {
+                alert('Sản phẩm không tồn tại trong hệ thống!');
+            }
+        } else {
+            // Trường hợp 2: Lấy từ HTML (category-products page)
+            const productItem = button.closest('.product-item') || button.closest('.new-product-item');
             
             if (productItem) {
                 const productNameElement = productItem.querySelector('.product-name a') || 
                                          productItem.querySelector('.new-product-name a');
                 
                 if (!productNameElement) {
-                    console.error('Không tìm thấy tên sản phẩm');
                     return;
                 }
                 
@@ -265,27 +299,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 const priceElement = productItem.querySelector('.current-price');
                 
                 if (!priceElement) {
-                    console.error('Không tìm thấy giá sản phẩm');
                     return;
                 }
                 
                 const priceText = priceElement.textContent;
                 const productPrice = parseInt(priceText.replace(/\D/g, ''));
-                const productId = productName.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+                
+                // Tìm sản phẩm trong localStorage bằng tên để lấy ID gốc
+                const products = JSON.parse(localStorage.getItem('products') || '[]');
+                const productInStorage = products.find(p => p.name === productName);
+                const productIdFromName = productInStorage ? productInStorage.id : productName.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
                 
                 const product = {
-                    id: productId,
+                    id: productIdFromName,
                     name: productName,
                     price: productPrice,
                     image: productImage,
                     quantity: 1
                 };
                 
-                addToCart(product);
-            } else {
-                console.error('Không tìm thấy thông tin sản phẩm');
+                if (productInStorage) {
+                    addToCart(product);
+                } else {
+                    alert('Sản phẩm không tồn tại trong hệ thống. Vui lòng tải lại trang.');
+                }
             }
-        });
+        }
     });
 
     // 3. XỬ LÝ FLASH SALE CAROUSEL
@@ -325,60 +364,8 @@ document.addEventListener('DOMContentLoaded', function() {
         nextBtn.addEventListener('click', nextSlide);
     }
 
-    // 4. XỬ LÝ THÊM SẢN PHẨM FLASH SALE VÀO GIỎ HÀNG
-    const flashSaleAddToCartBtns = document.querySelectorAll('.fs-add-to-cart-btn');
-    
-    flashSaleAddToCartBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const productCard = this.closest('.fs-product-card');
-            if (!productCard) {
-                console.error('Không tìm thấy fs-product-card');
-                return;
-            }
-
-            const productNameElement = productCard.querySelector('.fs-product-name');
-            const productImageElement = productCard.querySelector('.fs-product-image');
-            const priceElement = productCard.querySelector('.fs-current-price');
-            
-            if (!productNameElement || !productImageElement || !priceElement) {
-                console.error('Không tìm thấy các element cần thiết trong Flash Sale card');
-                return;
-            }
-
-            const productName = productNameElement.textContent.trim();
-            const productImage = productImageElement.src;
-            const priceText = priceElement.textContent;
-            const productPrice = parseInt(priceText.replace(/\D/g, ''));
-            const productId = productName.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
-            
-            const product = {
-                id: productId,
-                name: productName,
-                price: productPrice,
-                image: productImage,
-                quantity: 1
-            };
-            
-            addToCart(product);
-
-            // // Hiệu ứng visual feedback
-            // const originalContent = this.innerHTML;
-            // this.innerHTML = '<i class="fas fa-check"></i> Đã thêm!';
-            // this.style.background = '#28a745';
-            // this.style.borderColor = '#28a745';
-            // this.style.color = 'white';
-            
-            // setTimeout(() => {
-            //     this.innerHTML = originalContent;
-            //     this.style.background = 'transparent';
-            //     this.style.borderColor = '#c94a52';
-            //     this.style.color = '#c94a52';
-            // }, 2000);
-        });
-    });
+    // 4. FLASH SALE HANDLER - NOW HANDLED BY scriptFlashSale.js
+    // (Removed buggy handler that was creating slug IDs instead of using data-product-id)
     
     // 5. KHỞI TẠO CAROUSEL
     updateSlide();
@@ -700,11 +687,9 @@ function khoiTaoSanPhamCu() {
         const merged = [...existingProducts, ...missing];
         const normalized = _dedupeProducts(merged);
         localStorage.setItem('products', JSON.stringify(normalized));
-        console.log(`Added ${missing.length} missing demo product(s) to localStorage.`);
     } else {
         // ensure localStorage is deduped
         localStorage.setItem('products', JSON.stringify(existingProducts));
-        console.log('Demo products already present; ensured deduplication.');
     }
 }
 
@@ -768,7 +753,6 @@ function taiSanPhamTuAdmin() {
     existingNodes.forEach(node => node.remove());
 
     if (newProducts.length === 0) {
-        console.log('No new products to display');
         return;
     }
 
@@ -782,10 +766,8 @@ function taiSanPhamTuAdmin() {
             el.classList.add('new-product-added');
             el.setAttribute('data-product-id-new', product.id);
             newProductGrid.insertBefore(el, newProductGrid.firstChild);
-            console.log('Inserted new product into DOM:', product.id, product.name);
         }
     });
-    console.log('Added new products to new products section');
 }
 
 // Lắng nghe sự thay đổi localStorage (ứng dụng khi thêm sản phẩm trên tab/admin khác)
@@ -844,32 +826,6 @@ function createNewProductCard(product) {
         </div>
     `;
 }
-
-// Xử lý thêm vào giỏ hàng cho sản phẩm động
-document.addEventListener('click', function(e) {
-    if (e.target.closest('.add-to-cart')) {
-        const button = e.target.closest('.add-to-cart');
-        const productId = button.getAttribute('data-product-id');
-        
-        if (productId) {
-            const products = JSON.parse(localStorage.getItem('products') || '[]');
-            const product = products.find(p => p.id == productId);
-            
-            if (product) {
-                const cartProduct = {
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image,
-                    quantity: 1
-                };
-                
-                addToCart(cartProduct);
-            }
-        }
-    }
-});
-
 // Khởi tạo Flash Sale products
 function khoiTaoFlashSaleProducts() {
     let products = JSON.parse(localStorage.getItem('products')) || [];
@@ -882,14 +838,14 @@ function khoiTaoFlashSaleProducts() {
     
     if (!flashSaleExists) {
         const flashSaleProducts = [
-            { id: 'fs-1', name: 'Bộ đồ chơi lego lắp ráp chủ đề Giáng Sinh', price: 200000, oldPrice: 250000, discount: -20, image: 'images/flash_sale_1.webp', sold: 205, progress: 82, description: 'Bộ đồ chơi lego cao cấp lắp ráp chủ đề Giáng Sinh, phù hợp cho trẻ em và người lớn. Gồm các mô hình trang trí Noel, cây thông, ông già Noel và nhiều chi tiết khác. Chất liệu an toàn, không độc hại.', categoryId: 4, category: 'Quà tặng giáng sinh' },
-            { id: 'fs-2', name: 'Set mô hình 5 Ông già Noel dễ thương', price: 140000, oldPrice: 200000, discount: -30, image: 'images/flash_sale_2.webp', sold: 55, progress: 55, description: 'Set 5 mô hình ông già Noel dễ thương với các biểu cảm khác nhau. Chất liệu PVC cao cấp, màu sắc sáng, độc đáo. Dùng để trang trí nhà cửa, cửa hàng, bàn làm việc.', categoryId: 4, category: 'Quà tặng giáng sinh' },
-            { id: 'fs-3', name: 'Cốc ly hình cây thông Giáng Sinh 3D', price: 160000, oldPrice: 200000, discount: -20, image: 'images/flash_sale_3.webp', sold: 90, progress: 72, description: 'Cốc ly hình cây thông Giáng Sinh 3D với thiết kế độc đáo, nắp và khay giữ. Chất liệu sứ cao cấp, in hình đẹp mắt, không độc hại. Phù hợp làm quà tặng.', categoryId: 4, category: 'Quà tặng giáng sinh' },
-            { id: 'fs-4', name: 'Cốc ly sứ Christmas hộp quà tặng ngôi sao', price: 200000, oldPrice: 300000, discount: -33, image: 'images/flash_sale_4.webp', sold: 52, progress: 52, description: 'Cốc ly sứ cao cấp với họa tiết Christmas ngôi sao lấp lánh. Đi kèm hộp quà đẹp, in logo nhãn hiệu. Dùng đựng nước, cà phê, trà, là quà tặng tuyệt vời.', categoryId: 4, category: 'Quà tặng giáng sinh' },
-            { id: 'fs-5', name: 'Đèn LED trang trí cây thông Giáng Sinh', price: 150000, oldPrice: 200000, discount: -25, image: 'images/flash_sale_5.webp', sold: 85, progress: 68, description: 'Đèn LED trang trí cây thông Giáng Sinh với 100 bóng LED sáng đa màu, dây dài 10m. Tiết kiệm điện, sáng lâu, an toàn tuyệt đối. Chế độ nhấp nháy tự động.', categoryId: 4, category: 'Quà tặng giáng sinh' },
-            { id: 'fs-6', name: 'Set hộp quà trang trí Noel cao cấp', price: 180000, oldPrice: 300000, discount: -40, image: 'images/flash_sale_6.webp', sold: 45, progress: 45, description: 'Set 3 hộp quà trang trí Noel cao cấp với họa tiết đặc biệt, màu sắc rực rỡ. Chất liệu carton dày, bền bỉ. Dùng đựng quà tặng hoặc trang trí nhà cửa.', categoryId: 8, category: 'Túi, hộp đựng quà' },
-            { id: 'fs-7', name: 'Tất treo Giáng Sinh họa tiết đáng yêu', price: 85000, oldPrice: 100000, discount: -15, image: 'images/flash_sale_7.webp', sold: 95, progress: 76, description: 'Tất treo Giáng Sinh họa tiết đáng yêu với màu đỏ, xanh, trắng. Chất liệu cotton mềm mại, ấm áp. Treo trên cây thông, tường, cửa sổ để trang trí.', categoryId: 4, category: 'Quà tặng giáng sinh' },
-            { id: 'fs-8', name: 'Set chuông vàng trang trí Giáng Sinh', price: 130000, oldPrice: 200000, discount: -35, image: 'images/flash_sale_8.webp', sold: 60, progress: 60, description: 'Set 5 chuông vàng trang trí Giáng Sinh với âm thanh rung chuông dễ nghe. Chất liệu kim loại cao cấp, bền bỉ, sáng bóng. Treo trên cây thông hoặc tường.', categoryId: 4, category: 'Quà tặng giáng sinh' }
+            { id: 'fs-1', name: 'Bộ đồ chơi lego lắp ráp chủ đề Giáng Sinh', price: 200000, oldPrice: 250000, discount: -20, image: 'images/flash_sale_1.webp', sold: 20, progress: 20, stock: 100, description: 'Bộ đồ chơi lego cao cấp lắp ráp chủ đề Giáng Sinh, phù hợp cho trẻ em và người lớn. Gồm các mô hình trang trí Noel, cây thông, ông già Noel và nhiều chi tiết khác. Chất liệu an toàn, không độc hại.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+            { id: 'fs-2', name: 'Set mô hình 5 Ông già Noel dễ thương', price: 140000, oldPrice: 200000, discount: -30, image: 'images/flash_sale_2.webp', sold: 25, progress: 25, stock: 100, description: 'Set 5 mô hình ông già Noel dễ thương với các biểu cảm khác nhau. Chất liệu PVC cao cấp, màu sắc sáng, độc đáo. Dùng để trang trí nhà cửa, cửa hàng, bàn làm việc.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+            { id: 'fs-3', name: 'Cốc ly hình cây thông Giáng Sinh 3D', price: 160000, oldPrice: 200000, discount: -20, image: 'images/flash_sale_3.webp', sold: 35, progress: 35, stock: 100, description: 'Cốc ly hình cây thông Giáng Sinh 3D với thiết kế độc đáo, nắp và khay giữ. Chất liệu sứ cao cấp, in hình đẹp mắt, không độc hại. Phù hợp làm quà tặng.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+            { id: 'fs-4', name: 'Cốc ly sứ Christmas hộp quà tặng ngôi sao', price: 200000, oldPrice: 300000, discount: -33, image: 'images/flash_sale_4.webp', sold: 18, progress: 18, stock: 100, description: 'Cốc ly sứ cao cấp với họa tiết Christmas ngôi sao lấp lánh. Đi kèm hộp quà đẹp, in logo nhãn hiệu. Dùng đựng nước, cà phê, trà, là quà tặng tuyệt vời.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+            { id: 'fs-5', name: 'Đèn LED trang trí cây thông Giáng Sinh', price: 150000, oldPrice: 200000, discount: -25, image: 'images/flash_sale_5.webp', sold: 32, progress: 32, stock: 100, description: 'Đèn LED trang trí cây thông Giáng Sinh với 100 bóng LED sáng đa màu, dây dài 10m. Tiết kiệm điện, sáng lâu, an toàn tuyệt đối. Chế độ nhấp nháy tự động.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+            { id: 'fs-6', name: 'Set hộp quà trang trí Noel cao cấp', price: 180000, oldPrice: 300000, discount: -40, image: 'images/flash_sale_6.webp', sold: 28, progress: 28, stock: 100, description: 'Set 3 hộp quà trang trí Noel cao cấp với họa tiết đặc biệt, màu sắc rực rỡ. Chất liệu carton dày, bền bỉ. Dùng đựng quà tặng hoặc trang trí nhà cửa.', categoryId: 8, category: 'Túi, hộp đựng quà' },
+            { id: 'fs-7', name: 'Tất treo Giáng Sinh họa tiết đáng yêu', price: 85000, oldPrice: 100000, discount: -15, image: 'images/flash_sale_7.webp', sold: 42, progress: 42, stock: 100, description: 'Tất treo Giáng Sinh họa tiết đáng yêu với màu đỏ, xanh, trắng. Chất liệu cotton mềm mại, ấm áp. Treo trên cây thông, tường, cửa sổ để trang trí.', categoryId: 4, category: 'Quà tặng giáng sinh' },
+            { id: 'fs-8', name: 'Set chuông vàng trang trí Giáng Sinh', price: 130000, oldPrice: 200000, discount: -35, image: 'images/flash_sale_8.webp', sold: 31, progress: 31, stock: 100, description: 'Set 5 chuông vàng trang trí Giáng Sinh với âm thanh rung chuông dễ nghe. Chất liệu kim loại cao cấp, bền bỉ, sáng bóng. Treo trên cây thông hoặc tường.', categoryId: 4, category: 'Quà tặng giáng sinh' }
         ];
         
         flashSaleProducts.forEach(product => {

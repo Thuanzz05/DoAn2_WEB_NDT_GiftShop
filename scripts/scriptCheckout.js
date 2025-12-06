@@ -202,6 +202,24 @@ function processOrder() {
         alert('Giỏ hàng của bạn đang trống!');
         return;
     }
+    
+    // Validate tồn kho trước khi xử lý đơn hàng
+    const products = JSON.parse(localStorage.getItem('products') || '[]');
+    
+    for (let cartItem of cart) {
+        const product = products.find(p => String(p.id) === String(cartItem.id));
+        
+        if (!product) {
+            alert(`Sản phẩm ${cartItem.name} không tồn tại trong hệ thống!`);
+            console.error(`Product not found for cart item:`, cartItem);
+            return;
+        }
+        const stock = parseInt(product.stock) || 0;
+        if (cartItem.quantity > stock) {
+            alert(`Tồn kho của "${cartItem.name}" không đủ! Chỉ còn ${stock} sản phẩm. Vui lòng cập nhật giỏ hàng.`);
+            return;
+        }
+    }
 
     // Tính tổng tiền
     let subtotal = 0;
@@ -252,6 +270,9 @@ function processOrder() {
 
     // Lưu đơn hàng vào localStorage
     saveOrder(newOrder);
+    
+    // Trừ tồn kho cho các sản phẩm được mua
+    reduceStockForOrder(cart);
     
     // Xóa giỏ hàng và mã giảm giá sau khi đặt hàng thành công
     localStorage.removeItem('cart');
@@ -374,4 +395,23 @@ function applyCheckoutCoupon() {
     
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     updateOrderSummary(cart);
+}
+
+// Function trừ tồn kho khi mua hàng
+function reduceStockForOrder(cart) {
+    const products = JSON.parse(localStorage.getItem('products') || '[]');
+    
+    cart.forEach(cartItem => {
+        // Tìm sản phẩm trong danh sách - dùng String() để so sánh chính xác
+        const productIndex = products.findIndex(p => String(p.id) === String(cartItem.id));
+        
+        if (productIndex !== -1) {
+            const currentStock = parseInt(products[productIndex].stock) || 0;
+            const newStock = Math.max(0, currentStock - cartItem.quantity);
+            products[productIndex].stock = newStock;
+        }
+    });
+    
+    // Lưu lại danh sách sản phẩm với tồn kho mới
+    localStorage.setItem('products', JSON.stringify(products));
 }

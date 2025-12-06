@@ -43,12 +43,12 @@ function taiSanPham() {
             <td>${product.name}</td>
             <td>${categoryName}</td>
             <td>${parseInt(product.price).toLocaleString('vi-VN')}₫</td>
-            <td>${product.stock}</td>
+            <td>${product.stock || 0}</td>
             <td>
-                <button class="btn-icon" onclick="suaSanPham(${product.id})" title="Sửa">
+                <button class="btn-icon" onclick="suaSanPham('${product.id}')" title="Sửa">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn-icon btn-danger" onclick="xoaSanPham(${product.id})" title="Xóa">
+                <button class="btn-icon btn-danger" onclick="xoaSanPham('${product.id}')" title="Xóa">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
@@ -101,11 +101,12 @@ function luuSanPham() {
     let products = JSON.parse(localStorage.getItem('products') || '[]');
     
     if (id) {
-        // Cập nhật sản phẩm
-        const index = products.findIndex(p => p.id == id);
+        // Cập nhật sản phẩm - dùng String() để so sánh chính xác
+        const index = products.findIndex(p => String(p.id) === String(id));
         if (index !== -1) {
+            // Giữ nguyên ID (có thể là số hoặc string như "fs-1")
             products[index] = {
-                id: parseInt(id),
+                id: isNaN(parseInt(id)) ? id : parseInt(id),
                 name: name,
                 categoryId: parseInt(categoryId),
                 price: parseInt(price),
@@ -114,11 +115,13 @@ function luuSanPham() {
                 description: description
             };
             alert('Đã cập nhật sản phẩm thành công!');
+        } else {
+            alert('Không tìm thấy sản phẩm để cập nhật!');
         }
     } else {
         // Thêm sản phẩm mới
         // Lấy ID max từ sản phẩm admin (ID < 100), đảm bảo không bị chồng ID với demo
-        const adminProducts = products.filter(p => p.id < 100);
+        const adminProducts = products.filter(p => typeof p.id === 'number' && p.id < 100);
         const newId = adminProducts.length > 0 ? Math.max(...adminProducts.map(p => p.id)) + 1 : 1;
         
         products.push({
@@ -149,7 +152,7 @@ function luuSanPham() {
   */
 function suaSanPham(id) {
     const products = JSON.parse(localStorage.getItem('products') || '[]');
-    const product = products.find(p => p.id == id);
+    const product = products.find(p => String(p.id) === String(id));
     
     if (!product) {
         alert('Không tìm thấy sản phẩm!');
@@ -161,7 +164,7 @@ function suaSanPham(id) {
     document.getElementById('product-name').value = product.name;
     document.getElementById('product-category').value = product.categoryId;
     document.getElementById('product-price').value = product.price;
-    document.getElementById('product-stock').value = product.stock;
+    document.getElementById('product-stock').value = product.stock || 0;
     document.getElementById('product-image').value = product.image || '';
     document.getElementById('product-description').value = product.description || '';
     
@@ -183,7 +186,7 @@ function xoaSanPham(id) {
     }
     
     let products = JSON.parse(localStorage.getItem('products') || '[]');
-    products = products.filter(p => p.id != id);
+    products = products.filter(p => String(p.id) !== String(id));
     
     localStorage.setItem('products', JSON.stringify(products));
     
