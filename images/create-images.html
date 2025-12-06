@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Images</title>
+</head>
+<body>
+    <canvas id="canvas1" width="400" height="300"></canvas>
+    <canvas id="canvas2" width="400" height="300"></canvas>
+    <canvas id="canvas3" width="400" height="300"></canvas>
+    
+    <script>
+        // Create image 1 - Dedication (Heart)
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext('2d');
+        
+        // Gradient background
+        const gradient1 = ctx1.createLinearGradient(0, 0, 0, 300);
+        gradient1.addColorStop(0, '#ff6b6b');
+        gradient1.addColorStop(1, '#c92a2a');
+        ctx1.fillStyle = gradient1;
+        ctx1.fillRect(0, 0, 400, 300);
+        
+        // Draw heart
+        ctx1.fillStyle = 'white';
+        ctx1.beginPath();
+        ctx1.moveTo(200, 120);
+        ctx1.bezierCurveTo(200, 110, 190, 100, 180, 100);
+        ctx1.bezierCurveTo(160, 100, 150, 115, 150, 130);
+        ctx1.bezierCurveTo(150, 155, 180, 180, 200, 200);
+        ctx1.bezierCurveTo(220, 180, 250, 155, 250, 130);
+        ctx1.bezierCurveTo(250, 115, 240, 100, 220, 100);
+        ctx1.bezierCurveTo(210, 100, 200, 110, 200, 120);
+        ctx1.fill();
+        
+        // Download
+        canvas1.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'value-dedication.webp';
+            a.click();
+        }, 'image/webp');
+        
+        // Create image 2 - Quality (Gem)
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas2.getContext('2d');
+        
+        const gradient2 = ctx2.createLinearGradient(0, 0, 0, 300);
+        gradient2.addColorStop(0, '#ff6b6b');
+        gradient2.addColorStop(1, '#c92a2a');
+        ctx2.fillStyle = gradient2;
+        ctx2.fillRect(0, 0, 400, 300);
+        
+        // Draw gem
+        ctx2.fillStyle = 'white';
+        ctx2.beginPath();
+        ctx2.moveTo(200, 60);
+        ctx2.lineTo(280, 130);
+        ctx2.lineTo(240, 200);
+        ctx2.lineTo(200, 160);
+        ctx2.lineTo(160, 200);
+        ctx2.lineTo(120, 130);
+        ctx2.closePath();
+        ctx2.fill();
+        
+        ctx2.strokeStyle = '#ffb3b3';
+        ctx2.lineWidth = 2;
+        ctx2.stroke();
+        
+        canvas2.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'value-quality.webp';
+            a.click();
+        }, 'image/webp');
+        
+        // Create image 3 - Innovation (Lightbulb)
+        const canvas3 = document.getElementById('canvas3');
+        const ctx3 = canvas3.getContext('2d');
+        
+        const gradient3 = ctx3.createLinearGradient(0, 0, 0, 300);
+        gradient3.addColorStop(0, '#ff6b6b');
+        gradient3.addColorStop(1, '#c92a2a');
+        ctx3.fillStyle = gradient3;
+        ctx3.fillRect(0, 0, 400, 300);
+        
+        // Draw lightbulb
+        ctx3.fillStyle = 'white';
+        ctx3.beginPath();
+        ctx3.arc(200, 110, 50, 0, Math.PI * 2);
+        ctx3.fill();
+        
+        // Bulb bottom
+        ctx3.fillRect(180, 150, 40, 15);
+        ctx3.fillRect(185, 165, 30, 10);
+        ctx3.fillRect(190, 175, 20, 5);
+        
+        canvas3.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'value-innovation.webp';
+            a.click();
+        }, 'image/webp');
+        
+        alert('Images are being downloaded. Save them to: d:\\Course\\DoAn2_Web\\images\\');
+    </script>
+</body>
+</html>
