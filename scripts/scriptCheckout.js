@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!userData) {
         alert('Vui lòng đăng nhập để đặt hàng!');
-        // Lưu URL hiện tại để redirect về sau khi đăng nhập
         localStorage.setItem('redirectAfterLogin', 'checkout.html');
         window.location.href = 'login-register.html';
         return;
@@ -26,8 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            if (validateForm()) {             // Kiểm tra thông tin form
-                processOrder(); // Xử lý đặt hàng
+            if (validateForm()) {      
+                processOrder(); 
             }
         });
     }
@@ -60,13 +59,13 @@ function updateOrderSummary(cart) {
     const productSummary = document.querySelector('.product-summary');
     if (!productSummary) return;
     
-    productSummary.innerHTML = '';     // Xóa nội dung hiện tại
+    productSummary.innerHTML = '';    
     
-    let subtotal = 0;    // Tổng tiền tạm tính
+    let subtotal = 0;   
     
     // Thêm từng sản phẩm vào phần tóm tắt đơn hàng
     cart.forEach(item => {
-        const itemTotal = item.price * item.quantity;         // Tính tổng giá trị của mỗi sản phẩm
+        const itemTotal = item.price * item.quantity;        
         subtotal += itemTotal;
         
         // Tạo HTML cho mỗi sản phẩm
@@ -144,7 +143,6 @@ function validateForm() {
     const street = document.getElementById('street').value.trim();
     const chkAgree = document.getElementById('chkAgree').checked;
 
-    // Validate các trường bắt buộc
     if (!fullname) {
         alert('Vui lòng nhập họ tên người nhận!');
         return false;
@@ -155,7 +153,6 @@ function validateForm() {
         return false;
     }
 
-    // Validate định dạng số điện thoại
     const phoneRegex = /0\d{9}/;
     if (!phoneRegex.test(phone)) {
         alert('Số điện thoại không hợp lệ! Vui lòng nhập theo định dạng 0xxxxxxxxx');
@@ -223,9 +220,7 @@ function processOrder() {
 
     // Tính tổng tiền
     let subtotal = 0;
-    cart.forEach(item => {
-        subtotal += item.price * item.quantity;
-    });
+    cart.forEach(item => { subtotal += item.price * item.quantity;});
     const shipping = subtotal >= 500000 ? 0 : 30000;
     
     // Tính giảm giá từ mã đã áp dụng
@@ -268,20 +263,12 @@ function processOrder() {
         joinDate: new Date().toISOString().split('T')[0]
     };
 
-    // Lưu đơn hàng vào localStorage
     saveOrder(newOrder);
     
-    // Trừ tồn kho cho các sản phẩm được mua
     reduceStockForOrder(cart);
-    
-    // Xóa giỏ hàng và mã giảm giá sau khi đặt hàng thành công
     localStorage.removeItem('cart');
     localStorage.removeItem('appliedCoupon');
-    
-    // Hiển thị thông báo thành công
     alert('Đặt hàng thành công! Đơn hàng của bạn sẽ được xử lý sớm nhất.');
-    
-    // Chuyển hướng về trang chủ hoặc trang tài khoản
     if (userData) {
         window.location.href = 'orders-management.html';
     } else {
@@ -303,7 +290,6 @@ function generateAdminId() {
 
 // Lưu đơn hàng vào localStorage
 function saveOrder(order) {
-    // Lưu vào mảng user orders
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
     orders.push(order);
     localStorage.setItem('orders', JSON.stringify(orders));
@@ -328,7 +314,7 @@ function syncOrderToAdmin(order) {
         code: order.id,
         customerId: order.userId !== 'guest' ? 1 : 0,
         customerName: order.customerInfo.fullname,
-        customerEmail: order.customerInfo.email,  // QUAN TRỌNG: Lưu email để sync sau này
+        customerEmail: order.customerInfo.email,  
         customerPhone: order.customerInfo.phone,
         customerAddress: order.customerInfo.address,
         items: order.items,
@@ -397,12 +383,12 @@ function applyCheckoutCoupon() {
     updateOrderSummary(cart);
 }
 
-// Function trừ tồn kho khi mua hàng
+// trừ tồn kho khi mua hàng
 function reduceStockForOrder(cart) {
     const products = JSON.parse(localStorage.getItem('products') || '[]');
     
     cart.forEach(cartItem => {
-        // Tìm sản phẩm trong danh sách - dùng String() để so sánh chính xác
+        // Tìm sản phẩm trong danh sách
         const productIndex = products.findIndex(p => String(p.id) === String(cartItem.id));
         
         if (productIndex !== -1) {
@@ -411,7 +397,6 @@ function reduceStockForOrder(cart) {
             products[productIndex].stock = newStock;
         }
     });
-    
-    // Lưu lại danh sách sản phẩm với tồn kho mới
+
     localStorage.setItem('products', JSON.stringify(products));
 }

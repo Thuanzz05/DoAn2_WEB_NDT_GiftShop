@@ -25,9 +25,7 @@ function loadCustomersToSelect() {
 
 function loadOrders() {
     const orders = JSON.parse(localStorage.getItem('adminOrders') || '[]');
-    const tbody = document.getElementById('order-list');
-    
-    console.log('Loading orders:', orders); // Debug
+    const tbody = document.getElementById('order-list');  
     
     if (orders.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="text-center">Chưa có đơn hàng nào</td></tr>';
@@ -37,8 +35,6 @@ function loadOrders() {
     tbody.innerHTML = '';
     
     orders.forEach(order => {
-        console.log('Processing order:', order); // Debug
-        
         // Lấy tên khách hàng từ nhiều nguồn
         let customerName = '';
         if (order.customerName) {
@@ -135,7 +131,7 @@ function saveOrder() {
                 code,
                 customerId: parseInt(customerId),
                 customerName,
-                customerEmail,  // Lưu email để không cần lookup lần sau
+                customerEmail,  
                 date,
                 status: newStatus,
                 total: parseInt(total),
@@ -144,7 +140,6 @@ function saveOrder() {
             };
             orders[index] = updatedOrder;
             
-            // ===== ĐỒNG BỘ NGƯỢC VỀ USER =====
             if (customerEmail && oldStatus !== newStatus) {
                 syncAdminOrderToUser(code, customerEmail, newStatus);
             }
@@ -159,7 +154,7 @@ function saveOrder() {
             code,
             customerId: parseInt(customerId),
             customerName,
-            customerEmail,  // Lưu email để không cần lookup lần sau
+            customerEmail, 
             date,
             status,
             total: parseInt(total),
@@ -174,7 +169,6 @@ function saveOrder() {
     loadOrders();
 }
 
-// ===== HÀM ĐỒNG BỘ =====
 // Đồng bộ từ admin sang user (admin thay đổi → user nhìn thấy)
 function syncAdminOrderToUser(userOrderId, email, newStatus) {
     try {

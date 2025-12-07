@@ -25,9 +25,6 @@ function taiThongKe() {
     document.getElementById('total-customers').textContent = danhSachKhachHang.length;
 
     // Tính doanh thu từ các đơn hàng
-    // Cách tính hợp lý:
-    // - Đơn hàng đã hoàn thành (completed): tính vào doanh thu thực tế
-    // - Đơn hàng đang xử lý/giao (pending/shipping): tính vào doanh thu tiềm năng
     let tongDoanhThuThucTe = 0;
     let tongDoanhThuTienNang = 0;
     let totalByStatus = {
@@ -54,19 +51,8 @@ function taiThongKe() {
         }
     });
     
-    // Hiển thị doanh thu thực tế (hoàn thành)
+    //Hiển thị doanh thu thực tế 
     document.getElementById('total-revenue').textContent = tongDoanhThuThucTe.toLocaleString('vi-VN') + '₫';
-    
-    // Thêm thông tin chi tiết vào console để admin có thể xem
-    console.log('=== THỐNG KÊ DOANH THU ===');
-    console.log('Doanh thu thực tế (hoàn thành):', tongDoanhThuThucTe.toLocaleString('vi-VN') + '₫');
-    console.log('Doanh thu tiềm năng (đang xử lý/giao):', tongDoanhThuTienNang.toLocaleString('vi-VN') + '₫');
-    console.log('Chi tiết theo trạng thái:', {
-        'Đang xử lý': totalByStatus.pending.toLocaleString('vi-VN') + '₫',
-        'Đang giao': totalByStatus.shipping.toLocaleString('vi-VN') + '₫',
-        'Hoàn tất': totalByStatus.completed.toLocaleString('vi-VN') + '₫',
-        'Đã hủy': totalByStatus.cancelled.toLocaleString('vi-VN') + '₫'
-    });
 }
 
 // Xuất báo cáo đơn hàng thành CSV
@@ -97,15 +83,14 @@ function xuatBaoCaoDonHangCSV() {
             try { itemsText = JSON.stringify(o.items); } catch(e) { itemsText = String(o.items); }
         }
 
-        // Escape values that may contain commas
         const escape = v => `"${String(v).replace(/"/g, '""')}"`;
 
         return [id, date, customerName, email, total, o.status || '', itemsText].map(escape).join(',');
     });
 
-    // Thêm BOM UTF-8 để Excel trên Windows nhận diện đúng encoding (giúp hiển thị tiếng Việt)
+    // Thêm BOM UTF-8 để Excel trên Windows nhận diện đúng encoding
     const csvBody = [headers.join(','), ...rows].join('\r\n');
-    const csvContent = '\uFEFF' + csvBody; // prepend BOM
+    const csvContent = '\uFEFF' + csvBody;
 
     // Tạo file blob và download (UTF-8 với BOM)
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });

@@ -1,5 +1,3 @@
-// Flash Sale Christmas Product Data and Handlers
-
 // Flash Sale Products Data
 const flashSaleProducts = {
     'fs-1': {
@@ -116,12 +114,8 @@ const flashSaleProducts = {
     }
 };
 
-
-
 // Xử lý khi bấm nút "Thêm vào giỏ" cho Flash Sale
 document.addEventListener('DOMContentLoaded', function() {
-    // khoiTaoFlashSaleProducts(); // Đã được khởi tạo ở scriptIndex.js, không cần gọi lại ở đây
-    
     // Gán sự kiện cho tất cả nút "Thêm vào giỏ" trong Flash Sale
     const addToCartButtons = document.querySelectorAll('#flash-sale-christmas .fs-add-to-cart-btn');
     
@@ -129,17 +123,14 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Lấy product ID từ button attribute
             const flashSaleId = this.getAttribute('data-product-id');
             
             if (flashSaleId) {
-                // Lấy sản phẩm từ localStorage thay vì từ object cứng
                 const products = JSON.parse(localStorage.getItem('products') || '[]');
                 
                 const product = products.find(p => String(p.id) === String(flashSaleId));
                 
                 if (product) {
-                    // Thêm vào giỏ
                     addToCart(product);
                 }
             }

@@ -8,7 +8,6 @@
 body {
     font-family: Arial, sans-serif;
     color: #333;
-    /* justify-content: center;  0 */ 
 }
 
 .container {
@@ -212,9 +211,7 @@ ul {
 	.contact-item:nth-child(2), .contact-item:nth-child(3), .contact-item:nth-child(4) {
         display: none;
     }
-	
 	/* TK */
-	
 	.account-submenu {
         left: 0px;
 		min-width: 140px;
@@ -1474,9 +1471,7 @@ ul {
 	border-bottom: 1px solid #ccc;
 }
 
-.footer-contact-info, 
-.footer-customer-service, 
-.footer-google-map {
+.footer-contact-info, .footer-customer-service, .footer-google-map {
     flex: 1;
     min-width: 250px;
     padding: 0 15px;
@@ -1488,9 +1483,7 @@ ul {
     margin-bottom: 15px;
 }
 
-.footer-contact-info h3,
-.footer-customer-service h3,
-.footer-google-map h3 {
+.footer-contact-info h3, .footer-customer-service h3, .footer-google-map h3 {
     color: #fff;
     font-size: 18px;
     margin-bottom: 20px;
@@ -1498,9 +1491,7 @@ ul {
     padding-bottom: 10px;
 }
 
-.footer-contact-info h3:after,
-.footer-customer-service h3:after,
-.footer-google-map h3:after {
+.footer-contact-info h3:after, .footer-customer-service h3:after, .footer-google-map h3:after {
     content: '';
     position: absolute;
     left: 0;
@@ -1631,20 +1622,20 @@ ul {
 
 /* Messenger Icon */
 #messenger-icon {
-  width: 50px;
-  height: 50px;
-  color: white;
-  background-color: #0084ff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  position: fixed;
-  bottom: 100px;
-  right: 20px;
-  cursor: pointer;
-  font-size: 24px;
-  transition: all 0.3s ease;
+    width: 50px;
+    height: 50px;
+    color: white;
+    background-color: #0084ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 24px;
+    transition: all 0.3s ease;
     z-index: 1003;
 }
 
@@ -1781,7 +1772,6 @@ ul {
     bottom: 15px;
     border: 2px dashed white;
     border-radius: 15px;
-    /* z-index: 1; */
 }
 
 #flash-sale-christmas::after {
@@ -2021,8 +2011,6 @@ ul {
 }
 
 /* Responsive Flash Sale */
-/* ===== RESPONSIVE FLASH SALE - GIỮ 2 NÚT ===== */
-
 @media (max-width: 768px) {
     #flash-sale-christmas {
         padding: 30px 10px;
@@ -2135,7 +2123,6 @@ ul {
     font-size: 18px;
 }
 
-/* Highlight khi hover */
 .account-dropdown:hover > a {
     color: #ff6600;
 }

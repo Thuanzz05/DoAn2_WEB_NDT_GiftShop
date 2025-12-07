@@ -44,18 +44,13 @@ function handleLogout() {
     }
 }
 
-// Khởi tạo khi trang load
 document.addEventListener('DOMContentLoaded', function() {
-    // Kiểm tra đăng nhập admin
     if (!checkAdminLogin()) {
         return;
     }
-    
-    // Setup responsive menu toggle
     setupResponsiveMenu();
 });
 
-// Setup Responsive Menu Toggle
 function setupResponsiveMenu() {
     const menuToggle = document.getElementById('menu-toggle');
     const sidebar = document.querySelector('.sidebar');

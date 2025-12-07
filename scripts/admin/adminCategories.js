@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Kiểm tra và tạo danh mục mặc định nếu chưa có
     khoiTaoDanhMucMacDinh();
     taiDanhMuc();
     thietLapForm();

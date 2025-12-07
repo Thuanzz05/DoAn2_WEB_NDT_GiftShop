@@ -42,8 +42,7 @@
 }
 
 /* Form styles */
-#checkout-form h2,
-.order-summary h2 {
+#checkout-form h2, .order-summary h2 {
     font-size: 20px;
     margin-bottom: 20px;
     font-weight: 600;
@@ -63,11 +62,7 @@
     color: #333;
 }
 
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="tel"],
-.form-group textarea,
-.form-group select {
+.form-group input[type="text"], .form-group input[type="email"], .form-group input[type="tel"], .form-group textarea, .form-group select {
     width: 100%;
     padding: 10px 15px;
     border: 1px solid #ddd;
@@ -76,9 +71,7 @@
     color: #333;
 }
 
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus {
     border-color: #f15a25;
     outline: none;
 }

@@ -1,4 +1,3 @@
-// Khai báo biến global productData
 let productData = {};
 
 // Hàm lấy tên danh mục từ ID

@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     thietLapForm();
 });
 
-/*  - Lấy danh mục từ localStorage - Hiển thị vào dropdown để chọn */
+/*  - Lấy danh mục từ localStorage */
 function taiDanhMuc() {
     const categories = JSON.parse(localStorage.getItem('categories') || '[]');
     const select = document.getElementById('product-category');
@@ -20,7 +20,7 @@ function taiDanhMuc() {
     });
 }
 
-/* - Lấy sản phẩm từ localStorage- Hiển thị thông tin sản phẩm và danh mục- Tạo nút sửa/xóa cho mỗi sản phẩm */
+/* - Lấy sản phẩm từ localStorage*/
 function taiSanPham() {
     const products = JSON.parse(localStorage.getItem('products') || '[]');
     const categories = JSON.parse(localStorage.getItem('categories') || '[]');
@@ -57,9 +57,7 @@ function taiSanPham() {
     });
 }
 
-/* 
-   - Gọi hàm luuSanPham khi submit
-   */
+/* - Gọi hàm luuSanPham khi submit */
 function thietLapForm() {
         const formSanPham = document.getElementById('product-form');
     
@@ -69,11 +67,6 @@ function thietLapForm() {
     });
 }
 
-/* 
-   - Lấy thông tin từ form
-   - Kiểm tra dữ liệu hợp lệ
-   - Thêm mới hoặc cập nhật sản phẩm
-   */
 function luuSanPham() {
     const id = document.getElementById('product-id').value;
     const name = document.getElementById('product-name').value.trim();
@@ -83,7 +76,6 @@ function luuSanPham() {
     const image = document.getElementById('product-image').value.trim();
     const description = document.getElementById('product-description').value.trim();
     
-    // Validate
     if (!name || !categoryId || !price || !stock) {
         alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
         return;
@@ -97,11 +89,10 @@ function luuSanPham() {
         return;
     }
     
-    // Lấy danh sách sản phẩm
     let products = JSON.parse(localStorage.getItem('products') || '[]');
     
     if (id) {
-        // Cập nhật sản phẩm - dùng String() để so sánh chính xác
+        // Cập nhật sản phẩm 
         const index = products.findIndex(p => String(p.id) === String(id));
         if (index !== -1) {
             // Giữ nguyên ID (có thể là số hoặc string như "fs-1")
@@ -120,7 +111,7 @@ function luuSanPham() {
         }
     } else {
         // Thêm sản phẩm mới
-        // Lấy ID max từ sản phẩm admin (ID < 100), đảm bảo không bị chồng ID với demo
+        // Lấy ID max từ sản phẩm admin (ID < 100)
         const adminProducts = products.filter(p => typeof p.id === 'number' && p.id < 100);
         const newId = adminProducts.length > 0 ? Math.max(...adminProducts.map(p => p.id)) + 1 : 1;
         
@@ -137,19 +128,11 @@ function luuSanPham() {
         alert('Đã thêm sản phẩm thành công!');
     }
     
-    // Lưu vào localStorage
     localStorage.setItem('products', JSON.stringify(products));
-    
-    // Đặt lại form và tải lại danh sách
     datLaiForm();
     taiSanPham();
 }
 
-/* 
-   - Tìm sản phẩm theo ID
-   - Điền thông tin vào form
-   - Chuyển form sang chế độ sửa
-  */
 function suaSanPham(id) {
     const products = JSON.parse(localStorage.getItem('products') || '[]');
     const product = products.find(p => String(p.id) === String(id));
@@ -168,18 +151,12 @@ function suaSanPham(id) {
     document.getElementById('product-image').value = product.image || '';
     document.getElementById('product-description').value = product.description || '';
     
-    // Đổi title form
+
     document.getElementById('form-title').textContent = 'Chỉnh sửa sản phẩm';
-    
-    // Scroll lên form
     document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth' });
 }
 
-/* 
-   - Xác nhận trước khi xóa
-   - Xóa sản phẩm khỏi localStorage
-   - Cập nhật lại danh sách
-   */
+
 function xoaSanPham(id) {
     if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
         return;
@@ -194,11 +171,7 @@ function xoaSanPham(id) {
     taiSanPham();
 }
 
-/* 
-   ĐẶT LẠI FORM
-   - Xóa tất cả dữ liệu trong form
-   - Đặt lại tiêu đề form
-  */
+
 function datLaiForm() {
     document.getElementById('product-form').reset();
     document.getElementById('product-id').value = '';

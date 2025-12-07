@@ -1,4 +1,3 @@
-// Khởi tạo khi trang load
 document.addEventListener('DOMContentLoaded', function() {
     loadCategoryProducts();
     setupSortListener();
@@ -9,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Tải sản phẩm theo danh mục
 function loadCategoryProducts() {
     const urlParams = new URLSearchParams(window.location.search);
-    const categoryId = urlParams.get('id') || 1; // Mặc định danh mục 1 nếu không có ID
+    const categoryId = urlParams.get('id') || 1; 
     
     const categories = JSON.parse(localStorage.getItem('categories') || '[]');
     const category = categories.find(c => c.id == categoryId);
@@ -21,16 +20,13 @@ function loadCategoryProducts() {
         document.title = category.name + ' - NDT Gift Shop';
     }
     
-    // Lấy tất cả sản phẩm
     const products = JSON.parse(localStorage.getItem('products') || '[]');
     
-    // Lọc sản phẩm theo danh mục
     let categoryProducts = products.filter(p => p.categoryId == categoryId);
     
-    // Sắp xếp mặc định theo giá tăng dần
+    // Sx mặc định theo giá tăng dần
     categoryProducts.sort((a, b) => a.price - b.price);
     
-    // Hiển thị sản phẩm
     displayProducts(categoryProducts);
 }
 
@@ -39,8 +35,7 @@ function displayProducts(products) {
     const categoryProductsContainer = document.querySelector('.category-products');
     
     if (!categoryProductsContainer) return;
-    
-    // Xóa sản phẩm cũ
+
     categoryProductsContainer.innerHTML = '';
     
     if (products.length === 0) {
@@ -53,8 +48,6 @@ function displayProducts(products) {
         const productHTML = createProductCard(product);
         categoryProductsContainer.insertAdjacentHTML('beforeend', productHTML);
     });
-    
-    // Thêm event listener cho nút "Thêm vào giỏ"
     setupAddToCartButtons();
 }
 
@@ -97,10 +90,7 @@ function sortProducts(sortType) {
     const urlParams = new URLSearchParams(window.location.search);
     const categoryId = urlParams.get('id') || 1;
     
-    // Lấy tất cả sản phẩm
     const products = JSON.parse(localStorage.getItem('products') || '[]');
-    
-    // Lọc sản phẩm theo danh mục
     let categoryProducts = products.filter(p => p.categoryId == categoryId);
     
     // Sắp xếp theo loại đã chọn
@@ -127,7 +117,6 @@ function sortProducts(sortType) {
             break;
     }
     
-    // Hiển thị sản phẩm đã sắp xếp
     displayProducts(categoryProducts);
 }
 
@@ -195,11 +184,9 @@ function addToCart(productId) {
         });
     }
     
-    // Lưu giỏ hàng
     localStorage.setItem('cart', JSON.stringify(cart));
     alert(`${product.name} đã được thêm vào giỏ hàng!`);
     
-    // Cập nhật số lượng giỏ hàng trên menu
     updateCartCount();
 }
 

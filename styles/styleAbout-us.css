@@ -1,9 +1,7 @@
-/* ===== General Styles ===== */
 * {
     font-family: Arial, sans-serif;
 }
 
-/* ===== Hero Section ===== */
 .hero-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -65,7 +63,7 @@
     background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 107, 107, 0.3));
 }
 
-/* ===== Story Section ===== */
+/*Story Section */
 .story-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -112,33 +110,7 @@
     margin-bottom: 20px;
 }
 
-.story-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    margin-top: 40px;
-    padding-top: 40px;
-    border-top: 2px solid #f0f0f0;
-}
-
-.stat-item {
-    text-align: center;
-}
-
-.stat-number {
-    font-size: 36px;
-    font-weight: 700;
-    color: #ff6b6b;
-    margin-bottom: 10px;
-}
-
-.stat-label {
-    font-size: 14px;
-    color: #999;
-    font-weight: 600;
-}
-
-/* ===== Values New Section ===== */
+/*Values New Section */
 .values-new-section {
     padding: 80px 0;
     text-align: center;
@@ -222,7 +194,7 @@
     padding: 0 25px 25px;
 }
 
-/* ===== Why Choose Section ===== */
+/*  Why Choose Section  */
 .why-choose-section {
     padding: 80px 40px;
     background: linear-gradient(135deg, #fff8f8 0%, #fff 100%);
@@ -353,7 +325,7 @@
     padding: 0 20px 20px !important;
 }
 
-/* ===== CTA Section ===== */
+/*  CTA Section */
 .cta-section {
     background: linear-gradient(135deg, #ff6b6b, #ff8787);
     color: white;
@@ -414,7 +386,7 @@
     transform: translateY(-2px);
 }
 
-/* ===== Responsive Design ===== */
+/*Responsive*/
 @media (max-width: 1200px) {
     .hero-section {
         gap: 40px;
@@ -554,7 +526,3 @@
         font-size: 24px;
     }
 }
-
-
-
-

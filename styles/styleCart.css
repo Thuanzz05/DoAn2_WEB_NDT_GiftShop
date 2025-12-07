@@ -321,7 +321,7 @@
     background-color: #222;
 }
 
-/* Responsive Styles */
+/* Responsive*/
 @media (max-width: 768px) {
 
     .cart-quantity {
@@ -415,7 +415,3 @@
         margin-left: 0;
     }
 }
-
-
-
-

@@ -1,7 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
-    // Lấy các phần tử DOM
     const cartEmptyMessage = document.querySelector('.cart-empty');
     const cartHasItemsMessage = document.querySelector('.cart-has-items');
     
@@ -42,7 +40,6 @@ function updateCartDisplay() {
     
     // Thêm từng sản phẩm vào bảng giỏ hàng
     cart.forEach((item, index) => {
-        // Đảm bảo price và quantity là số hợp lệ
         const price = Number(item.price) || 0;
         const quantity = Number(item.quantity) || 1;
         const subtotal = price * quantity;
@@ -76,7 +73,7 @@ function updateQuantity(index, quantity) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     
     quantity = parseInt(quantity); 
-    if (isNaN(quantity) || quantity < 1) quantity = 1;     // Kiểm tra và xác nhận giá trị nhập vào
+    if (isNaN(quantity) || quantity < 1) quantity = 1;   
     
     // Kiểm tra tồn kho
     const products = JSON.parse(localStorage.getItem('products') || '[]');
@@ -91,10 +88,10 @@ function updateQuantity(index, quantity) {
             cart.splice(index, 1);
         }
     } else {
-        cart[index].quantity = quantity;     // Cập nhật số lượng sản phẩm trong giỏ hàng
+        cart[index].quantity = quantity;   
     }
     
-    localStorage.setItem('cart', JSON.stringify(cart));     // Lưu lại giỏ hàng vào localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));    
     updateCartDisplay();
 }
 
@@ -102,7 +99,7 @@ function updateQuantity(index, quantity) {
 function removeItem(index) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     
-    cart.splice(index, 1);     // Xóa sản phẩm khỏi giỏ hàng
+    cart.splice(index, 1);    
     
     localStorage.setItem('cart', JSON.stringify(cart));     
     

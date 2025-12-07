@@ -1,9 +1,6 @@
 let currentFilter = 'all';
 
-/**
- * Render mã giảm giá
- * @param {string} filter - Loại filter ('all', 'active', 'expired', 'percent', 'amount')
- */
+/**Render mã giảm giá*/
 function renderPromos(filter = 'all') {
     const promotions = JSON.parse(localStorage.getItem('promotions') || '[]');
     const promoList = document.getElementById('promo-list');
@@ -65,14 +62,10 @@ function renderPromos(filter = 'all') {
     }).join('');
 }
 
-/**
- * Lọc mã giảm giá theo filter
- * @param {string} filter - Loại filter
- */
+/*Lọc mã giảm giá theo filter*/
 function filterPromos(filter) {
     currentFilter = filter;
     
-    // Cập nhật active button
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
     });
@@ -81,10 +74,7 @@ function filterPromos(filter) {
     renderPromos(filter);
 }
 
-/**
- * Sao chép mã giảm giá vào clipboard
- * @param {string} code - Mã giảm giá
- */
+/*Sao chép mã giảm giá vào clipboard*/
 function copyCode(code) {
     navigator.clipboard.writeText(code).then(() => {
         alert(`Đã sao chép mã: ${code}`);
@@ -100,7 +90,6 @@ function copyCode(code) {
     });
 }
 
-// Load promotions on page load
 document.addEventListener('DOMContentLoaded', function() {
     renderPromos();
 });

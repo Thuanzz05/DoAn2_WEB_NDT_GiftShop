@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    syncAccountsToCustomers(); // Đồng bộ accounts sang customers
+    syncAccountsToCustomers(); 
     loadCustomers();
     setupForm();
     setupSearch();

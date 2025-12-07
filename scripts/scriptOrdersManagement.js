@@ -1,6 +1,3 @@
-// Orders Management Script - User Orders with Filter and Search
-// Displays user's orders same as account.html but in dedicated page with filter
-
 let allOrders = [];
 let currentFilter = 'all';
 let currentUserEmail = '';
@@ -25,15 +22,11 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
 });
 
-/**
- * Load user's orders
- */
+
 function loadOrders() {
     try {
-        // Sync with admin first
         syncOrdersFromAdmin(currentUserEmail);
         
-        // Load user's orders
         const storedOrders = localStorage.getItem(`orders_${currentUserEmail}`);
         if (storedOrders) {
             allOrders = JSON.parse(storedOrders);
@@ -47,9 +40,7 @@ function loadOrders() {
     }
 }
 
-/**
- * Sync orders from admin to user
- */
+/* Đồng bộ đơn hàng từ admin về user*/
 function syncOrdersFromAdmin(email) {
     try {
         const userOrders = JSON.parse(localStorage.getItem(`orders_${email}`)) || [];
@@ -58,7 +49,6 @@ function syncOrdersFromAdmin(email) {
         let updated = false;
         
         userOrders.forEach(userOrder => {
-            // Find corresponding admin order by code (code in admin = id in user)
             const adminOrder = adminOrders.find(ao => ao.code === userOrder.id);
             
             if (adminOrder && adminOrder.status !== userOrder.status) {
@@ -79,20 +69,18 @@ function syncOrdersFromAdmin(email) {
     }
 }
 
-/**
- * Display orders - same format as account.html
- */
+/*Hiển thị danh sách đơn hàng */
 function displayOrders() {
     const container = document.getElementById('ordersContainer');
     if (!container) return;
 
-    // Apply filter
+    // Áp dụng bộ lọc
     let filteredOrders = allOrders;
     if (currentFilter !== 'all') {
         filteredOrders = allOrders.filter(order => order.status === currentFilter);
     }
 
-    // Apply search
+    // Áp dụng tìm kiếm
     const searchInput = document.getElementById('searchInput');
     if (searchInput && searchInput.value.trim()) {
         const searchTerm = searchInput.value.toLowerCase().trim();
@@ -106,7 +94,7 @@ function displayOrders() {
         });
     }
 
-    // Show empty state
+    // Hiển thị trạng thái trống
     if (filteredOrders.length === 0) {
         container.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
@@ -117,7 +105,7 @@ function displayOrders() {
         return;
     }
 
-    // Display orders in account.html format
+    // Hiển thị danh sách đơn hàng
     let ordersHTML = '';
     
     filteredOrders.forEach(order => {
@@ -185,9 +173,6 @@ function displayOrders() {
     container.innerHTML = ordersHTML;
 }
 
-/**
- * Get action buttons based on order status
- */
 function getOrderActionButtons(order) {
     let buttons = '';
     
@@ -222,9 +207,7 @@ function getOrderActionButtons(order) {
     return buttons;
 }
 
-/**
- * Cancel order - with confirmation
- */
+/*Hủy đơn hàng*/
 function handleCancelOrder(orderId, email) {
     const userOrders = JSON.parse(localStorage.getItem(`orders_${email}`)) || [];
     const orderIndex = userOrders.findIndex(o => o.id === orderId);
@@ -236,7 +219,7 @@ function handleCancelOrder(orderId, email) {
     
     const order = userOrders[orderIndex];
     
-    // Check if can cancel
+    // Kiểm tra có thể hủy hay không
     if (!['pending', 'processing', 'confirmed'].includes(order.status)) {
         alert(`Chỉ có thể hủy đơn hàng ở trạng thái "Chờ xử lý" hoặc "Đã xác nhận". Đơn hàng hiện tại: ${getOrderStatusText(order.status)}`);
         return;
@@ -246,13 +229,10 @@ function handleCancelOrder(orderId, email) {
         order.status = 'cancelled';
         order.cancelledDate = new Date().toISOString();
         
-        // Save to user orders
         localStorage.setItem(`orders_${email}`, JSON.stringify(userOrders));
         
-        // Sync to admin
         syncUserOrderToAdmin(orderId, email, 'cancelled');
         
-        // Reload
         allOrders = userOrders;
         displayOrders();
         
@@ -260,9 +240,7 @@ function handleCancelOrder(orderId, email) {
     }
 }
 
-/**
- * Confirm delivery - mark order as received
- */
+/* Xác nhận nhận hàng */
 function handleConfirmDelivery(orderId, email) {
     const userOrders = JSON.parse(localStorage.getItem(`orders_${email}`)) || [];
     const orderIndex = userOrders.findIndex(o => o.id === orderId);
@@ -283,13 +261,10 @@ function handleConfirmDelivery(orderId, email) {
         order.status = 'completed';
         order.deliveredDate = new Date().toISOString();
         
-        // Save to user orders
         localStorage.setItem(`orders_${email}`, JSON.stringify(userOrders));
         
-        // Sync to admin
         syncUserOrderToAdmin(orderId, email, 'completed');
         
-        // Reload
         allOrders = userOrders;
         displayOrders();
         
@@ -315,9 +290,7 @@ function handleOpenReview(orderId, email) {
     openReviewModal(orderId, email, order);
 }
 
-/**
- * Sync user order changes to admin orders
- */
+/*Đồng bộ thay đổi đơn hàng từ user về admin*/
 function syncUserOrderToAdmin(userOrderId, email, newStatus) {
     try {
         const adminOrders = JSON.parse(localStorage.getItem('adminOrders')) || [];
@@ -328,7 +301,7 @@ function syncUserOrderToAdmin(userOrderId, email, newStatus) {
             return;
         }
         
-        // Update status
+        // Cập nhật trạng thái
         adminOrders[adminOrderIndex].status = newStatus;
         if (newStatus === 'cancelled') {
             adminOrders[adminOrderIndex].cancelledDate = new Date().toISOString();
@@ -337,7 +310,7 @@ function syncUserOrderToAdmin(userOrderId, email, newStatus) {
             adminOrders[adminOrderIndex].deliveredDate = new Date().toISOString();
         }
         
-        // Save to admin orders
+        // Lưu vào đơn hàng admin
         localStorage.setItem('adminOrders', JSON.stringify(adminOrders));
         console.log(`Synced to admin: ${userOrderId} → ${newStatus}`);
     } catch (error) {
@@ -345,24 +318,8 @@ function syncUserOrderToAdmin(userOrderId, email, newStatus) {
     }
 }
 
-/**
- * View order detail (can be expanded to show modal or detail page)
- * @param {Number} orderId - Order ID
- */
-function viewOrderDetail(orderId) {
-    const order = allOrders.find(o => o.id === orderId);
-    if (order) {
-        const orderDate = new Date(order.orderDate || order.createdDate).toLocaleDateString('vi-VN');
-        const statusText = getStatusText(order.status);
-        const itemsList = order.items?.map(item => `${item.name} (x${item.quantity})`).join('\n') || 'N/A';
-        
-        alert(`Chi tiết đơn hàng #${order.id}\n\nNgày đặt: ${orderDate}\nTrạng thái: ${statusText}\n\nSản phẩm:\n${itemsList}\n\nTổng cộng: ${order.totalPrice?.toLocaleString('vi-VN') || 0} ₫`);
-    }
-}
 
-/**
- * Update tab counts based on order status
- */
+/* Cập nhật số lượng trong các tab bộ lọc dựa trên trạng thái đơn hàng*/
 function updateTabCounts() {
     const counts = {
         'all': allOrders.length,
@@ -380,14 +337,11 @@ function updateTabCounts() {
     });
 }
 
-/**
- * Setup event listeners for filter tabs and search
- */
+/*Thiết lập event listeners cho các tab bộ lọc và tìm kiếm*/
 function setupEventListeners() {
-    // Update tab counts
     updateTabCounts();
     
-    // Status tabs
+    // Tab trạng thái
     const statusTabs = document.querySelectorAll('.status-tab');
     if (statusTabs.length > 0) {
         statusTabs.forEach(tab => {
@@ -399,11 +353,11 @@ function setupEventListeners() {
             });
         });
         
-        // Set first tab as active
+        // Đặt tab đầu tiên là active
         statusTabs[0].classList.add('active');
     }
     
-    // Search input
+    // Ô tìm kiếm
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.addEventListener('input', function() {
@@ -412,9 +366,7 @@ function setupEventListeners() {
     }
 }
 
-/**
- * Get order status text in Vietnamese (theo admin system)
- */
+/**Lấy tên trạng thái đơn hàng bằng tiếng Việt*/
 function getOrderStatusText(status) {
     const statusMap = {
         'pending': 'Đang xử lý',
@@ -425,9 +377,7 @@ function getOrderStatusText(status) {
     return statusMap[status] || 'Đang xử lý';
 }
 
-/**
- * Get CSS class for order status
- */
+/*Lấy tên class CSS tương ứng với trạng thái đơn hàng*/
 function getOrderStatusClass(status) {
     const classMap = {
         'pending': 'status-pending',
@@ -438,9 +388,7 @@ function getOrderStatusClass(status) {
     return classMap[status] || 'status-pending';
 }
 
-/**
- * Get payment method text
- */
+/* Lấy nội dung hiển thị cho phương thức thanh toán*/
 function getPaymentMethodText(method) {
     const methodMap = {
         'cod': 'Thanh toán khi nhận hàng (COD)',

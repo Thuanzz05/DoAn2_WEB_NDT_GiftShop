@@ -48,7 +48,6 @@ if (loginTab && registerTab && loginForm && registerForm) {
             const emailOrUsername = emailElement.value.trim();
             const password = passwordElement.value;
             
-            // Lấy danh sách tài khoản từ localStorage
             const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
             
             // Tìm tài khoản khớp
@@ -101,28 +100,23 @@ if (loginTab && registerTab && loginForm && registerForm) {
             const password = passwordElement.value;
             const confirm = confirmElement.value;
             
-            // Kiểm tra mật khẩu khớp
             if (password !== confirm) {
                 alert('Mật khẩu không khớp!');
                 return;
             }
             
-            // Kiểm tra độ dài mật khẩu
             if (password.length < 6) {
                 alert('Mật khẩu phải có ít nhất 6 ký tự!');
                 return;
             }
-            
-            // Lấy danh sách tài khoản hiện có
+
             const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
             
-            // Kiểm tra email đã tồn tại
             if (accounts.some(acc => acc.email === email)) {
                 alert('Email này đã được đăng ký!');
                 return;
             }
             
-            // Kiểm tra tên đã tồn tại
             if (accounts.some(acc => acc.name === name)) {
                 alert('Tên người dùng này đã tồn tại!');
                 return;
@@ -169,16 +163,7 @@ if (loginTab && registerTab && loginForm && registerForm) {
         }
     });
 }
-// Xử lý sự kiện click cho nút đăng ký trên thanh điều hướng
-// if (goToRegisterButton) {
-//     goToRegisterButton.addEventListener('click', function(e) {
-        
-//     });
-// }
 
-
-// HIỂN THỊ TÊN NGƯỜI DÙNG TRÊN INDEX.HTML
-// Chạy khi trang index.html load
 document.addEventListener('DOMContentLoaded', function() {
     updateUserDisplay();
 });
@@ -217,7 +202,7 @@ function updateUserDisplay() {
     }
 }
 
-// Hàm đăng xuất từ trang index
+// Hàm đăng xuất
 function handleLogoutFromIndex() {
     if (confirm('Bạn có chắc muốn đăng xuất?')) {
         localStorage.removeItem('userData');

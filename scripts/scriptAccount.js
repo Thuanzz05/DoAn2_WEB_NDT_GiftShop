@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Kiểm tra đăng nhập
     const isLoggedIn = checkLogin();
     if (!isLoggedIn) {
         alert('Vui lòng đăng nhập để sử dụng chức năng này!');
@@ -7,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    // Load dữ liệu người dùng
     loadUserData();
 
     // Xử lý menu sidebar
@@ -103,7 +101,7 @@ function handleEditSubmit(e) {
     const phone = document.getElementById('edit-phone').value.trim();
     const address = document.getElementById('edit-address').value.trim();
 
-    // Validate số điện thoại
+    // Validate sdt
     const phoneRegex = /^[0-9]{10}$/;
     if (phone && !phoneRegex.test(phone)) {
         showAlert('edit-error');
@@ -116,15 +114,12 @@ function handleEditSubmit(e) {
         return;
     }
 
-    // Lấy dữ liệu hiện tại
     const userData = JSON.parse(localStorage.getItem('userData'));
     
-    // Cập nhật thông tin mới
     userData.name = name;
     userData.phone = phone;
     userData.address = address;
     
-    // Lưu lại
     localStorage.setItem('userData', JSON.stringify(userData));
     
     // Cập nhật vào danh sách accounts
@@ -148,7 +143,7 @@ function handleEditSubmit(e) {
         customers[customerIndex].address = address;
         localStorage.setItem('customers', JSON.stringify(customers));
     } else {
-        // Nếu chưa có trong customers, thêm mới (trường hợp khách hàng đăng ký trước khi có tính năng đồng bộ)
+        // Nếu chưa có trong customers, thêm mới 
         const newCustomerId = customers.length > 0 ? Math.max(...customers.map(c => c.id)) + 1 : 1;
         customers.push({
             id: newCustomerId,
@@ -161,13 +156,9 @@ function handleEditSubmit(e) {
         localStorage.setItem('customers', JSON.stringify(customers));
     }
 
-    // Cập nhật hiển thị
     loadUserData();
-
-    // Hiển thị thông báo thành công
     showAlert('edit-success');
 
-    // Chuyển về tab xem thông tin sau 1.5s
     setTimeout(() => {
         switchSection('info');
     }, 1500);
@@ -193,11 +184,9 @@ function handlePasswordSubmit(e) {
         return;
     }
 
-    // Lấy thông tin user hiện tại
     const userData = JSON.parse(localStorage.getItem('userData'));
     const accounts = JSON.parse(localStorage.getItem('accounts')) || [];
     
-    // Tìm account trong danh sách
     const accountIndex = accounts.findIndex(acc => acc.email === userData.email);
     
     if (accountIndex !== -1) {
@@ -212,17 +201,13 @@ function handlePasswordSubmit(e) {
         accounts[accountIndex].password = newPassword;
         localStorage.setItem('accounts', JSON.stringify(accounts));
         
-        // Hiển thị thông báo thành công
         showAlert('password-success');
-        
-        // Reset form
-        document.getElementById('password-form').reset();
-        
+        document.getElementById('password-form').reset();     
         alert('Đổi mật khẩu thành công!');
     }
 }
 
-// Hiển thị alert
+
 function showAlert(alertId) {
     hideAllAlerts();
     const alert = document.getElementById(alertId);
@@ -249,17 +234,14 @@ function cancelEdit() {
 // Đăng xuất
 function handleLogout() {
     if (confirm('Bạn có chắc muốn đăng xuất?')) {
-        // Xóa session
-        localStorage.removeItem('userData');
-        
+        localStorage.removeItem('userData'); 
         // localStorage.removeItem('cart');
-
         alert('Đăng xuất thành công!');
         window.location.href = 'index.html';
     }
 }
 
-// Hàm đăng xuất từ trang index (dùng chung)
+// Hàm đăng xuất từ trang index
 window.handleLogoutFromIndex = handleLogout;
 
 // Load đơn hàng 
@@ -432,14 +414,12 @@ function handleCancelOrder(orderId, email) {
         localStorage.setItem(`orders_${email}`, JSON.stringify(userOrders));
     }
     
-    // Đồng bộ ngay tới admin
     syncUserOrderToAdmin(orderId, email, 'cancelled');
-    
     alert('Đơn hàng đã được hủy thành công!');
     loadOrders();
 }
 
-// Xác nhận nhận hàng - với cảnh báo
+// Xác nhận nhận hàng 
 function handleConfirmDelivery(orderId, email) {
     const userOrders = JSON.parse(localStorage.getItem(`orders_${email}`)) || [];
     const order = userOrders.find(o => o.id === orderId);
@@ -449,13 +429,11 @@ function handleConfirmDelivery(orderId, email) {
         return;
     }
     
-    // Kiểm tra trạng thái
     if (order.status !== 'shipping') {
         alert(`Chỉ có thể xác nhận nhận hàng khi đơn đang được giao. Đơn hàng hiện tại: ${getOrderStatusText(order.status)}`);
         return;
     }
     
-    // Xác nhận từ user
     if (!confirm('Xác nhận rằng bạn đã nhận được đơn hàng?')) {
         return;
     }
@@ -475,7 +453,7 @@ function handleConfirmDelivery(orderId, email) {
     loadOrders();
 }
 
-// Đánh giá sản phẩm - với cảnh báo
+// Đánh giá sản phẩm 
 function handleOpenReview(orderId, email) {
     const userOrders = JSON.parse(localStorage.getItem(`orders_${email}`)) || [];
     const order = userOrders.find(o => o.id === orderId);
@@ -485,7 +463,6 @@ function handleOpenReview(orderId, email) {
         return;
     }
     
-    // Kiểm tra trạng thái
     if (order.status !== 'completed') {
         alert(`Chỉ có thể đánh giá sản phẩm khi đơn hàng đã hoàn tất. Đơn hàng hiện tại: ${getOrderStatusText(order.status)}`);
         return;
@@ -495,9 +472,7 @@ function handleOpenReview(orderId, email) {
     openReviewModal(orderId, email, order);
 }
 
-// ===== HÀM ĐỒNG BỘ ĐƠN HÀNG =====
-
-// Đồng bộ trạng thái từ adminOrders xuống user orders (admin thay đổi → user nhìn thấy)
+// Đồng bộ trạng thái từ adminOrders xuống user orders 
 function syncOrdersFromAdmin() {
     const userData = JSON.parse(localStorage.getItem('userData'));
     if (!userData) return;
@@ -509,7 +484,7 @@ function syncOrdersFromAdmin() {
     let updated = false;
     
     userOrders.forEach(userOrder => {
-        // Tìm order tương ứng ở admin qua code (code ở admin = id ở user)
+        // Tìm order tương ứng ở admin qua code
         const adminOrder = adminOrders.find(ao => ao.code === userOrder.id);
         
         if (adminOrder && adminOrder.status !== userOrder.status) {
@@ -527,7 +502,7 @@ function syncOrdersFromAdmin() {
     }
 }
 
-// Đồng bộ từ user sang admin (user thay đổi → admin nhìn thấy)
+// Đồng bộ từ user sang admin 
 function syncUserOrderToAdmin(userOrderId, email, newStatus) {
     try {
         // Lấy thông tin admin order
@@ -557,7 +532,6 @@ function syncUserOrderToAdmin(userOrderId, email, newStatus) {
 
 // Mở modal đánh giá sản phẩm
 function openReviewModal(orderId, email, order) {
-    // Tạo modal HTML
     const modalHTML = `
         <div id="review-modal-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 2000;">
             <div style="background: white; padding: 30px; border-radius: 8px; max-width: 600px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">

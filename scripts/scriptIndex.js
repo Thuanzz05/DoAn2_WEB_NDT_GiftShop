@@ -1,4 +1,4 @@
-// Kiểm tra trạng thái đăng nhập và cập nhật menu
+//ktr tt đăng nhập và cập nhật menu
 function updateMenuByLoginStatus() {
     const userData = JSON.parse(localStorage.getItem('userData'));
     const isLoggedIn = userData && userData.isLoggedIn;
@@ -9,9 +9,9 @@ function updateMenuByLoginStatus() {
     
     if (accountDropdown && accountSubmenu && accountLink) {
         if (isLoggedIn) {
-            // Đã đăng nhập: Hiển thị tên người dùng, hiện "Quản lý tài khoản", ẩn "Đăng ký"
+            //Đã đăng nhập: Hiển thị tên người dùng, hiện "Quản lý tài khoản", ẩn "Đăng ký"
             accountLink.innerHTML = `<i class="fas fa-user"></i> ${userData.name} <i class="fas fa-angle-down"></i>`;
-            
+         
             accountSubmenu.innerHTML = `
                 <li><a href="account.html"><i class="fas fa-user-circle"></i> Quản lý tài khoản</a></li>
                 <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>`;
@@ -24,29 +24,25 @@ function updateMenuByLoginStatus() {
                     if (confirm('Bạn có chắc muốn đăng xuất?')) {
                         localStorage.removeItem('userData');
                         alert('Đăng xuất thành công!');
-                        location.reload();
-                    }
+                        location.reload();}
                 });
             }
         } else {
             // Chưa đăng nhập: Hiện chữ "Tài khoản", hiển thị "Đăng nhập" và "Đăng ký"
-            accountLink.innerHTML = `<i class="fas fa-user"></i> Tài khoản <i class="fas fa-angle-down"></i>`;
-            
+            accountLink.innerHTML = `<i class="fas fa-user"></i> Tài khoản <i class="fas fa-angle-down"></i>`;        
             accountSubmenu.innerHTML = `
                 <li><a href="login-register.html"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a></li>
-                <li><a href="login-register.html#register" id="go-to-register"><i class="fas fa-user-plus"></i> Đăng ký</a></li>
-            `;
+                <li><a href="login-register.html#register" id="go-to-register"><i class="fas fa-user-plus"></i> Đăng ký</a></li>`;
         }
     }
 }
 
-// Gọi hàm khi load trang
 document.addEventListener('DOMContentLoaded', function() {
     updateMenuByLoginStatus();
     setupSearchForm();
 });
 
-// Setup xử lý form tìm kiếm
+//tìm kiếm
 function setupSearchForm() {
     const searchForm = document.getElementById('search-form');
     if (searchForm) {
@@ -56,13 +52,11 @@ function setupSearchForm() {
             const query = searchInput.value.trim();
             
             if (query) {
-                // Redirect tới trang search-results với query parameter
                 window.location.href = `search-results.html?q=${encodeURIComponent(query)}`;
             }
         });
     }
 }
-
 
 // --slideshow--
 var n = 5;
@@ -119,7 +113,6 @@ window.onscroll = function() {
 
 // Thêm sản phẩm vào giỏ hàng
 function addToCart(product) {
-    // Lấy stock từ localStorage, không phải từ object product
     const products = JSON.parse(localStorage.getItem('products') || '[]');
     const productInStorage = products.find(p => String(p.id) === String(product.id) || p.name === product.name);
     const stock = productInStorage ? parseInt(productInStorage.stock) || 0 : 0;
@@ -172,7 +165,6 @@ function updateCartCount() {
     }
 }
 
-// ===== LOAD TRANG =====
 document.addEventListener('DOMContentLoaded', function() {
 	// Xử lý account dropdown cho mobile
 	const accountDropdown = document.querySelector('.account-dropdown');
@@ -196,8 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
 	
-    
-    // 1. XỬ LÝ MENU VÀ SIDEBAR CHO MOBILE
+    //Xử lý menu, sidebar cho mobile
     const menuContainer = document.querySelector('#menu .container');
     if (menuContainer) {
         const menuToggle = document.createElement('div');
@@ -262,18 +253,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // 2. XỬ LÝ THÊM SẢN PHẨM VÀO GIỎ HÀNG - SẢN PHẨM BÁN CHẠY & SẢN PHẨM MỚI
-    // 2. EVENT DELEGATION FOR ADD-TO-CART BUTTONS (works for both static and dynamic elements)
     document.addEventListener('click', function(e) {
         const button = e.target.closest('.add-to-cart');
         if (!button) return;
         
         e.preventDefault();
-        
-        // Ưu tiên: Nếu button có data-product-id (bestseller/new products), sử dụng nó
         let productId = button.getAttribute('data-product-id');
         
         if (productId) {
-            // Trường hợp 1: Button có data-product-id (bestseller/new products render tĩnh + admin products)
             const products = JSON.parse(localStorage.getItem('products') || '[]');
             const product = products.find(p => String(p.id) === String(productId));
             
@@ -287,8 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const productItem = button.closest('.product-item') || button.closest('.new-product-item');
             
             if (productItem) {
-                const productNameElement = productItem.querySelector('.product-name a') || 
-                                         productItem.querySelector('.new-product-name a');
+                const productNameElement = productItem.querySelector('.product-name a') || productItem.querySelector('.new-product-name a');
                 
                 if (!productNameElement) {
                     return;
@@ -327,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 3. XỬ LÝ FLASH SALE CAROUSEL
+    //XỬ LÝ FLASH SALE
     let currentSlide = 0;
     const totalSlides = 2;
 
@@ -364,13 +350,9 @@ document.addEventListener('DOMContentLoaded', function() {
         nextBtn.addEventListener('click', nextSlide);
     }
 
-    // 4. FLASH SALE HANDLER - NOW HANDLED BY scriptFlashSale.js
-    // (Removed buggy handler that was creating slug IDs instead of using data-product-id)
-    
-    // 5. KHỞI TẠO CAROUSEL
     updateSlide();
 
-    // 6. HỖ TRỢ TOUCH/SWIPE TRÊN MOBILE
+    //HỖ TRỢ TOUCH/SWIPE TRÊN MOBILE
     let touchStartX = 0;
     let touchEndX = 0;
 
@@ -387,7 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 7. AUTO-PLAY CAROUSEL
+    // AUTO-PLAY CAROUSEL
     let autoPlayInterval;
     
     function startAutoPlay() {
@@ -412,11 +394,8 @@ document.addEventListener('DOMContentLoaded', function() {
         flashSaleSection.addEventListener('mouseleave', startAutoPlay);
     }
 
-    // 8. CẬP NHẬT SỐ LƯỢNG GIỎ HÀNG KHI LOAD TRANG
     updateCartCount();
 });
-
-
 
 
 // Khởi tạo 18 sản phẩm demo từ HTML vào localStorage
@@ -436,11 +415,10 @@ function _dedupeProducts(products) {
 }
 
 function khoiTaoSanPhamCu() {
-    // load and dedupe existing products
     let existingProducts = JSON.parse(localStorage.getItem('products') || '[]');
     existingProducts = _dedupeProducts(existingProducts);
 
-    // ============ SẢN PHẨM BÁN CHẠY (ID 100-107) ============
+    // SP BÁN CHẠY (ID 100-107) 
     const sanPhamBanChay = [
         {
             id: 100,
@@ -450,7 +428,7 @@ function khoiTaoSanPhamCu() {
             categoryId: 3,
             stock: 999,
             description: 'Set 4 mô hình em bé hổ tài lộc lắc đầu biểu cảm dễ thương nhiều màu sắc trang trí nhà cửa, bàn làm việc. Sản phẩm làm từ chất liệu nhựa cao cấp, bền đẹp theo thời gian.',
-            section: 'bestsellers' // Đánh dấu từ SẢN PHẨM BÁN CHẠY
+            section: 'bestsellers' 
         },
         {
             id: 101,
@@ -524,7 +502,7 @@ function khoiTaoSanPhamCu() {
         }
     ];
 
-    // ============ SẢN PHẨM MỚI ============
+    // SP MỚI (ID 108-115) 
     const sanPhamMoi = [
         {
             id: 108,
@@ -534,7 +512,7 @@ function khoiTaoSanPhamCu() {
             categoryId: 1,
             stock: 999,
             description: 'Set mô hình Shiba thần tài hoa anh đào độc đáo. Kết hợp giữa chó Shiba dễ thương và hoa anh đào, mang lại cảm giác mùa xuân.',
-            section: 'newproducts' // Đánh dấu từ SẢN PHẨM MỚI
+            section: 'newproducts' 
         },
         {
             id: 109,
@@ -679,7 +657,6 @@ function khoiTaoSanPhamCu() {
         }
     ];
 
-    // Merge demo products into existingProducts only if missing
     const demoProducts = [...sanPhamBanChay, ...sanPhamMoi];
     const missing = demoProducts.filter(dp => !existingProducts.some(ep => String(ep.id) === String(dp.id)));
 
@@ -688,7 +665,6 @@ function khoiTaoSanPhamCu() {
         const normalized = _dedupeProducts(merged);
         localStorage.setItem('products', JSON.stringify(normalized));
     } else {
-        // ensure localStorage is deduped
         localStorage.setItem('products', JSON.stringify(existingProducts));
     }
 }
@@ -696,17 +672,11 @@ function khoiTaoSanPhamCu() {
 // Xóa những sản phẩm lỗi (không có ảnh hợp lệ)
 function xoaSanPhamLoi() {
     const products = JSON.parse(localStorage.getItem('products') || '[]');
-    
-    // Giữ lại các sản phẩm có trường ảnh hợp lệ.
-    // Trường hợp sản phẩm admin không nhập ảnh sẽ được gán ảnh mặc định,
-    // không nên xóa sản phẩm chỉ vì dùng ảnh mặc định.
     const validProducts = products.filter(product => {
         // Nếu không có trường image (undefined/null/empty) thì loại bỏ
         if (!product.image || String(product.image).trim() === '') {
             return false;
         }
-
-        // Người quản trị có thể để ảnh mặc định 'default-product.jpg' — vẫn giữ lại
         return true;
     });
     
@@ -718,20 +688,18 @@ function xoaSanPhamLoi() {
 
 // Load sản phẩm khi trang chủ load
 document.addEventListener('DOMContentLoaded', function() {
-    khoiTaoDanhMucMacDinh(); // Đảm bảo có 10 danh mục mặc định
-    khoiTaoSanPhamCu(); // Khởi tạo 18 sản phẩm demo (100-117)
-    khoiTaoFlashSaleProducts(); // Khởi tạo 8 sản phẩm Flash Sale
-    xoaSanPhamLoi(); // Xóa những sản phẩm lỗi/không hợp lệ
+    khoiTaoDanhMucMacDinh(); 
+    khoiTaoSanPhamCu(); 
+    khoiTaoFlashSaleProducts(); 
+    xoaSanPhamLoi(); 
     
-    // Dedupe products to prevent duplicates
     const products = JSON.parse(localStorage.getItem('products') || '[]');
     const dedupedProducts = _dedupeProducts(products);
     localStorage.setItem('products', JSON.stringify(dedupedProducts));
     
-    khoiTaoMaGiamGia(); // Khởi tạo mã giảm giá demo
+    khoiTaoMaGiamGia(); 
     taiDanhMuc();
     
-    // Delay taiSanPhamTuAdmin để đảm bảo DOM hoàn toàn render
     setTimeout(function() {
         taiSanPhamTuAdmin();
     }, 100);
@@ -740,10 +708,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load sản phẩm từ localStorage (thêm tất cả sản phẩm mới: admin + demo)
 function taiSanPhamTuAdmin() {
     const products = JSON.parse(localStorage.getItem('products') || '[]');
-    
-    // Display all new products: admin (ID < 100) AND demo with section='newproducts' (IDs 100-122)
     const newProducts = products.filter(p => {
-        // Include admin products (ID < 100) or demo products marked as newproducts
         const isAdmin = typeof p.id === 'number' && p.id < 100 && !String(p.id).startsWith('fs');
         const isNewDemo = p.section === 'newproducts';
         return isAdmin || isNewDemo;
@@ -754,7 +719,6 @@ function taiSanPhamTuAdmin() {
         return;
     }
 
-    // Clear ALL new product items (both static HTML and dynamically added)
     const allProductItems = newProductGrid.querySelectorAll('.new-product-item');
     allProductItems.forEach(node => node.remove());
 
@@ -762,9 +726,7 @@ function taiSanPhamTuAdmin() {
         return;
     }
 
-    // Add all new products to the grid
     newProducts.forEach(product => {
-        // tạo DOM từ chuỗi HTML
         const wrapper = document.createElement('div');
         wrapper.innerHTML = createNewProductCard(product).trim();
         const el = wrapper.firstElementChild;
@@ -781,7 +743,6 @@ window.addEventListener('storage', function(e) {
     }
 });
 
-// Ensure admin products are rendered also on full load / pageshow (covers reloads and navigation)
 window.addEventListener('load', function() {
     setTimeout(function() {
         taiSanPhamTuAdmin();
@@ -794,7 +755,7 @@ window.addEventListener('pageshow', function() {
     }, 200);
 });
 
-// Tạo HTML card sản phẩm mới (với fallback cho trường bị thiếu)
+// Tạo HTML card sản phẩm mới
 function createNewProductCard(product) {
     const imageUrl = product.image || 'images/default-product.jpg';
     const productName = product.name || 'Sản phẩm không tên';
@@ -859,12 +820,9 @@ function khoiTaoFlashSaleProducts() {
     }
 }
 
-
-// Khởi tạo 10 danh mục mặc định - chỉ tạo lần đầu khi chưa có
+// Khởi tạo 10 danh mục mặc định 
 function khoiTaoDanhMucMacDinh() {
     const danhMucHienTai = JSON.parse(localStorage.getItem('categories') || '[]');
-    
-    // Chỉ tạo danh mục mặc định khi chưa có danh mục nào
     if (danhMucHienTai.length === 0) {
         const danhMucMacDinh = [
             { id: 1, name: 'Set quà tặng', description: 'Các bộ quà tặng độc đáo và ý nghĩa' },
@@ -886,24 +844,20 @@ function khoiTaoDanhMucMacDinh() {
 function taiDanhMuc() {
     const categories = JSON.parse(localStorage.getItem('categories') || '[]');
     
-    // 1. Cập nhật sidebar
+    // Cập nhật sidebar
     const sidebarList = document.querySelector('#sidebar ul');
-    if (sidebarList) {
-        sidebarList.innerHTML = categories.map(cat => `
-            <li><a href="category-products.html?id=${cat.id}">${cat.name}</a></li>
-        `).join('');
+    if (sidebarList) { sidebarList.innerHTML = categories.map(cat => `
+            <li><a href="category-products.html?id=${cat.id}">${cat.name}</a></li>`).join('');
     }
     
-    // 2. Cập nhật category-list (nếu đang ở trang category)
+    // Cập nhật category-list 
     const categoryList = document.querySelector('#sidebar .category-list');
-    if (categoryList) {
-        categoryList.innerHTML = categories.map(cat => `
-            <li><a href="category-products.html?id=${cat.id}">${cat.name}</a></li>
-        `).join('');
+    if (categoryList) { categoryList.innerHTML = categories.map(cat => `
+            <li><a href="category-products.html?id=${cat.id}">${cat.name}</a></li>`).join('');
     }
 }
 
-// Load sản phẩm theo danh mục (cho trang category-products.html)
+// Load sản phẩm theo danh mục (category-products.html)
 function taiSanPhamTheoDanhMuc() {
     const categoryId = new URLSearchParams(window.location.search).get('id');
     const categories = JSON.parse(localStorage.getItem('categories') || '[]');
@@ -915,8 +869,7 @@ function taiSanPhamTheoDanhMuc() {
     
     // Cập nhật tiêu đề danh mục
     const categoryTitle = document.getElementById('category-title');
-    if (categoryTitle && category) {
-        categoryTitle.textContent = category.name;
+    if (categoryTitle && category) { categoryTitle.textContent = category.name;
     }
     
     // Lọc sản phẩm theo danh mục
@@ -962,9 +915,7 @@ function taiSanPhamTheoDanhMuc() {
     });
     
     // Gắn event listener cho các nút "Thêm vào giỏ"
-    document.querySelectorAll('.product-buttons .add-to-cart').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
+    document.querySelectorAll('.product-buttons .add-to-cart').forEach(btn => { btn.addEventListener('click', function(e) { e.preventDefault();
             const productId = this.getAttribute('data-product-id');
             const product = products.find(p => p.id == productId);
             if (product) {
@@ -983,8 +934,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Xử lý click icon Messenger
     const messengerIcon = document.getElementById('messenger-icon');
-    if (messengerIcon) {
-        messengerIcon.addEventListener('click', function() {
+    if (messengerIcon) { messengerIcon.addEventListener('click', function() {
             // Chuyển hướng tới Facebook Messenger
             window.open('https://www.facebook.com/thuanzz05', '_blank');
         });
