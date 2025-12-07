@@ -722,6 +722,12 @@ document.addEventListener('DOMContentLoaded', function() {
     khoiTaoSanPhamCu(); // Khởi tạo 18 sản phẩm demo (100-117)
     khoiTaoFlashSaleProducts(); // Khởi tạo 8 sản phẩm Flash Sale
     xoaSanPhamLoi(); // Xóa những sản phẩm lỗi/không hợp lệ
+    
+    // Dedupe products to prevent duplicates
+    const products = JSON.parse(localStorage.getItem('products') || '[]');
+    const dedupedProducts = _dedupeProducts(products);
+    localStorage.setItem('products', JSON.stringify(dedupedProducts));
+    
     khoiTaoMaGiamGia(); // Khởi tạo mã giảm giá demo
     taiDanhMuc();
     
@@ -748,24 +754,22 @@ function taiSanPhamTuAdmin() {
         return;
     }
 
-    // Clear any previously inserted new product items to prevent duplicates
-    const existingNodes = newProductGrid.querySelectorAll('.new-product-item.new-product-added');
-    existingNodes.forEach(node => node.remove());
+    // Clear ALL new product items (both static HTML and dynamically added)
+    const allProductItems = newProductGrid.querySelectorAll('.new-product-item');
+    allProductItems.forEach(node => node.remove());
 
     if (newProducts.length === 0) {
         return;
     }
 
-    // Add all new products to the grid (marked with class 'new-product-added')
+    // Add all new products to the grid
     newProducts.forEach(product => {
-        // tạo DOM từ chuỗi HTML và đánh dấu
+        // tạo DOM từ chuỗi HTML
         const wrapper = document.createElement('div');
         wrapper.innerHTML = createNewProductCard(product).trim();
         const el = wrapper.firstElementChild;
         if (el) {
-            el.classList.add('new-product-added');
-            el.setAttribute('data-product-id-new', product.id);
-            newProductGrid.insertBefore(el, newProductGrid.firstChild);
+            newProductGrid.appendChild(el);
         }
     });
 }
