@@ -283,7 +283,7 @@ function processOrder() {
     
     // Chuyển hướng về trang chủ hoặc trang tài khoản
     if (userData) {
-        window.location.href = 'account.html';
+        window.location.href = 'orders-management.html';
     } else {
         window.location.href = 'index.html';
     }
