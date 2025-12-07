@@ -116,25 +116,7 @@ const flashSaleProducts = {
     }
 };
 
-// Khởi tạo Flash Sale Products vào localStorage
-// NOTE: Khởi tạo đã được thực hiện ở scriptIndex.js, hàm này KHÔNG dùng
-// function khoiTaoFlashSaleProducts() {
-//     // Lấy danh sách sản phẩm hiện tại
-//     let products = JSON.parse(localStorage.getItem('products')) || [];
-//     
-//     // Kiểm tra xem Flash Sale products đã có trong localStorage chưa
-//     const flashSaleExists = products.some(p => String(p.id) === 'fs-1');
-//     
-//     // Nếu chưa có, thêm vào. Nếu có rồi, không thêm lại
-//     if (!flashSaleExists) {
-//         Object.values(flashSaleProducts).forEach(product => {
-//             products.push(product);
-//         });
-//         
-//         // Lưu vào localStorage
-//         localStorage.setItem('products', JSON.stringify(products));
-//     }
-// }
+
 
 // Xử lý khi bấm nút "Thêm vào giỏ" cho Flash Sale
 document.addEventListener('DOMContentLoaded', function() {

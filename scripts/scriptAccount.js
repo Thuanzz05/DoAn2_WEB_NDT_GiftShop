@@ -374,22 +374,20 @@ function loadOrders() {
 // Lấy text trạng thái đơn hàng
 function getOrderStatusText(status) {
     const statusMap = {
-        'pending': 'Chờ xử lý',
-        'processing': 'Đang xử lý',
-        'shipping': 'Đang giao hàng',
-        'delivered': 'Đã giao hàng',
+        'pending': 'Đang xử lý',
+        'shipping': 'Đang giao',
+        'completed': 'Hoàn tất',
         'cancelled': 'Đã hủy'
     };
-    return statusMap[status] || 'Chờ xử lý';
+    return statusMap[status] || 'Đang xử lý';
 }
 
 // Lấy class CSS cho trạng thái đơn hàng
 function getOrderStatusClass(status) {
     const classMap = {
         'pending': 'status-pending',
-        'processing': 'status-processing',
         'shipping': 'status-shipping',
-        'delivered': 'status-delivered',
+        'completed': 'status-completed',
         'cancelled': 'status-cancelled'
     };
     return classMap[status] || 'status-pending';
@@ -465,13 +463,13 @@ function handleConfirmDelivery(orderId, email) {
     // Cập nhật trạng thái ở user
     const orderIndex = userOrders.findIndex(o => o.id === orderId);
     if (orderIndex !== -1) {
-        userOrders[orderIndex].status = 'delivered';
+        userOrders[orderIndex].status = 'completed';
         userOrders[orderIndex].deliveredDate = new Date().toISOString();
         localStorage.setItem(`orders_${email}`, JSON.stringify(userOrders));
     }
     
     // Đồng bộ ngay tới admin
-    syncUserOrderToAdmin(orderId, email, 'delivered');
+    syncUserOrderToAdmin(orderId, email, 'completed');
     
     alert('Xác nhận nhận hàng thành công! Bây giờ bạn có thể đánh giá sản phẩm.');
     loadOrders();
@@ -488,8 +486,8 @@ function handleOpenReview(orderId, email) {
     }
     
     // Kiểm tra trạng thái
-    if (order.status !== 'delivered') {
-        alert(`Chỉ có thể đánh giá sản phẩm khi đơn hàng đã được giao. Đơn hàng hiện tại: ${getOrderStatusText(order.status)}`);
+    if (order.status !== 'completed') {
+        alert(`Chỉ có thể đánh giá sản phẩm khi đơn hàng đã hoàn tất. Đơn hàng hiện tại: ${getOrderStatusText(order.status)}`);
         return;
     }
     
@@ -546,7 +544,7 @@ function syncUserOrderToAdmin(userOrderId, email, newStatus) {
         if (newStatus === 'cancelled') {
             adminOrders[adminOrderIndex].cancelledDate = new Date().toISOString();
         }
-        if (newStatus === 'delivered') {
+        if (newStatus === 'completed') {
             adminOrders[adminOrderIndex].deliveredDate = new Date().toISOString();
         }
         
