@@ -724,6 +724,82 @@ body {
     }
 }
 
+/* ============== CHARTS SECTION ============== */
+.charts-section {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #ddd;
+}
+
+.charts-section h2 {
+    margin-bottom: 25px;
+    font-size: 22px;
+    color: #333;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.chart-container {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chart-container h3 {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.chart-container > div {
+    position: relative;
+    width: 100%;
+    height: 300px;
+}
+
+.chart-container canvas {
+    max-height: 300px;
+}
+
+/* Chart Filter Buttons */
+.chart-filter-btn {
+    padding: 8px 15px;
+    border: 2px solid #ddd;
+    background: white;
+    color: #333;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.chart-filter-btn:hover {
+    border-color: #B53740;
+    color: #B53740;
+}
+
+.chart-filter-btn.active {
+    background: #B53740;
+    color: white;
+    border-color: #B53740;
+}
+
+/* Small Mobile */
+@media (max-width: 768px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
 /* Small Mobile */
 @media (max-width: 480px) {
     .header {

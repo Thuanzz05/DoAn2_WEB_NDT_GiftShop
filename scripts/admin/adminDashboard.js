@@ -1,6 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     taiThongKe();
     setupReportExport();
+    
+    // Delay để đảm bảo canvas đã render
+    setTimeout(function() {
+        initCharts();
+    }, 500);
 });
 
 function setupReportExport() {
@@ -107,4 +112,242 @@ function xuatBaoCaoDonHangCSV() {
     URL.revokeObjectURL(url);
 
     alert('Đã tải xuống báo cáo: ' + filename);
+}
+
+// ============== CHARTS FUNCTIONS ==============
+
+// Biến toàn cục để lưu trữ loại biểu đồ hiện tại
+let currentRevenueChartType = 'day';
+
+// Khởi tạo tất cả biểu đồ
+function initCharts() {
+    drawRevenueChart('day');
+    drawTopProductsChart();
+}
+
+// Hàm thay đổi loại biểu đồ doanh thu
+function changeRevenueChartType(type) {
+    currentRevenueChartType = type;
+    
+    // Cập nhật active button
+    document.getElementById('revenueByDay').classList.remove('active');
+    document.getElementById('revenueByMonth').classList.remove('active');
+    document.getElementById('revenueByYear').classList.remove('active');
+    document.getElementById('revenueBy' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
+    
+    // Vẽ lại biểu đồ
+    drawRevenueChart(type);
+}
+
+// Biểu đồ 1: Doanh thu theo ngày/tháng/năm
+function drawRevenueChart(type = 'day') {
+    try {
+        const orders = JSON.parse(localStorage.getItem('adminOrders') || '[]');
+        const revenueData = {};
+        
+        orders.forEach(order => {
+            if (order.status === 'completed') {
+                const date = order.date || order.createdAt || new Date().toISOString().split('T')[0];
+                const dateStr = date.substring(0, 10);
+                let key;
+                
+                if (type === 'day') {
+                    // Format: YYYY-MM-DD
+                    key = dateStr;
+                } else if (type === 'month') {
+                    // Format: YYYY-MM (năm-tháng)
+                    key = dateStr.substring(0, 7);
+                } else if (type === 'year') {
+                    // Format: YYYY (năm)
+                    key = dateStr.substring(0, 4);
+                }
+                
+                if (!revenueData[key]) {
+                    revenueData[key] = 0;
+                }
+                revenueData[key] += order.total || 0;
+            }
+        });
+        
+        // Sắp xếp theo key và lấy dữ liệu
+        const sortedKeys = Object.keys(revenueData).sort();
+        let displayKeys = sortedKeys;
+        
+        // Giới hạn số điểm dữ liệu để biểu đồ không quá chật
+        if (type === 'day' && sortedKeys.length > 30) {
+            displayKeys = sortedKeys.slice(-30);
+        } else if (type === 'month' && sortedKeys.length > 24) {
+            displayKeys = sortedKeys.slice(-24);
+        }
+        
+        const labels = displayKeys.length > 0 ? displayKeys : ['Không có dữ liệu'];
+        const data = displayKeys.length > 0 ? displayKeys.map(key => revenueData[key]) : [0];
+        
+        const ctx = document.getElementById('revenueChart');
+        if (!ctx) {
+            console.error('Canvas element revenueChart not found');
+            return;
+        }
+        
+        // Nếu biểu đồ đã tồn tại, hủy nó trước
+        if (window.revenueChart && typeof window.revenueChart.destroy === 'function') {
+            window.revenueChart.destroy();
+        }
+        
+        window.revenueChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Doanh thu (₫)',
+                    data: data,
+                    borderColor: '#B53740',
+                    backgroundColor: 'rgba(181, 55, 64, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#B53740',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('vi-VN') + '₫';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        console.log('Revenue chart created successfully for type:', type);
+    } catch (error) {
+        console.error('Error creating revenue chart:', error);
+    }
+}
+
+// Biểu đồ 2: Top 5 sản phẩm bán chạy
+function drawTopProductsChart() {
+    try {
+        const orders = JSON.parse(localStorage.getItem('adminOrders') || '[]');
+        const products = JSON.parse(localStorage.getItem('products') || '[]');
+        
+        // Tính số lượng bán của mỗi sản phẩm (CHỈ từ các đơn hàng hoàn thành)
+        const productSales = {};
+        
+        orders.forEach(order => {
+            // CHỈ tính các đơn hàng có trạng thái 'completed'
+            if (order.status === 'completed' && order.items && Array.isArray(order.items)) {
+                order.items.forEach(item => {
+                    // Sử dụng productId, nếu không có thì dùng name hoặc id
+                    const productId = item.productId || item.id || item.name;
+                    const productName = item.name || 'Sản phẩm không xác định';
+                    const quantity = item.quantity || item.qty || 1;
+                    
+                    if (!productSales[productId]) {
+                        productSales[productId] = { 
+                            qty: 0, 
+                            name: productName,
+                            id: productId
+                        };
+                    }
+                    productSales[productId].qty += quantity;
+                });
+            }
+        });
+        
+        // Log dữ liệu để debug
+        console.log('Product Sales Data:', productSales);
+        console.log('Total products with sales:', Object.keys(productSales).length);
+        
+        // Sắp xếp và lấy top 5
+        const sorted = Object.entries(productSales)
+            .map(([id, data]) => ({ id, qty: data.qty, name: data.name }))
+            .sort((a, b) => b.qty - a.qty)
+            .slice(0, 5);
+        
+        console.log('Top 5 Products:', sorted);
+        console.log('Sorted length:', sorted.length);
+        
+        const labels = sorted.length > 0 ? sorted.map(p => p.name.substring(0, 25)) : ['Không có dữ liệu'];
+        const data = sorted.length > 0 ? sorted.map(p => p.qty) : [0];
+        
+        console.log('Chart Labels:', labels);
+        console.log('Chart Data:', data);
+        
+        const ctx = document.getElementById('topProductsChart');
+        if (!ctx) {
+            console.error('Canvas element topProductsChart not found');
+            return;
+        }
+        
+        if (window.topProductsChart && typeof window.topProductsChart.destroy === 'function') {
+            window.topProductsChart.destroy();
+        }
+        
+        // Điều chỉnh chiều cao container dựa trên số lượng sản phẩm
+        const chartContainer = ctx.closest('.chart-container > div');
+        if (chartContainer) {
+            const heightPerProduct = 50;
+            const minHeight = 300;
+            const calculatedHeight = Math.max(minHeight, heightPerProduct * sorted.length);
+            chartContainer.style.height = calculatedHeight + 'px';
+        }
+        
+        window.topProductsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Số lượng bán',
+                    data: data,
+                    backgroundColor: '#B53740',
+                    borderColor: '#8B2635',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        console.log('Top products chart created successfully with', sorted.length, 'products');
+    } catch (error) {
+        console.error('Error creating top products chart:', error);
+    }
 }

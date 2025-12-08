@@ -6,6 +6,7 @@
     <title>Tổng quan - Quản trị NDT Gift</title>
     <link rel="stylesheet" href="styles/styleAdmin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
 </head>
 <body>
     <div class="admin-container">
@@ -110,6 +111,32 @@
                             <i class="fas fa-store"></i>
                             <span>Xem trang chủ</span>
                         </a>                
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <h2>Biểu đồ thống kê</h2>
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h3>Doanh thu</h3>
+                                <div style="display: flex; gap: 10px;">
+                                    <button id="revenueByDay" class="chart-filter-btn active" onclick="changeRevenueChartType('day')">Ngày</button>
+                                    <button id="revenueByMonth" class="chart-filter-btn" onclick="changeRevenueChartType('month')">Tháng</button>
+                                    <button id="revenueByYear" class="chart-filter-btn" onclick="changeRevenueChartType('year')">Năm</button>
+                                </div>
+                            </div>
+                            <div style="position: relative; width: 100%; height: 300px;">
+                                <canvas id="revenueChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Top 5 sản phẩm bán chạy</h3>
+                            <div style="position: relative; width: 100%; height: 300px;">
+                                <canvas id="topProductsChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
