@@ -317,7 +317,10 @@ function syncOrderToAdmin(order) {
         customerEmail: order.customerInfo.email,  
         customerPhone: order.customerInfo.phone,
         customerAddress: order.customerInfo.address,
-        items: order.items,
+        items: order.items.map(item => ({
+            ...item,
+            productId: item.id || item.productId  // Đảm bảo productId được set
+        })),
         total: order.totalPrice,
         payment: order.paymentMethod,
         status: order.status,
