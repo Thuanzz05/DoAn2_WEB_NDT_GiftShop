@@ -98,6 +98,10 @@ function luuDanhMuc() {
     }
     
     localStorage.setItem('categories', JSON.stringify(danhSachDanhMuc));
+    
+    // Thêm timestamp vào localStorage để báo hiệu có thay đổi
+    localStorage.setItem('categoriesUpdatedAt', new Date().getTime().toString());
+    
     datLaiForm();
     taiDanhMuc();
 }
@@ -132,6 +136,9 @@ function xoaDanhMuc(id) {
     let danhSachDanhMuc = JSON.parse(localStorage.getItem('categories') || '[]');
     danhSachDanhMuc = danhSachDanhMuc.filter(dm => dm.id != id);
     localStorage.setItem('categories', JSON.stringify(danhSachDanhMuc));
+    
+    // Thêm timestamp vào localStorage để báo hiệu có thay đổi
+    localStorage.setItem('categoriesUpdatedAt', new Date().getTime().toString());
     
     alert('Đã xóa danh mục!');
     taiDanhMuc();

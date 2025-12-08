@@ -703,6 +703,20 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
         taiSanPhamTuAdmin();
     }, 100);
+    
+    // Lắng nghe sự kiện cập nhật danh mục từ admin
+    window.addEventListener('categoriesUpdated', function() {
+        console.log('Categories updated event received, reloading categories...');
+        taiDanhMuc();
+    });
+    
+    // Lắng nghe storage change từ các tab khác
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'categories' || e.key === 'categoriesUpdatedAt') {
+            console.log('Storage change detected for categories, reloading...');
+            taiDanhMuc();
+        }
+    });
 });
 
 // Load sản phẩm từ localStorage (thêm tất cả sản phẩm mới: admin + demo)
@@ -844,17 +858,43 @@ function khoiTaoDanhMucMacDinh() {
 function taiDanhMuc() {
     const categories = JSON.parse(localStorage.getItem('categories') || '[]');
     
-    // Cập nhật sidebar
-    const sidebarList = document.querySelector('#sidebar ul');
-    if (sidebarList) { sidebarList.innerHTML = categories.map(cat => `
+    // Cập nhật sidebar - selector cho #category-sidebar
+    const sidebarList = document.querySelector('#category-sidebar');
+    if (sidebarList) { 
+        // Nếu localStorage có categories, load từ đó
+        if (categories.length > 0) {
+            const categoryLinks = categories.map(cat => 
+                `<li><a href="category-products.html?id=${cat.id}">${cat.name}</a></li>`
+            ).join('');
+            
+            // Thêm link "Xem thêm..." ở cuối
+            sidebarList.innerHTML = categoryLinks + '<li><a href="#">Xem thêm...</a></li>';
+        }
+        // Nếu không có, giữ dữ liệu fallback trong HTML
+        
+        // Thêm event listener cho tất cả links
+        sidebarList.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.textContent.trim() === 'Xem thêm...') {
+                    e.preventDefault();
+                    // Scroll tới danh mục nổi bật
+                    const featuredSection = document.querySelector('#featured-cats');
+                    if (featuredSection) {
+                        featuredSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+    }
+    
+    // Cập nhật category-list (nếu tồn tại)
+    const categoryList = document.querySelector('#sidebar .category-list');
+    if (categoryList && categories.length > 0) { 
+        categoryList.innerHTML = categories.map(cat => `
             <li><a href="category-products.html?id=${cat.id}">${cat.name}</a></li>`).join('');
     }
     
-    // Cập nhật category-list 
-    const categoryList = document.querySelector('#sidebar .category-list');
-    if (categoryList) { categoryList.innerHTML = categories.map(cat => `
-            <li><a href="category-products.html?id=${cat.id}">${cat.name}</a></li>`).join('');
-    }
+    console.log('taiDanhMuc() called, categories count:', categories.length);
 }
 
 // Load sản phẩm theo danh mục (category-products.html)

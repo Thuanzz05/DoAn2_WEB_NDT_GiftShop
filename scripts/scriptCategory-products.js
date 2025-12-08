@@ -1,9 +1,45 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Load danh mục vào sidebar
+    loadCategoriesIntoSidebar();
+    
     loadCategoryProducts();
     setupSortListener();
     updateMenuByLoginStatus();
     updateActiveCategoryLink();
+    
+    // Lắng nghe storage change từ các tab khác
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'categories' || e.key === 'categoriesUpdatedAt') {
+            console.log('Storage change detected for categories in category page...');
+            loadCategoriesIntoSidebar();
+            loadCategoryProducts();
+        }
+    });
+    
+    // Fallback: kiểm tra thay đổi categories mỗi 2 giây
+    setInterval(function() {
+        const currentCategories = JSON.stringify(JSON.parse(localStorage.getItem('categories') || '[]'));
+        if (window.lastCategoriesJsonCategory !== currentCategories) {
+            console.log('Categories changed in category page, updating...');
+            loadCategoryProducts();
+            window.lastCategoriesJsonCategory = currentCategories;
+        }
+    }, 2000);
+    
+    // Lưu state ban đầu
+    window.lastCategoriesJsonCategory = JSON.stringify(JSON.parse(localStorage.getItem('categories') || '[]'));
 });
+
+// Load danh mục vào sidebar
+function loadCategoriesIntoSidebar() {
+    const categories = JSON.parse(localStorage.getItem('categories') || '[]');
+    const categoryList = document.querySelector('#category-sidebar');
+    
+    if (categoryList) {
+        categoryList.innerHTML = categories.map(cat => `
+            <li><a href="category-products.html?id=${cat.id}">${cat.name}</a></li>`).join('');
+    }
+}
 
 // Tải sản phẩm theo danh mục
 function loadCategoryProducts() {
